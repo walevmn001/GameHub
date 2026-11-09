@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-base-950 text-slate-200 antialiased;
+    /* Hỗ trợ safe-area cho thiết bị có tai thỏ khi đóng gói bằng Capacitor */
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
+      env(safe-area-inset-left);
+    /* Tránh cuộn ngang trên điện thoại khi có hiệu ứng tràn viền */
+    overflow-x: hidden;
+  }
+
+  /* Nền phát sáng rất nhẹ, không lạm dụng gradient mạnh */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+      radial-gradient(60rem 40rem at 12% -10%, rgba(168, 85, 247, 0.12), transparent 60%),
+      radial-gradient(50rem 34rem at 100% 0%, rgba(34, 211, 238, 0.1), transparent 60%);
+  }
+
+  *:focus-visible {
+    @apply outline-none ring-2 ring-neon-purple/70 ring-offset-2 ring-offset-base-950;
+  }
+}
+
+@layer components {
+  /* Khung nội dung dùng chung */
+  .glass-panel {
+    @apply rounded-2xl border border-white/5 bg-base-850/70 shadow-soft backdrop-blur-sm;
+  }
+
+  .neon-text {
+    @apply bg-gradient-to-r from-neon-purple via-neon-violet to-neon-cyan bg-clip-text text-transparent;
+  }
+
+  /* Thanh cuộn mảnh, phù hợp dark mode */
+  .scrollbar-thin::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-base-600;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Vùng an toàn cho bàn chơi trên thiết bị di động */
+  .safe-bottom {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem);
+  }
+  .safe-left {
+    padding-left: env(safe-area-inset-left);
+  }
+  .safe-right {
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

@@ -1,0 +1,98 @@
+// Schema Prisma cho Mini Game Hub (PostgreSQL).
+// Thiết kế theo API_PLAN.md: User + Stats + MatchRecord + Room + RoomMember.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String   @id @default(cuid())
+  username        String   @unique
+  displayName     String
+  avatar          String?
+  passwordHash    String
+  coins           Int      @default(5000)
+  isGuest         Boolean  @default(false)
+
+  // Tuỳ chọn người dùng (giữ phẳng cho đơn giản).
+  sound           Boolean  @default(true)
+  animations      Boolean  @default(true)
+  preferLandscape Boolean  @default(false)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  stats           Stats?
+  matches         MatchRecord[]
+  hostedRooms     Room[]       @relation("RoomHost")
+  memberships     RoomMember[]
+}
+
+model Stats {
+  userId  String @id
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  matches Int    @default(0)
+  wins    Int    @default(0)
+  losses  Int    @default(0)
+  score   Int    @default(0)
+}
+
+model MatchRecord {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  gameId       String
+  gameName     String
+  placement    Int
+  totalPlayers Int
+  win          Boolean
+  score        Int
+  coinDelta    Int      @default(0)
+  durationMs   Int?
+  createdAt    DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
+
+model Room {
+  id           String   @id @default(cuid())
+  name         String
+  gameId       String
+  gameName     String
+  visibility   String   @default("public") // public | private
+  status       String   @default("waiting") // waiting | playing | closed
+  maxPlayers   Int      @default(4)
+  config       Json
+  passwordHash String?
+  hostId       String
+  host         User     @relation("RoomHost", fields: [hostId], references: [id], onDelete: Cascade)
+
+  members      RoomMember[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([status, visibility])
+}
+
+model RoomMember {
+  id       String   @id @default(cuid())
+  roomId   String
+  room     Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  userId   String?
+  user     User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  isBot    Boolean  @default(false)
+  botName  String?
+  isHost   Boolean  @default(false)
+  seat     Int      @default(0)
+  coins    Int      @default(0)
+  joinedAt DateTime @default(now())
+
+  @@unique([roomId, userId])
+  @@index([roomId])
+}
