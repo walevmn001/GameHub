@@ -1,7 +1,7 @@
 import { REALTIME_EVENTS, type ChatMessage } from '@/types';
 import { verifyToken } from '../auth/jwt';
 import { prisma } from '../prisma';
-import { getRoomRow, addMember, removeMember } from '../rooms/service';
+import { getRoomRow, addMember, removeMember, setStatus } from '../rooms/service';
 import { abortMatch, hasMatch, passInMatch, playInMatch, syncMatch } from '../matches/manager';
 import { broadcastRoomClosed, broadcastRoomUpdate } from './broadcast';
 import { roomChannel, type AppServer } from './io';
@@ -55,6 +55,8 @@ export function registerSocketHandlers(io: AppServer): void {
 
         if (hadMatch) {
           abortMatch(roomId);
+          // Ván bị dừng giữa chừng: đưa phòng về trạng thái chờ và báo cho người còn lại.
+          await setStatus(roomId, 'waiting').catch(() => undefined);
           io.to(roomChannel(roomId)).emit(REALTIME_EVENTS.serverError, {
             message: 'Một người chơi đã rời ván. Ván đấu đã kết thúc.',
           });

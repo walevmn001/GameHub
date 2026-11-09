@@ -12,6 +12,7 @@ import {
   Swords,
 } from 'lucide-react';
 import type { GameBoardProps } from '@/games/types';
+import { REALTIME_EVENTS } from '@/types';
 import { describeCombo } from '@/game-engine/tienlen';
 import { useAuth } from '@/contexts/AuthContext';
 import { useIsMobile, useIsPortrait } from '@/hooks/useMediaQuery';
@@ -96,6 +97,16 @@ function OnlineTienLenBoard({
   );
 
   const game = useOnlineTienLenGame({ roomId, playerName, playerAvatar, onMatchEnd });
+
+  /**
+   * Khi một người chơi khác rời ván giữa chừng, máy chủ dừng ván và phát `server:error`.
+   * Đưa người còn lại về phòng chờ để không còn thấy ghế của người đã rời.
+   */
+  useEffect(() => {
+    return socketService.on(REALTIME_EVENTS.serverError, () => {
+      navigate(`/rooms/${roomId}`);
+    });
+  }, [navigate, roomId]);
 
   /** Thoát bàn chơi: rời phòng (máy chủ dừng ván) rồi mới điều hướng. */
   const handleExit = useCallback(() => {

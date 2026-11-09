@@ -29,6 +29,12 @@ function withTimeout<T>(promise: Promise<T>, fallback: T): Promise<T> {
 class SocketService {
   private socket: AppSocket | null = null;
   private handlers = new Map<string, Set<AnyHandler>>();
+  /** Mã phòng mà kết nối hiện đang gắn vào (để tự rời khi người chơi rời trang phòng/bàn). */
+  private roomId: string | null = null;
+
+  get currentRoomId(): string | null {
+    return this.roomId;
+  }
 
   /** Gắn toàn bộ handler đã đăng ký vào một socket vừa tạo. */
   private attachHandlers(socket: AppSocket): void {
@@ -68,6 +74,7 @@ class SocketService {
   disconnect(): void {
     this.socket?.disconnect();
     this.socket = null;
+    this.roomId = null;
   }
 
   get connected(): boolean {
@@ -108,12 +115,14 @@ class SocketService {
   }
 
   joinRoom(roomId: string): Promise<AckResult> {
+    this.roomId = roomId;
     return this.ackEmit((socket, done) =>
       socket.emit(REALTIME_EVENTS.roomJoin, { roomId }, done),
     );
   }
 
   leaveRoom(roomId: string): Promise<AckResult> {
+    this.roomId = null;
     return this.ackEmit((socket, done) =>
       socket.emit(REALTIME_EVENTS.roomLeave, { roomId }, done),
     );

@@ -1,6 +1,5 @@
 import type { Card } from '@/types';
 import { PlayCard, type CardSize } from '@/components/game/PlayCard';
-import { cn } from '@/utils/cn';
 
 /**
  * Khu vực bài trên tay người chơi.
@@ -33,10 +32,11 @@ export function PlayerHand({
           return (
             <div
               key={card.id}
-              className={cn(index > 0 && 'z-0')}
               style={{
                 marginLeft: index === 0 ? 0 : overlap,
-                zIndex: isSelected ? 20 : index,
+                // Giữ thứ tự xếp lớp theo vị trí trong bài: lá sau luôn nằm trên lá trước.
+                // Nhờ vậy lá đang chọn (được nâng lên bằng transform) không che mất vùng bấm của các lá sau.
+                zIndex: index,
               }}
             >
               <PlayCard
