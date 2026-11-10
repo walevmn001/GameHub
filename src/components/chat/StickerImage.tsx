@@ -37,6 +37,7 @@ export function StickerImage({
         width={size}
         height={size}
         draggable={false}
+        style={{ width: size, height: size, maxWidth: 'none' }}
         className={cn('pointer-events-none select-none', className)}
       />
     );
