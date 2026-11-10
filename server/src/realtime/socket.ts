@@ -14,6 +14,51 @@ import { addConnection, onlineUserIds, removeConnection } from './presence';
 import { roomChannel, userChannel, type AppServer } from './io';
 
 const MAX_CHAT_LENGTH = 200;
+/** Cho phép người chơi tải lại trang/kết nối lại trước khi coi là đã rời phòng. */
+const ROOM_RECONNECT_GRACE_MS = 30_000;
+const pendingRoomLeaves = new Map<string, ReturnType<typeof setTimeout>>();
+
+function roomLeaveKey(roomId: string, userId: string): string {
+  return `${roomId}:${userId}`;
+}
+
+function cancelPendingRoomLeave(roomId: string, userId: string): void {
+  const key = roomLeaveKey(roomId, userId);
+  const timer = pendingRoomLeaves.get(key);
+  if (timer) clearTimeout(timer);
+  pendingRoomLeaves.delete(key);
+}
+
+function scheduleRoomLeave(io: AppServer, roomId: string, userId: string): void {
+  const key = roomLeaveKey(roomId, userId);
+  cancelPendingRoomLeave(roomId, userId);
+  const timer = setTimeout(() => {
+    pendingRoomLeaves.delete(key);
+    void (async () => {
+      try {
+        // Nếu socket mới đã tham gia lại, không xóa ghế hoặc dừng match.
+        const sockets = await io.in(roomChannel(roomId)).fetchSockets();
+        if (sockets.some((activeSocket) => activeSocket.data.userId === userId)) return;
+
+        const room = await getRoomRow(roomId);
+        if (!room) return;
+        if (hasMatch(roomId)) {
+          abortMatch(roomId);
+          await setStatus(roomId, 'waiting').catch(() => undefined);
+          io.to(roomChannel(roomId)).emit(REALTIME_EVENTS.serverError, {
+            message: 'Một người chơi đã rời ván. Ván đấu đã kết thúc.',
+          });
+        }
+        const result = await removeMember(room, userId);
+        if (result.closed) broadcastRoomClosed(roomId);
+        else await broadcastRoomUpdate(roomId);
+      } catch (error) {
+        console.error('[socket] cleanup disconnected player', error);
+      }
+    })();
+  }, ROOM_RECONNECT_GRACE_MS);
+  pendingRoomLeaves.set(key, timer);
+}
 
 async function coinsOf(userId: string): Promise<number> {
   const user = await prisma.user.findUnique({ where: { id: userId }, select: { coins: true } });
@@ -67,18 +112,18 @@ export function registerSocketHandlers(io: AppServer): void {
     broadcastPresence(onlineUserIds());
     void notifyFriends(socket.data.userId);
 
-    /** Rời phòng hiện tại: dừng ván (nếu đang chơi), xoá ghế và phát cập nhật. */
+    /** Rời phòng chủ động: dừng ván (nếu đang chơi), xoá ghế và phát cập nhật. */
     const leaveCurrentRoom = async (): Promise<void> => {
       const roomId = socket.data.roomId;
       if (!roomId) return;
       socket.data.roomId = null;
+      cancelPendingRoomLeave(roomId, socket.data.userId);
       try {
         const hadMatch = hasMatch(roomId);
         await socket.leave(roomChannel(roomId));
 
         if (hadMatch) {
           abortMatch(roomId);
-          // Ván bị dừng giữa chừng: đưa phòng về trạng thái chờ và báo cho người còn lại.
           await setStatus(roomId, 'waiting').catch(() => undefined);
           io.to(roomChannel(roomId)).emit(REALTIME_EVENTS.serverError, {
             message: 'Một người chơi đã rời ván. Ván đấu đã kết thúc.',
@@ -108,6 +153,7 @@ export function registerSocketHandlers(io: AppServer): void {
           return;
         }
 
+        cancelPendingRoomLeave(roomId, socket.data.userId);
         await addMember(room, { id: socket.data.userId, coins: await coinsOf(socket.data.userId) });
         await socket.join(roomChannel(roomId));
         socket.data.roomId = roomId;
@@ -195,7 +241,10 @@ export function registerSocketHandlers(io: AppServer): void {
     });
 
     socket.on('disconnect', () => {
-      void leaveCurrentRoom();
+      const roomId = socket.data.roomId;
+      // F5/mất mạng là disconnect tạm thời, không phải lệnh rời phòng.
+      // Cho client 30 giây để kết nối và tham gia phòng lại trước khi dừng ván.
+      if (roomId) scheduleRoomLeave(io, roomId, socket.data.userId);
       removeConnection(socket.data.userId);
       broadcastPresence(onlineUserIds());
       void notifyFriends(socket.data.userId);

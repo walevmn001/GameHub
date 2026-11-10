@@ -9,12 +9,25 @@ import { useToast } from '@/contexts/ToastContext';
 import { Button, FullPageLoader } from '@/components/ui';
 import type { BoardSeat, MatchResult } from '@/games/types';
 
+const SAVED_BOARD_KEY = 'gamehub:active-board';
+
 /** Dữ liệu phòng chơi được truyền kèm khi bắt đầu ván (nếu vào từ phòng chờ). */
 interface BoardLocationState {
   config?: TienLenConfig;
   seats?: BoardSeat[];
   /** Mã phòng khi chơi trực tuyến — có mã nghĩa là ván chạy trên máy chủ. */
   roomId?: string;
+}
+
+function readSavedBoardState(gameId: string): BoardLocationState | null {
+  try {
+    const raw = window.sessionStorage.getItem(SAVED_BOARD_KEY);
+    if (!raw) return null;
+    const saved = JSON.parse(raw) as { gameId?: string; state?: BoardLocationState };
+    return saved.gameId === gameId && saved.state?.roomId ? saved.state : null;
+  } catch {
+    return null;
+  }
 }
 
 export function PlayGamePage() {
@@ -24,8 +37,20 @@ export function PlayGamePage() {
   const toast = useToast();
   const { user, refresh } = useAuth();
 
-  const boardState = (location.state ?? null) as BoardLocationState | null;
+  // React Router location.state mất sau F5; dùng snapshot trong sessionStorage để vào lại bàn.
+  const boardState = (location.state ?? readSavedBoardState(gameId)) as BoardLocationState | null;
   const online = onlineEnabled && Boolean(boardState?.roomId);
+
+  if (online && boardState?.roomId) {
+    try {
+      window.sessionStorage.setItem(
+        SAVED_BOARD_KEY,
+        JSON.stringify({ gameId, state: boardState }),
+      );
+    } catch {
+      // Có thể tiếp tục chơi online nếu trình duyệt không cho dùng sessionStorage.
+    }
+  }
 
   const meta = gameService.getGame(gameId);
   const Board = gameService.getBoardComponent(gameId);
@@ -66,10 +91,16 @@ export function PlayGamePage() {
     [meta, refresh, toast, user, online],
   );
 
-  const handleExit = useCallback(
-    () => navigate(online ? '/rooms' : '/'),
-    [navigate, online],
-  );
+  const handleExit = useCallback(() => {
+    if (online) {
+      try {
+        window.sessionStorage.removeItem(SAVED_BOARD_KEY);
+      } catch {
+        // Bỏ qua lỗi storage khi người chơi chủ động thoát.
+      }
+    }
+    navigate(online ? '/rooms' : '/');
+  }, [navigate, online]);
 
   if (!meta || !Board) {
     return (
