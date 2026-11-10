@@ -1,4 +1,4 @@
-import type { UserRole } from './user';
+import type { MatchRecord, PlayerStats, UserRole } from './user';
 
 /**
  * Kiểu dữ liệu cho tính năng xã hội: bạn bè, tìm người chơi và tin nhắn riêng.
