@@ -47,7 +47,7 @@ export function SeatPanel({
         position === 'right' && 'flex-col',
       )}
     >
-      <div className="relative">
+      <div className="relative w-fit">
         {isTurn && (
           <span className="absolute inset-0 animate-pulse-ring rounded-full border-2 border-neon-cyan" />
         )}
