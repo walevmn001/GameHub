@@ -47,14 +47,17 @@ const POSITION_CLASS: Record<SeatPosition, string> = {
 };
 
 /** Vị trí các ghế đối thủ quanh bàn theo số người (2–4). */
-function opponentSlots(count: number): Array<{ seat: number; position: SeatPosition }> {
+function opponentSlots(count: number, humanSeat: number): Array<{ seat: number; position: SeatPosition }> {
   const table: Record<number, SeatPosition[]> = {
     2: ['top'],
     3: ['right', 'left'],
     4: ['right', 'top', 'left'],
   };
   const positions = table[count] ?? ['right', 'top', 'left'];
-  return positions.map((position, index) => ({ seat: index + 1, position }));
+  return positions.map((position, index) => ({
+    seat: (humanSeat + index + 1) % count,
+    position,
+  }));
 }
 
 /**
@@ -256,7 +259,7 @@ function TienLenBoardView({
     onRematch();
   };
 
-  const slots = opponentSlots(players.length);
+  const slots = opponentSlots(players.length, game.humanSeat);
 
   const board = (
     <div className="flex h-full w-full flex-col bg-base-950">
