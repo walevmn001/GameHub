@@ -10,7 +10,7 @@ import {
 } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import type { Room, RoomStatus, ServiceResult, CreateRoomInput } from '@/types';
-import { REALTIME_EVENTS } from '@/types';
+import { getRequiredTienLenCoins, REALTIME_EVENTS } from '@/types';
 import { roomService } from '@/services/RoomService';
 import { socketService } from '@/services/SocketService';
 import { onlineEnabled } from '@/services/backend';
@@ -38,6 +38,11 @@ interface RoomsContextValue {
 
 const RoomsContext = createContext<RoomsContextValue | null>(null);
 
+function insufficientCoinsMessage(coins: number, required: number, action: string): string {
+  const missing = Math.max(0, required - coins);
+  return `Không đủ xu để ${action}. Cần ${required.toLocaleString('vi-VN')} xu (thiếu ${missing.toLocaleString('vi-VN')} xu); hiện có ${coins.toLocaleString('vi-VN')} xu.`;
+}
+
 export function RoomsProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const location = useLocation();
@@ -58,9 +63,8 @@ export function RoomsProvider({ children }: { children: ReactNode }) {
   }, [refresh]);
 
   /**
-   * Rời phòng tự động khi người chơi điều hướng ra khỏi trang phòng chờ/bàn chơi
-   * mà không bấm "Rời phòng" (ví dụ nút quay lại, nút "Danh sách", trình duyệt back).
-   * Nhờ vậy những người chơi khác không còn thấy người đã rời trong phòng.
+   * Rời phòng tự động khi người chơi điều hướng ra khỏi trang phòng/bàn bằng thao tác
+   * trong ứng dụng. Full reload không chạy điều hướng React Router này.
    */
   const previousPathRef = useRef(location.pathname);
   useEffect(() => {
@@ -73,19 +77,13 @@ export function RoomsProvider({ children }: { children: ReactNode }) {
 
     const roomPath = `/rooms/${roomId}`;
     const path = location.pathname;
-    // Đang ở trong phòng hoặc bàn chơi của phòng đó thì vẫn thuộc phòng.
     if (path === roomPath || path.startsWith('/play')) return;
-    // Chỉ rời khi trước đó thực sự đang ở trang phòng/bàn để tránh rời nhầm.
     const wasInRoom = previousPath === roomPath || previousPath.startsWith('/play');
     if (!wasInRoom) return;
 
     void socketService.leaveRoom(roomId).then(() => refresh());
   }, [location.pathname, refresh]);
 
-  /**
-   * Đồng bộ danh sách phòng theo thời gian thực: khi máy chủ phát `room:updated`
-   * hoặc `room:closed`, cập nhật ngay mà không cần tải lại toàn bộ danh sách.
-   */
   useEffect(() => {
     const offUpdated = socketService.on(REALTIME_EVENTS.roomUpdated, (updated) => {
       setRooms((prev) => {
@@ -114,8 +112,15 @@ export function RoomsProvider({ children }: { children: ReactNode }) {
     async (input) => {
       const name = user?.displayName ?? 'Khách';
       const avatar = user?.avatar ?? '';
+      const coins = user?.coins ?? 0;
+      if (input.gameId === 'tien-len') {
+        const required = getRequiredTienLenCoins(input.config, input.maxPlayers);
+        if (coins < required) {
+          return { ok: false, error: insufficientCoinsMessage(coins, required, 'tạo phòng') };
+        }
+      }
       const result = await roomService.createRoom(
-        { ...input, hostName: name, hostAvatar: avatar, hostCoins: user?.coins },
+        { ...input, hostName: name, hostAvatar: avatar, hostCoins: coins },
         user?.id ?? 'guest',
       );
       if (result.ok) {
@@ -129,6 +134,14 @@ export function RoomsProvider({ children }: { children: ReactNode }) {
 
   const joinRoom = useCallback<RoomsContextValue['joinRoom']>(
     async (roomId, password) => {
+      const room = await roomService.getRoom(roomId);
+      if (room && room.gameId === 'tien-len' && !room.players.some((player) => player.id === (user?.id ?? 'guest'))) {
+        const coins = user?.coins ?? 0;
+        const required = getRequiredTienLenCoins(room.config, room.players.length + 1);
+        if (coins < required) {
+          return { ok: false, error: insufficientCoinsMessage(coins, required, 'vào phòng') };
+        }
+      }
       const result = await roomService.joinRoom(
         roomId,
         {
@@ -151,7 +164,6 @@ export function RoomsProvider({ children }: { children: ReactNode }) {
   const leaveRoom = useCallback<RoomsContextValue['leaveRoom']>(
     async (roomId) => {
       const result = await roomService.leaveRoom(roomId, user?.id ?? 'guest');
-      // Dọn kênh Socket.IO để máy chủ xoá hẳn thành viên và dừng ván (nếu có).
       if (onlineEnabled) void socketService.leaveRoom(roomId);
       if (result.ok) await refresh();
       return result;
@@ -206,7 +218,6 @@ export function RoomsProvider({ children }: { children: ReactNode }) {
     [refresh],
   );
 
-  /** Chủ phòng bắt đầu ván đấu. Trực tuyến: máy chủ khởi tạo ván và phát qua Socket.IO. */
   const startMatch = useCallback<RoomsContextValue['startMatch']>(
     async (roomId) => {
       const result = await roomService.startMatch(roomId);
