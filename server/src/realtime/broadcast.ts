@@ -12,9 +12,9 @@ export async function broadcastRoomUpdate(roomId: string): Promise<RoomRow | nul
   return room;
 }
 
-/** Thông báo phòng đã đóng. */
-export function broadcastRoomClosed(roomId: string): void {
-  getIo()?.emit(REALTIME_EVENTS.roomClosed, { roomId });
+/** Thông báo phòng đã đóng; có thể kèm lý do để client hiện thông báo phù hợp. */
+export function broadcastRoomClosed(roomId: string, reason?: 'admin'): void {
+  getIo()?.emit(REALTIME_EVENTS.roomClosed, { roomId, reason });
 }
 
 /** Báo cho một người dùng tải lại danh sách bạn bè/lời mời. */
