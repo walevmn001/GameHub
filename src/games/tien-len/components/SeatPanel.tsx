@@ -68,17 +68,14 @@ export function SeatPanel({
             {(player.placement ?? 0) === 1 ? <Crown className="h-3 w-3" /> : player.placement}
           </span>
         )}
+        {bubble && (
+          <ChatBubble
+            type={bubble.type}
+            text={bubble.text}
+            stickerId={bubble.stickerId}
+          />
+        )}
       </div>
-
-      {bubble && (
-        <ChatBubble
-          type={bubble.type}
-          text={bubble.text}
-          stickerId={bubble.stickerId}
-          floating={false}
-          className={cn(horizontal && 'max-w-[8rem]')}
-        />
-      )}
 
       <div className={cn('min-w-0', !horizontal && 'text-center')}>
         <p className="flex items-center justify-center gap-1 truncate text-xs font-semibold text-slate-200">
