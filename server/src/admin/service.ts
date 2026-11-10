@@ -1,7 +1,12 @@
 import { prisma } from '../prisma';
 import { badRequest, notFound } from '../http/errors';
 import { isOnline, onlineUserIds } from '../realtime/presence';
-import type { AdminCoinResult, AdminStats, AdminUser, UserRole } from '@/types';
+import type { AdminCoinResult, AdminStats, AdminUser, Room, UserRole } from '@/types';
+import {
+  getRoomRow,
+  listRooms as listActiveRooms,
+  toClientRoom,
+} from '../rooms/service';
 
 /**
  * Nghiệp vụ khu quản trị: liệt kê người dùng, tặng/trừ xu, đổi vai trò và xoá tài khoản.
@@ -133,4 +138,17 @@ export async function deleteUser(userId: string, actorId: string): Promise<void>
   const exists = await prisma.user.findUnique({ where: { id: userId }, select: { id: true } });
   if (!exists) throw notFound('Không tìm thấy người dùng.');
   await prisma.user.delete({ where: { id: userId } });
+}
+
+/** Danh sách phòng đang hoạt động cho bảng quản trị. */
+export async function listRooms(): Promise<Room[]> {
+  const rooms = await listActiveRooms();
+  return rooms.map(toClientRoom);
+}
+
+/** Xoá phòng theo yêu cầu quản trị viên. */
+export async function deleteRoom(roomId: string): Promise<void> {
+  const room = await getRoomRow(roomId);
+  if (!room) throw notFound('Không tìm thấy phòng.');
+  await prisma.room.delete({ where: { id: roomId } });
 }

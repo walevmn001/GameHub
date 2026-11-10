@@ -3,6 +3,8 @@ import { z } from 'zod';
 import { asyncHandler } from '../http/asyncHandler';
 import { parseBody } from '../http/validation';
 import { requireAdmin } from '../auth/middleware';
+import { broadcastRoomClosed } from '../realtime/broadcast';
+import { disposeRoom } from '../matches/manager';
 import * as admin from './service';
 
 /**
@@ -12,6 +14,25 @@ import * as admin from './service';
 export const adminRouter = Router();
 
 adminRouter.use(requireAdmin);
+
+/** Danh sách các phòng đang hoạt động. */
+adminRouter.get(
+  '/rooms',
+  asyncHandler(async (_req, res) => {
+    res.json(await admin.listRooms());
+  }),
+);
+
+/** Admin xoá phòng và buộc người chơi đang ở trong phòng rời ra. */
+adminRouter.delete(
+  '/rooms/:roomId',
+  asyncHandler(async (req, res) => {
+    await admin.deleteRoom(req.params.roomId);
+    disposeRoom(req.params.roomId);
+    broadcastRoomClosed(req.params.roomId, 'admin');
+    res.json({ ok: true });
+  }),
+);
 
 const coinsBody = z.object({
   delta: z.number().int('Số xu phải là số nguyên.').refine((v) => v !== 0, {
