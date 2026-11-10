@@ -1,6 +1,7 @@
 import type { Card, Combo } from './game';
 import type { TienLenConfig } from './tienlen';
 import type { Room } from './room';
+import type { DirectMessage } from './social';
 import type { MatchSettlement } from '@/game-engine/tienlen/money';
 import type { PlayRecord } from '@/game-engine/tienlen/engine';
 
@@ -24,6 +25,14 @@ export const REALTIME_EVENTS = {
   matchState: 'match:state',
   matchEnded: 'match:ended',
   serverError: 'server:error',
+  /** Tin nhắn riêng tư mới (server → client). */
+  dmMessage: 'dm:message',
+  /** Có thay đổi về bạn bè/lời mời → client tải lại danh sách. */
+  socialUpdate: 'social:update',
+  /** Danh sách id người dùng đang trực tuyến. */
+  presenceUpdate: 'presence:update',
+  /** Thông báo xã hội để hiển thị toast (lời mời kết bạn / được chấp nhận). */
+  socialNotification: 'social:notification',
 } as const;
 
 /** Kết quả trả về tức thời cho một sự kiện từ client (ack). */
@@ -94,6 +103,17 @@ export interface ServerToClientEvents {
   'match:state': (view: MatchView) => void;
   'match:ended': (view: MatchView) => void;
   'server:error': (payload: { message: string }) => void;
+  'dm:message': (message: DirectMessage) => void;
+  'social:update': () => void;
+  'presence:update': (payload: { userIds: string[] }) => void;
+  'social:notification': (payload: SocialNotification) => void;
+}
+
+/** Thông báo xã hội hiển thị dạng toast cho người dùng. */
+export interface SocialNotification {
+  kind: 'friend-request' | 'friend-accepted';
+  fromId: string;
+  fromName: string;
 }
 
 /** Dữ liệu gắn kèm mỗi kết nối Socket.IO sau khi xác thực. */

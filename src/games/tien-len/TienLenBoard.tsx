@@ -305,6 +305,7 @@ function TienLenBoardView({
               isTurn={state.currentTurn === seat && state.phase === 'playing'}
               passed={isPassed(seat)}
               isThinking={state.currentTurn === seat && players[seat].isBot}
+              online={online}
             />
           </div>
         ))}

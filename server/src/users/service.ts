@@ -1,4 +1,4 @@
-import type { MatchRecord as ClientMatchRecord, PublicUser } from '@/types';
+import type { MatchRecord as ClientMatchRecord, PublicUser, UserRole } from '@/types';
 import { prisma } from '../prisma';
 import { notFound } from '../http/errors';
 
@@ -10,6 +10,7 @@ export interface UserRow {
   avatar: string | null;
   coins: number;
   createdAt: Date;
+  role: string;
   sound: boolean;
   animations: boolean;
   preferLandscape: boolean;
@@ -66,6 +67,7 @@ export function toPublicUser(user: UserRow): PublicUser {
       animations: user.animations,
       preferLandscape: user.preferLandscape,
     },
+    role: user.role === 'admin' ? 'admin' : ('user' as UserRole),
   };
 }
 

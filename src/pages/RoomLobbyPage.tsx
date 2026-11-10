@@ -36,6 +36,7 @@ import {
   Surface,
 } from '@/components/ui';
 import { NoticeBanner } from '@/components/common/NoticeBanner';
+import { FriendButton } from '@/components/social/FriendButton';
 import { cn } from '@/utils/cn';
 
 const STATUS_LABEL: Record<Room['status'], string> = {
@@ -379,6 +380,11 @@ export function RoomLobbyPage() {
                 <Coins className="h-3 w-3" />
                 {player.coins.toLocaleString('vi-VN')} xu
               </span>
+              {onlineEnabled && !player.isBot && player.id !== currentUserId && (
+                <FriendButton
+                  contact={{ id: player.id, displayName: player.name, avatar: player.avatar }}
+                />
+              )}
             </div>
           ))}
 

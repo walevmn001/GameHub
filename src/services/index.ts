@@ -15,3 +15,6 @@ export { activityService } from './ActivityService';
 export type { ActivityEntry, ActivityType } from './ActivityService';
 export { gameService } from './GameService';
 export type { CompleteMatchInput } from './GameService';
+export { socialService } from './SocialService';
+export { adminService } from './AdminService';
+export { socketService } from './SocketService';

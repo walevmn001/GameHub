@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
+import { ChatDock } from '@/components/social/ChatDock';
 
 /** Bố cục chung cho các trang thông thường (có navbar + footer). */
 export function MainLayout() {
@@ -11,6 +12,7 @@ export function MainLayout() {
         <Outlet />
       </main>
       <Footer />
+      <ChatDock />
     </div>
   );
 }
@@ -20,6 +22,7 @@ export function GameLayout() {
   return (
     <div className="relative z-10 h-[100dvh] w-full overflow-hidden">
       <Outlet />
+      <ChatDock />
     </div>
   );
 }

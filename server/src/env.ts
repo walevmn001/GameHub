@@ -16,6 +16,14 @@ export const env = {
     .map((origin) => origin.trim())
     .filter(Boolean),
   startingCoins: toNumber(process.env.STARTING_COINS, 5000),
+  /**
+   * Danh sách username được tự động cấp quyền admin (phân tách bằng dấu phẩy).
+   * Dùng để "bootstrap" quản trị viên đầu tiên mà không cần thao tác CSDL thủ công.
+   */
+  adminUsernames: (process.env.ADMIN_USERNAMES ?? '')
+    .split(',')
+    .map((name) => name.trim().toLowerCase())
+    .filter(Boolean),
   isProd: process.env.NODE_ENV === 'production',
 } as const;
 

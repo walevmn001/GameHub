@@ -14,6 +14,11 @@ export const authRouter = Router();
 
 const USERNAME_PATTERN = /^[a-zA-Z0-9_]{3,20}$/;
 
+/** Username nằm trong danh sách cấu hình sẽ được cấp quyền admin. */
+function bootstrapRole(username: string): 'admin' | 'user' {
+  return env.adminUsernames.includes(username) ? 'admin' : 'user';
+}
+
 const registerSchema = z.object({
   username: z
     .string()
@@ -55,6 +60,7 @@ authRouter.post(
         displayName,
         passwordHash,
         coins: env.startingCoins,
+        role: bootstrapRole(username),
         stats: { create: {} },
       },
     });
@@ -76,6 +82,12 @@ authRouter.post(
 
     const valid = await bcrypt.compare(input.password, user.passwordHash);
     if (!valid) throw unauthorized('Tên đăng nhập hoặc mật khẩu không đúng.');
+
+    // Đồng bộ quyền admin cho username nằm trong danh sách cấu hình (bootstrap).
+    const expectedRole = bootstrapRole(user.username);
+    if (expectedRole === 'admin' && user.role !== 'admin') {
+      await prisma.user.update({ where: { id: user.id }, data: { role: 'admin' } });
+    }
 
     const token = signToken({ sub: user.id, username: user.username, isGuest: user.isGuest });
     res.json({ token, user: await loadPublicUser(user.id) });

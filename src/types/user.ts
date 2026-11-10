@@ -4,6 +4,9 @@
  * KHÔNG phải hệ thống xác thực trực tuyến an toàn.
  */
 
+/** Vai trò người dùng: người chơi thường hoặc quản trị viên (bảng quản trị). */
+export type UserRole = 'user' | 'admin';
+
 export interface PlayerStats {
   matches: number;
   wins: number;
@@ -69,6 +72,8 @@ export interface PublicUser {
   stats: PlayerStats;
   history: MatchRecord[];
   preferences: UserPreferences;
+  /** Vai trò tài khoản; mặc định "user". */
+  role: UserRole;
 }
 
 export function toPublicUser(account: AccountRecord): PublicUser {
@@ -82,5 +87,6 @@ export function toPublicUser(account: AccountRecord): PublicUser {
     stats: account.stats,
     history: account.history,
     preferences: account.preferences,
+    role: 'user',
   };
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ChangeEvent } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import {
   Coins,
@@ -8,6 +8,7 @@ import {
   RefreshCw,
   Swords,
   Trophy,
+  Upload,
   UserRound,
 } from 'lucide-react';
 import { Avatar, Badge, Button, EmptyState, Input, Modal, SectionHeader, StatTile, Surface } from '@/components/ui';
@@ -53,6 +54,29 @@ export function ProfilePage() {
     }
     setEditOpen(false);
     toast.success('Đã cập nhật hồ sơ.');
+  };
+
+  /** Kích thước tối đa cho ảnh đại diện tải lên (giữ chuỗi data URI trong giới hạn máy chủ). */
+  const AVATAR_MAX_BYTES = 256 * 1024;
+
+  const handleAvatarFile = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      toast.error('Tệp không hợp lệ', 'Hãy chọn một tệp ảnh (PNG, JPG, GIF…).');
+      return;
+    }
+    if (file.size > AVATAR_MAX_BYTES) {
+      toast.error('Ảnh quá lớn', 'Vui lòng chọn ảnh nhỏ hơn 256 KB.');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === 'string') setAvatar(reader.result);
+    };
+    reader.onerror = () => toast.error('Không đọc được tệp ảnh.');
+    reader.readAsDataURL(file);
   };
 
   const handleLogout = async () => {
@@ -217,6 +241,24 @@ export function ProfilePage() {
 
           <div>
             <p className="mb-2 text-xs font-semibold text-slate-300">Ảnh đại diện</p>
+            <div className="mb-3 flex items-center gap-3 rounded-xl border border-white/10 bg-base-900/50 p-3">
+              <Avatar src={avatar} name={displayName || 'Player'} size="lg" ring />
+              <div className="min-w-0 flex-1">
+                <p className="text-xs text-slate-400">
+                  Tải ảnh của bạn lên (PNG, JPG, GIF — tối đa 256 KB).
+                </p>
+                <label className="mt-2 inline-flex cursor-pointer items-center gap-2 rounded-xl border border-neon-cyan/40 bg-neon-cyan/10 px-3 py-1.5 text-xs font-semibold text-neon-cyan transition-colors hover:bg-neon-cyan/20">
+                  <Upload className="h-3.5 w-3.5" />
+                  Tải ảnh lên
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleAvatarFile}
+                  />
+                </label>
+              </div>
+            </div>
             <div className="flex flex-wrap gap-2.5">
               {presets.map((preset, index) => (
                 <button

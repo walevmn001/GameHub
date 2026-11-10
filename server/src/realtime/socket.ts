@@ -3,14 +3,31 @@ import { verifyToken } from '../auth/jwt';
 import { prisma } from '../prisma';
 import { getRoomRow, addMember, removeMember, setStatus } from '../rooms/service';
 import { abortMatch, hasMatch, passInMatch, playInMatch, syncMatch } from '../matches/manager';
-import { broadcastRoomClosed, broadcastRoomUpdate } from './broadcast';
-import { roomChannel, type AppServer } from './io';
+import { friendIdsOf } from '../social/service';
+import {
+  broadcastPresence,
+  broadcastRoomClosed,
+  broadcastRoomUpdate,
+  notifySocialUpdate,
+} from './broadcast';
+import { addConnection, onlineUserIds, removeConnection } from './presence';
+import { roomChannel, userChannel, type AppServer } from './io';
 
 const MAX_CHAT_LENGTH = 200;
 
 async function coinsOf(userId: string): Promise<number> {
   const user = await prisma.user.findUnique({ where: { id: userId }, select: { coins: true } });
   return user?.coins ?? 0;
+}
+
+/** Báo cho bạn bè tải lại danh sách (trạng thái online/offline thay đổi). */
+async function notifyFriends(userId: string): Promise<void> {
+  try {
+    const ids = await friendIdsOf(userId);
+    for (const id of ids) notifySocialUpdate(id);
+  } catch (error) {
+    console.error('[socket] notifyFriends', error);
+  }
 }
 
 /**
@@ -44,6 +61,12 @@ export function registerSocketHandlers(io: AppServer): void {
   });
 
   io.on('connection', (socket) => {
+    // Theo dõi trực tuyến + vào kênh riêng để nhận tin nhắn/thông báo cá nhân.
+    addConnection(socket.data.userId);
+    void socket.join(userChannel(socket.data.userId));
+    broadcastPresence(onlineUserIds());
+    void notifyFriends(socket.data.userId);
+
     /** Rời phòng hiện tại: dừng ván (nếu đang chơi), xoá ghế và phát cập nhật. */
     const leaveCurrentRoom = async (): Promise<void> => {
       const roomId = socket.data.roomId;
@@ -173,6 +196,9 @@ export function registerSocketHandlers(io: AppServer): void {
 
     socket.on('disconnect', () => {
       void leaveCurrentRoom();
+      removeConnection(socket.data.userId);
+      broadcastPresence(onlineUserIds());
+      void notifyFriends(socket.data.userId);
     });
   });
 }

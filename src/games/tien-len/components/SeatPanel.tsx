@@ -1,6 +1,7 @@
 import { Bot, CheckCircle2, Coins, Crown } from 'lucide-react';
 import type { TienLenPlayer } from '@/game-engine/tienlen';
 import { Avatar } from '@/components/ui';
+import { FriendButton } from '@/components/social/FriendButton';
 import { cn } from '@/utils/cn';
 
 export type SeatPosition = 'top' | 'left' | 'right';
@@ -15,17 +16,21 @@ export function SeatPanel({
   isTurn,
   passed,
   isThinking,
+  online = false,
 }: {
   player: TienLenPlayer;
   position: SeatPosition;
   isTurn: boolean;
   passed: boolean;
   isThinking: boolean;
+  /** Ván trực tuyến — hiện nút kết bạn với đối thủ thật (không áp dụng cho AI). */
+  online?: boolean;
 }) {
   const finished = player.placement !== null;
   const placeLabel = finished ? ['', 'Nhất', 'Nhì', 'Ba', 'Bốn'][player.placement ?? 0] : null;
 
   const horizontal = position === 'top';
+  const showSocial = online && !player.isBot;
 
   return (
     <div
@@ -88,6 +93,16 @@ export function SeatPanel({
             </span>
           ) : null}
         </div>
+
+        {/* Kết bạn / nhắn tin với đối thủ thật */}
+        {showSocial && (
+          <div className={cn('mt-1.5 flex', !horizontal && 'justify-center')}>
+            <FriendButton
+              compact={!horizontal}
+              contact={{ id: player.id, displayName: player.name, avatar: player.avatar }}
+            />
+          </div>
+        )}
       </div>
 
       {/* Úp bài đối thủ */}

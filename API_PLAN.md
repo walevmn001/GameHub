@@ -123,6 +123,33 @@ POST /api/rooms
 > Với game nhiều người, **server là nguồn chân lý** (authoritative). Client gửi ý định,
 > server áp dụng cùng bộ luật trong `game-engine/tienlen` và phát lại kết quả cho mọi người.
 
+### 3.6. Xã hội — `/api/social` (yêu cầu đăng nhập)
+| Method | Endpoint | Mô tả |
+| --- | --- | --- |
+| GET | `/social/overview` | Tổng hợp: bạn bè + lời mời đến/đi |
+| GET | `/social/friends` | Danh sách bạn bè (kèm trạng thái online) |
+| GET | `/social/search?q=` | Tìm người chơi theo username/tên hiển thị |
+| GET | `/social/requests` | Lời mời kết bạn đến và đi |
+| POST | `/social/requests` | Gửi lời mời kết bạn (`{ targetId }`) |
+| POST | `/social/requests/:id/accept` | Chấp nhận lời mời |
+| POST | `/social/requests/:id/reject` | Từ chối lời mời |
+| DELETE | `/social/friends/:friendId` | Huỷ kết bạn |
+| GET | `/social/conversations` | Tóm tắt hội thoại + số tin chưa đọc |
+| GET | `/social/messages/:friendId` | Lịch sử tin nhắn với một bạn bè |
+| POST | `/social/messages/:friendId` | Gửi tin nhắn (`{ text }`, 1–500 ký tự) |
+| POST | `/social/messages/:friendId/read` | Đánh dấu đã đọc |
+
+### 3.7. Quản trị — `/api/admin` (yêu cầu `role = admin`)
+| Method | Endpoint | Mô tả |
+| --- | --- | --- |
+| GET | `/admin/stats` | Số liệu tổng quan (người dùng, đang online, admin, tổng xu, số trận…) |
+| GET | `/admin/users?q=&take=&skip=` | Danh sách/tìm kiếm người dùng |
+| POST | `/admin/users/:id/coins` | Tặng/trừ xu (`{ delta }` nguyên ≠ 0) |
+| PATCH | `/admin/users/:id/role` | Cấp/thu quyền (`role: "user" \| "admin"`, chặn tự hạ quyền) |
+| DELETE | `/admin/users/:id` | Xoá tài khoản (chặn tự xoá) |
+
+> Quyền admin được bootstrap qua biến môi trường `ADMIN_USERNAMES` (danh sách username cách nhau bởi dấu phẩy).
+
 ## 4. Sự kiện Realtime (Socket.IO)
 
 `RealtimeClient` (đã có interface) sẽ được hiện thực bởi `SocketIORealtimeClient`.
@@ -148,6 +175,10 @@ Khi có backend: `createRealtimeClient('socketio')` và `connect(url, token)`.
 | `match:turn` | `{ seat, deadline }` | Thông báo lượt + hạn chót |
 | `match:ended` | `{ finishOrder, matchId }` | Kết thúc ván |
 | `chat:message` | `{ from, text, at }` | Tin nhắn mới |
+| `presence:update` | `{ onlineUserIds: string[] }` | Danh sách người đang online thay đổi |
+| `social:update` | `{}` | Có thay đổi quan hệ bạn bè (client tải lại tổng quan) |
+| `social:notification` | `{ kind, fromName }` | Thông báo lời mời kết bạn / được chấp nhận |
+| `dm:message` | `DirectMessage` | Tin nhắn riêng mới (gửi tới kênh riêng từng người) |
 
 > **Bảo mật:** server chỉ gửi cho mỗi client phần bài của chính họ; bài người khác chỉ gửi số lượng.
 > `TienLenState` phía client vì vậy khác với state đầy đủ trên server.

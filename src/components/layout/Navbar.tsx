@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import {
   Coins,
@@ -7,7 +7,9 @@ import {
   LogOut,
   Menu,
   Settings,
+  ShieldCheck,
   User as UserIcon,
+  UserRound,
   Users,
   X,
   ChevronDown,
@@ -17,9 +19,18 @@ import { formatCoins } from '@/utils/format';
 import { cn } from '@/utils/cn';
 import { Avatar, Button } from '@/components/ui';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSocial } from '@/contexts/SocialContext';
 import { useToast } from '@/contexts/ToastContext';
 
-const NAV_LINKS = [
+interface NavItem {
+  to: string;
+  label: string;
+  icon: ReactNode;
+  /** Số thông báo chưa đọc hiển thị kèm liên kết. */
+  badge?: number;
+}
+
+const BASE_NAV_LINKS: NavItem[] = [
   { to: '/', label: 'Trang chủ', icon: <Gamepad2 className="h-4 w-4" /> },
   { to: '/games', label: 'Trò chơi', icon: <Gamepad2 className="h-4 w-4" /> },
   { to: '/rooms', label: 'Phòng chơi', icon: <Users className="h-4 w-4" /> },
@@ -27,11 +38,29 @@ const NAV_LINKS = [
 
 export function Navbar() {
   const { user, logout } = useAuth();
+  const social = useSocial();
   const navigate = useNavigate();
   const toast = useToast();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  /** Liên kết điều hướng thay đổi theo trạng thái đăng nhập và quyền tài khoản. */
+  const navLinks = useMemo<NavItem[]>(() => {
+    const links: NavItem[] = [...BASE_NAV_LINKS];
+    if (user && social.enabled) {
+      links.push({
+        to: '/friends',
+        label: 'Bạn bè',
+        icon: <UserRound className="h-4 w-4" />,
+        badge: social.unreadTotal,
+      });
+    }
+    if (user?.role === 'admin') {
+      links.push({ to: '/admin', label: 'Quản trị', icon: <ShieldCheck className="h-4 w-4" /> });
+    }
+    return links;
+  }, [user, social.enabled, social.unreadTotal]);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -66,7 +95,7 @@ export function Navbar() {
         </Link>
 
         <nav className="ml-4 hidden items-center gap-1 md:flex">
-          {NAV_LINKS.map((link) => (
+          {navLinks.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
@@ -82,6 +111,11 @@ export function Navbar() {
             >
               {link.icon}
               {link.label}
+              {typeof link.badge === 'number' && link.badge > 0 && (
+                <span className="ml-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
+                  {link.badge > 9 ? '9+' : link.badge}
+                </span>
+              )}
             </NavLink>
           ))}
         </nav>
@@ -127,6 +161,37 @@ export function Navbar() {
                       >
                         <UserIcon className="h-4 w-4" /> Hồ sơ cá nhân
                       </button>
+                      {social.enabled && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setMenuOpen(false);
+                            navigate('/friends');
+                          }}
+                          className="flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white"
+                        >
+                          <span className="flex items-center gap-2">
+                            <UserRound className="h-4 w-4" /> Bạn bè
+                          </span>
+                          {social.unreadTotal > 0 && (
+                            <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
+                              {social.unreadTotal > 9 ? '9+' : social.unreadTotal}
+                            </span>
+                          )}
+                        </button>
+                      )}
+                      {user.role === 'admin' && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setMenuOpen(false);
+                            navigate('/admin');
+                          }}
+                          className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white"
+                        >
+                          <ShieldCheck className="h-4 w-4" /> Bảng quản trị
+                        </button>
+                      )}
                       <button
                         type="button"
                         onClick={() => {
@@ -179,7 +244,7 @@ export function Navbar() {
 
       {mobileOpen && (
         <div className="border-t border-white/5 bg-base-900/95 px-3 py-2 md:hidden">
-          {NAV_LINKS.map((link) => (
+          {navLinks.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
@@ -194,6 +259,11 @@ export function Navbar() {
             >
               {link.icon}
               {link.label}
+              {typeof link.badge === 'number' && link.badge > 0 && (
+                <span className="ml-auto inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
+                  {link.badge > 9 ? '9+' : link.badge}
+                </span>
+              )}
             </NavLink>
           ))}
           {!user && (

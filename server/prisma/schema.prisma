@@ -19,6 +19,9 @@ model User {
   coins           Int      @default(5000)
   isGuest         Boolean  @default(false)
 
+  // Phân quyền: "user" (mặc định) hoặc "admin" (bảng quản trị, tặng xu, xoá tài khoản...).
+  role            String   @default("user")
+
   // Tuỳ chọn người dùng (giữ phẳng cho đơn giản).
   sound           Boolean  @default(true)
   animations      Boolean  @default(true)
@@ -27,10 +30,16 @@ model User {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  stats           Stats?
-  matches         MatchRecord[]
-  hostedRooms     Room[]       @relation("RoomHost")
-  memberships     RoomMember[]
+  stats            Stats?
+  matches          MatchRecord[]
+  hostedRooms      Room[]          @relation("RoomHost")
+  memberships      RoomMember[]
+  sentRequests     FriendRequest[] @relation("FriendRequestFrom")
+  receivedRequests FriendRequest[] @relation("FriendRequestTo")
+  friendshipsA     Friendship[]    @relation("FriendshipA")
+  friendshipsB     Friendship[]    @relation("FriendshipB")
+  sentMessages     DirectMessage[] @relation("DmSender")
+  receivedMessages DirectMessage[] @relation("DmRecipient")
 }
 
 model Stats {
@@ -95,4 +104,48 @@ model RoomMember {
 
   @@unique([roomId, userId])
   @@index([roomId])
+}
+
+/// Lời mời kết bạn. Khi được chấp nhận, tạo thêm một bản ghi Friendship.
+model FriendRequest {
+  id        String   @id @default(cuid())
+  fromId    String
+  from      User     @relation("FriendRequestFrom", fields: [fromId], references: [id], onDelete: Cascade)
+  toId      String
+  to        User     @relation("FriendRequestTo", fields: [toId], references: [id], onDelete: Cascade)
+  /// pending | accepted | rejected
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([fromId, toId])
+  @@index([toId, status])
+}
+
+/// Quan hệ bạn bè hai chiều (userAId và userBId luôn sắp xếp tăng dần để đảm bảo duy nhất).
+model Friendship {
+  id        String   @id @default(cuid())
+  userAId   String
+  userA     User     @relation("FriendshipA", fields: [userAId], references: [id], onDelete: Cascade)
+  userBId   String
+  userB     User     @relation("FriendshipB", fields: [userBId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userAId, userBId])
+  @@index([userBId])
+}
+
+/// Tin nhắn riêng tư giữa hai người chơi (chỉ gửi được cho bạn bè).
+model DirectMessage {
+  id          String    @id @default(cuid())
+  senderId    String
+  sender      User      @relation("DmSender", fields: [senderId], references: [id], onDelete: Cascade)
+  recipientId String
+  recipient   User      @relation("DmRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  text        String
+  readAt      DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([senderId, recipientId, createdAt])
+  @@index([recipientId, readAt])
 }

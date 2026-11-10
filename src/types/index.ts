@@ -4,4 +4,6 @@ export * from './tienlen';
 export * from './user';
 export * from './game-registry';
 export * from './room';
+export * from './social';
+export * from './admin';
 export * from './realtime';

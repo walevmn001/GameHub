@@ -23,3 +23,8 @@ export function getIo(): AppServer | null {
 export function roomChannel(roomId: string): string {
   return `room:${roomId}`;
 }
+
+/** Kênh riêng của mỗi người dùng để đẩy tin nhắn/thông báo cá nhân. */
+export function userChannel(userId: string): string {
+  return `user:${userId}`;
+}

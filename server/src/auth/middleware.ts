@@ -1,12 +1,13 @@
 import type { NextFunction, Request, Response } from 'express';
 import { verifyToken } from './jwt';
 import { prisma } from '../prisma';
-import { unauthorized } from '../http/errors';
+import { forbidden, unauthorized } from '../http/errors';
 
 export interface AuthInfo {
   userId: string;
   username: string;
   isGuest: boolean;
+  role: string;
 }
 
 declare global {
@@ -27,10 +28,10 @@ async function authenticate(req: Request): Promise<AuthInfo | null> {
 
   const user = await prisma.user.findUnique({
     where: { id: payload.sub },
-    select: { id: true, username: true, isGuest: true },
+    select: { id: true, username: true, isGuest: true, role: true },
   });
   if (!user) return null;
-  return { userId: user.id, username: user.username, isGuest: user.isGuest };
+  return { userId: user.id, username: user.username, isGuest: user.isGuest, role: user.role };
 }
 
 /** Xác thực nếu có token, nhưng không chặn khi thiếu (dùng cho endpoint công khai). */
@@ -49,6 +50,24 @@ export function requireAuth(req: Request, _res: Response, next: NextFunction): v
     .then((info) => {
       if (!info) {
         next(unauthorized());
+        return;
+      }
+      req.auth = info;
+      next();
+    })
+    .catch(next);
+}
+
+/** Bắt buộc đăng nhập và có quyền quản trị. */
+export function requireAdmin(req: Request, _res: Response, next: NextFunction): void {
+  authenticate(req)
+    .then((info) => {
+      if (!info) {
+        next(unauthorized());
+        return;
+      }
+      if (info.role !== 'admin') {
+        next(forbidden('Chỉ quản trị viên mới truy cập được khu vực này.'));
         return;
       }
       req.auth = info;

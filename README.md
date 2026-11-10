@@ -111,23 +111,25 @@ npm --prefix server start       # chạy bản đã build
 
 ```
 src/                       # Giao diện React
-├── components/            # UI dùng chung (ui/, game/, layout/, common/)
-├── pages/                 # Trang theo route
+├── components/            # UI dùng chung (ui/, game/, layout/, common/, social/)
+├── pages/                 # Trang theo route (kể cả FriendsPage, AdminPage)
 ├── layouts/               # MainLayout, GameLayout
 ├── games/                 # Game Registry + bàn chơi từng game (tien-len/)
 ├── game-engine/           # Logic game thuần (tienlen/)
-├── services/              # ApiService, SocketService, RoomService, AuthService, ...
-├── contexts/              # Toast, Auth, Rooms
-├── types/                 # Kiểu dữ liệu dùng chung (kể cả hợp đồng realtime)
+├── services/              # ApiService, SocketService, RoomService, AuthService, SocialService, AdminService, ...
+├── contexts/              # Toast, Auth, Rooms, Social
+├── types/                 # Kiểu dữ liệu dùng chung (kể cả social, admin, hợp đồng realtime)
 └── utils/                 # constants, format, id, crypto, avatar, images, cn
 
 server/                    # Backend Express + Socket.IO + Prisma
-├── prisma/schema.prisma   # Mô hình dữ liệu (User, Room, RoomMember, MatchHistory, ...)
+├── prisma/schema.prisma   # Mô hình dữ liệu (User, Room, RoomMember, MatchHistory, FriendRequest, Friendship, DirectMessage, ...)
 └── src/
-    ├── auth/              # JWT + middleware
+    ├── auth/              # JWT + middleware (requireAuth, requireAdmin)
     ├── rooms/             # REST phòng chơi + service
     ├── matches/           # Quản lý ván online (engine, view, ghi lịch sử)
-    ├── realtime/          # Socket.IO (socket.ts, broadcast.ts, io.ts)
+    ├── realtime/          # Socket.IO (socket.ts, broadcast.ts, io.ts, presence.ts)
+    ├── social/            # REST bạn bè + tin nhắn riêng
+    ├── admin/             # REST quản trị (số liệu, tặng xu, phân quyền, xoá tài khoản)
     ├── games/ users/      # Route danh mục game, hồ sơ người dùng
     └── app.ts index.ts    # Khởi tạo Express + server
 ```
@@ -146,6 +148,9 @@ Chi tiết kiến trúc xem tại [ARCHITECTURE.md](./ARCHITECTURE.md).
 - Phòng chơi realtime: tạo/join/rời, cập nhật thành viên qua `room:updated`.
 - Ván Tiến Lên nhiều người: máy chủ chia bài, kiểm tra luật, quản lý lượt + đồng hồ, phát trạng thái riêng cho từng người (ẩn bài người khác).
 - Rời phòng/ngắt kết nối: máy chủ xoá ghế; nếu đang chơi thì dừng ván và báo người còn lại.
+- **Xã hội:** trang `/friends` (tìm người chơi, gửi/chấp nhận/từ chối lời mời, huỷ kết bạn), trạng thái online, **kết bạn ngay trong phòng chờ và trong trận**, **chat riêng** qua khung chat nổi (`ChatDock`) — có đếm tin chưa đọc.
+- **Hồ sơ:** đổi tên hiển thị + **tải ảnh đại diện lên** (data URI, tối đa 256 KB).
+- **Bảng quản trị** (`/admin`, chỉ tài khoản có `role = admin`): số liệu tổng quan, tìm người dùng, **tặng/trừ xu**, **cấp/thu quyền admin**, **xoá tài khoản**. Quyền admin được bootstrap qua biến môi trường `ADMIN_USERNAMES`.
 
 ## 8. Triển khai lên GitHub & Render
 
