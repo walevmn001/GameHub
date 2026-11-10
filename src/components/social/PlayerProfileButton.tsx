@@ -25,8 +25,10 @@ export function PlayerProfileButton({
         type="button"
         title={`Xem thông tin ${contact.displayName}`}
         aria-label={`Xem thông tin ${contact.displayName}`}
+        aria-haspopup="dialog"
+        aria-expanded={open}
         onClick={() => setOpen(true)}
-        className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-cyan"
+        className="cursor-pointer rounded-full transition-transform duration-150 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-cyan"
       >
         {children}
       </button>
