@@ -6,6 +6,7 @@ import {
   Coins,
   Lightbulb,
   LogOut,
+  MessageSquare,
   MoveHorizontal,
   Shuffle,
   SkipForward,
@@ -20,6 +21,7 @@ import { makeAvatarDataUri } from '@/utils/avatar';
 import { playSound, setSoundEnabled } from '@/utils/sound';
 import { cn } from '@/utils/cn';
 import { Badge, Button } from '@/components/ui';
+import { RoomChat } from '@/components/game/RoomChat';
 import { socketService } from '@/services/SocketService';
 import { useTienLenGame, type TienLenGameApi } from './useTienLenGame';
 import { useOnlineTienLenGame } from './useOnlineTienLenGame';
@@ -127,6 +129,7 @@ function OnlineTienLenBoard({
       onExit={handleExit}
       onRematch={handleRematch}
       online
+      roomId={roomId}
     />
   );
 }
@@ -153,11 +156,14 @@ function TienLenBoardView({
   onExit,
   onRematch,
   online = false,
+  roomId,
 }: {
   game: TienLenGameApi;
   onExit: () => void;
   onRematch: () => void;
   online?: boolean;
+  /** Mã phòng — chỉ có ở ván trực tuyến, dùng cho khung trò chuyện trong phòng. */
+  roomId?: string;
 }) {
   const { user } = useAuth();
   const isMobile = useIsMobile();
@@ -167,6 +173,7 @@ function TienLenBoardView({
     () => Boolean(user?.preferences.preferLandscape) && isPortrait && isMobile,
   );
   const [resultOpen, setResultOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
   const [cutLabel, setCutLabel] = useState<string | null>(null);
   const [cutSeq, setCutSeq] = useState(0);
 
@@ -279,6 +286,23 @@ function TienLenBoardView({
           </div>
         </div>
 
+        {online && roomId && (
+          <button
+            type="button"
+            onClick={() => setChatOpen((v) => !v)}
+            className={cn(
+              'inline-flex h-9 items-center gap-1.5 rounded-xl border px-2.5 text-[11px] font-semibold transition-colors',
+              chatOpen
+                ? 'border-neon-cyan/50 bg-neon-cyan/10 text-neon-cyan'
+                : 'border-white/10 bg-base-900/70 text-slate-400',
+            )}
+            aria-label="Trò chuyện trong phòng"
+          >
+            <MessageSquare className="h-4 w-4" />
+            <span className="hidden sm:inline">Chat</span>
+          </button>
+        )}
+
         <button
           type="button"
           onClick={() => setLandscape((v) => !v)}
@@ -294,6 +318,17 @@ function TienLenBoardView({
           Ngang
         </button>
       </header>
+
+      {/* Khung trò chuyện trong phòng (trực tuyến) */}
+      {online && roomId && chatOpen && (
+        <div className="fixed inset-y-0 right-0 z-[80] w-full max-w-sm p-2 sm:p-3">
+          <RoomChat
+            roomId={roomId}
+            className="h-full shadow-soft"
+            onClose={() => setChatOpen(false)}
+          />
+        </div>
+      )}
 
       {/* Sân bàn chơi */}
       <div className="relative min-h-0 flex-1">

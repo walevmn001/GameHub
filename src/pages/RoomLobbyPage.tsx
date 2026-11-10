@@ -37,6 +37,7 @@ import {
 } from '@/components/ui';
 import { NoticeBanner } from '@/components/common/NoticeBanner';
 import { FriendButton } from '@/components/social/FriendButton';
+import { RoomChat } from '@/components/game/RoomChat';
 import { cn } from '@/utils/cn';
 
 const STATUS_LABEL: Record<Room['status'], string> = {
@@ -401,6 +402,11 @@ export function RoomLobbyPage() {
           ))}
         </div>
       </Surface>
+
+      {/* Trò chuyện với mọi người trong phòng (chỉ khi trực tuyến). */}
+      {onlineEnabled && joined && (
+        <RoomChat roomId={room.id} className="h-[22rem]" />
+      )}
 
       {/* Hành động */}
       <Surface className="flex flex-col gap-3 p-4">
