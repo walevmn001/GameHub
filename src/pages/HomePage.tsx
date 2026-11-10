@@ -12,7 +12,7 @@ import {
   Trophy,
   Users,
 } from 'lucide-react';
-import type { GameCategory, GameMeta } from '@/types';
+import { minCoinsToPlay, type GameCategory, type GameMeta } from '@/types';
 import { GAME_CATEGORY_LABEL } from '@/types/game-registry';
 import { gameService } from '@/services/GameService';
 import { activityService, type ActivityEntry } from '@/services/ActivityService';
@@ -89,6 +89,18 @@ export function HomePage() {
   };
 
   const handleJoinRoom = async (roomId: string) => {
+    const room = rooms.find((r) => r.id === roomId);
+    if (room?.gameId === 'tien-len') {
+      const required = minCoinsToPlay(room.config);
+      const balance = user?.coins ?? 0;
+      if (balance < required) {
+        toast.error(
+          'Không thể tham gia phòng',
+          `Bạn cần tối thiểu ${required.toLocaleString('vi-VN')} xu để vào bàn này (đủ chịu một ván thua nặng, kể cả bị chặt/thối Heo). Số dư hiện tại: ${balance.toLocaleString('vi-VN')} xu.`,
+        );
+        return;
+      }
+    }
     const result = await joinRoom(roomId);
     if (!result.ok) {
       toast.error('Không thể tham gia phòng', result.error);

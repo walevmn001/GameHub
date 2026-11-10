@@ -11,13 +11,12 @@ import {
   LogOut,
   Play,
   Settings2,
-  ShieldAlert,
   Trash2,
   UserPlus,
   Users,
   XCircle,
 } from 'lucide-react';
-import { REALTIME_EVENTS, summarizeConfig, type Room } from '@/types';
+import { REALTIME_EVENTS, minCoinsToPlay, summarizeConfig, type Room } from '@/types';
 import { gameService } from '@/services/GameService';
 import { onlineEnabled } from '@/services/backend';
 import { socketService } from '@/services/SocketService';
@@ -72,7 +71,6 @@ export function RoomLobbyPage() {
     transferHost,
     addBot,
     removeBot,
-    deleteRoom,
     setStatus,
     startMatch,
     rooms,
@@ -85,9 +83,7 @@ export function RoomLobbyPage() {
   const [leaving, setLeaving] = useState(false);
   const [joining, setJoining] = useState(false);
   const [busyBot, setBusyBot] = useState(false);
-  const [confirmClose, setConfirmClose] = useState(false);
   const [hostLeaveOpen, setHostLeaveOpen] = useState(false);
-  const [hostLeaveMode, setHostLeaveMode] = useState<'delete' | 'transfer'>('transfer');
   const [successorId, setSuccessorId] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
 
@@ -127,9 +123,10 @@ export function RoomLobbyPage() {
     const state = location.state as { promptHostLeave?: boolean } | null;
     if (!state?.promptHostLeave || !joined || !isHost) return;
     const firstSuccessor = room?.players.find((player) => !player.isBot && player.id !== currentUserId);
-    setSuccessorId(firstSuccessor?.id ?? '');
-    setHostLeaveMode(firstSuccessor ? 'transfer' : 'delete');
-    setHostLeaveOpen(true);
+    if (firstSuccessor) {
+      setSuccessorId(firstSuccessor.id);
+      setHostLeaveOpen(true);
+    }
     navigate(location.pathname, { replace: true, state: null });
   }, [currentUserId, isHost, joined, location.pathname, location.state, navigate, room]);
 
@@ -227,23 +224,22 @@ export function RoomLobbyPage() {
   };
 
   const handleLeave = () => {
-    if (isHost) {
-      const firstSuccessor = room?.players.find((player) => !player.isBot && player.id !== currentUserId);
-      setSuccessorId(firstSuccessor?.id ?? '');
-      setHostLeaveMode(firstSuccessor ? 'transfer' : 'delete');
-      setHostLeaveOpen(true);
+    if (!isHost) {
+      void leaveAsMember();
       return;
     }
-    void leaveAsMember();
+    const firstSuccessor = room?.players.find((player) => !player.isBot && player.id !== currentUserId);
+    // Không còn người thật khác để nhận quyền: rời luôn, phòng tự xoá nếu không còn ai.
+    if (!firstSuccessor) {
+      void leaveAsMember();
+      return;
+    }
+    setSuccessorId(firstSuccessor.id);
+    setHostLeaveOpen(true);
   };
 
   const confirmHostLeave = async () => {
     if (!room) return;
-    if (hostLeaveMode === 'delete') {
-      setHostLeaveOpen(false);
-      await handleClose();
-      return;
-    }
     if (!successorId) {
       toast.error('Hãy chọn người nhận quyền chủ phòng.');
       return;
@@ -271,6 +267,17 @@ export function RoomLobbyPage() {
 
   const handleJoin = async () => {
     if (!room) return;
+    if (room.gameId === 'tien-len') {
+      const required = minCoinsToPlay(room.config);
+      const balance = user?.coins ?? 0;
+      if (balance < required) {
+        toast.error(
+          'Không thể tham gia phòng',
+          `Bạn cần tối thiểu ${required.toLocaleString('vi-VN')} xu để vào bàn này (đủ chịu một ván thua nặng, kể cả bị chặt/thối Heo). Số dư hiện tại: ${balance.toLocaleString('vi-VN')} xu.`,
+        );
+        return;
+      }
+    }
     setJoining(true);
     const result = await joinRoom(room.id, passwordInput.trim() || undefined);
     setJoining(false);
@@ -305,19 +312,6 @@ export function RoomLobbyPage() {
       return;
     }
     setRoom(result.data);
-  };
-
-  const handleClose = async () => {
-    if (!room) return;
-    setConfirmClose(false);
-    setHostLeaveOpen(false);
-    const result = await deleteRoom(room.id);
-    if (!result.ok) {
-      toast.error(result.error);
-      return;
-    }
-    toast.info(`Đã đóng phòng "${room.name}"`);
-    navigate('/rooms');
   };
 
   if (loading) {
@@ -544,13 +538,6 @@ export function RoomLobbyPage() {
               >
                 Rời phòng
               </Button>
-              <Button
-                variant="danger"
-                icon={<ShieldAlert className="h-4 w-4" />}
-                onClick={() => setConfirmClose(true)}
-              >
-                Đóng phòng
-              </Button>
             </div>
             {!playable ? (
               <p className="text-[11px] text-amber-300">
@@ -590,7 +577,7 @@ export function RoomLobbyPage() {
         open={hostLeaveOpen}
         onClose={() => setHostLeaveOpen(false)}
         title="Rời phòng với tư cách chủ phòng"
-        description="Chọn cách xử lý phòng trước khi rời đi."
+        description="Chọn người nhận quyền chủ phòng trước khi rời đi."
         size="md"
         footer={
           <>
@@ -598,99 +585,36 @@ export function RoomLobbyPage() {
               Ở lại
             </Button>
             <Button
-              variant={hostLeaveMode === 'delete' ? 'danger' : 'primary'}
-              icon={hostLeaveMode === 'delete' ? <Trash2 className="h-4 w-4" /> : <Crown className="h-4 w-4" />}
+              icon={<Crown className="h-4 w-4" />}
               loading={leaving}
               onClick={() => void confirmHostLeave()}
             >
-              {hostLeaveMode === 'delete' ? 'Xoá phòng và rời' : 'Chuyển chủ và rời'}
+              Chuyển chủ và rời
             </Button>
           </>
         }
       >
-        <div className="space-y-3">
-          <button
-            type="button"
-            aria-pressed={hostLeaveMode === 'delete'}
-            onClick={() => setHostLeaveMode('delete')}
-            className={cn(
-              'w-full rounded-xl border p-3 text-left transition-colors',
-              hostLeaveMode === 'delete'
-                ? 'border-rose-500/50 bg-rose-500/10'
-                : 'border-white/10 bg-base-900/50 hover:bg-white/5',
-            )}
+        <div className="rounded-xl border border-neon-cyan/50 bg-neon-cyan/5 p-3">
+          <p className="text-sm font-semibold text-slate-100">Chuyển chủ phòng rồi rời</p>
+          <p className="mt-1 text-xs text-slate-400">
+            Giữ phòng hoạt động và chọn một người chơi thật đang ở trong phòng làm chủ mới.
+          </p>
+          <select
+            value={successorId}
+            onChange={(event) => setSuccessorId(event.target.value)}
+            aria-label="Chọn chủ phòng mới"
+            className="mt-3 h-10 w-full rounded-xl border border-white/10 bg-base-900 px-3 text-sm text-slate-100 outline-none focus:border-neon-cyan/60"
           >
-            <p className="text-sm font-semibold text-slate-100">Xoá phòng</p>
-            <p className="mt-1 text-xs text-slate-400">
-              Đóng phòng ngay; tất cả người chơi sẽ bị đưa ra ngoài và không thể tham gia lại.
-            </p>
-          </button>
-
-          <div
-            className={cn(
-              'rounded-xl border p-3 transition-colors',
-              hostLeaveMode === 'transfer'
-                ? 'border-neon-cyan/50 bg-neon-cyan/5'
-                : 'border-white/10 bg-base-900/50',
-              !room.players.some((player) => !player.isBot && player.id !== currentUserId) && 'opacity-50',
-            )}
-          >
-            <button
-              type="button"
-              disabled={!room.players.some((player) => !player.isBot && player.id !== currentUserId)}
-              aria-pressed={hostLeaveMode === 'transfer'}
-              onClick={() => setHostLeaveMode('transfer')}
-              className="w-full text-left"
-            >
-              <p className="text-sm font-semibold text-slate-100">Chuyển chủ phòng rồi rời</p>
-              <p className="mt-1 text-xs text-slate-400">
-                Giữ phòng hoạt động và chọn một người chơi thật đang ở trong phòng làm chủ mới.
-              </p>
-            </button>
-            <select
-              value={successorId}
-              onChange={(event) => {
-                setSuccessorId(event.target.value);
-                setHostLeaveMode('transfer');
-              }}
-              disabled={!room.players.some((player) => !player.isBot && player.id !== currentUserId)}
-              aria-label="Chọn chủ phòng mới"
-              className="mt-3 h-10 w-full rounded-xl border border-white/10 bg-base-900 px-3 text-sm text-slate-100 outline-none focus:border-neon-cyan/60 disabled:cursor-not-allowed"
-            >
-              <option value="">Chọn người nhận quyền</option>
-              {room.players
-                .filter((player) => !player.isBot && player.id !== currentUserId)
-                .map((player) => (
-                  <option key={player.id} value={player.id}>
-                    {player.name}
-                  </option>
-                ))}
-            </select>
-          </div>
+            <option value="">Chọn người nhận quyền</option>
+            {room.players
+              .filter((player) => !player.isBot && player.id !== currentUserId)
+              .map((player) => (
+                <option key={player.id} value={player.id}>
+                  {player.name}
+                </option>
+              ))}
+          </select>
         </div>
-      </Modal>
-
-      <Modal
-        open={confirmClose}
-        onClose={() => setConfirmClose(false)}
-        title="Đóng phòng?"
-        description={`Phòng "${room.name}" sẽ bị xoá khỏi danh sách trên thiết bị này.`}
-        size="sm"
-        footer={
-          <>
-            <Button variant="ghost" onClick={() => setConfirmClose(false)}>
-              Huỷ
-            </Button>
-            <Button variant="danger" icon={<ShieldAlert className="h-4 w-4" />} onClick={() => void handleClose()}>
-              Đóng phòng
-            </Button>
-          </>
-        }
-      >
-        <p className="text-sm text-slate-400">
-          Hành động này chỉ ảnh hưởng dữ liệu cục bộ. Mọi người trong phòng sẽ được đưa về danh sách
-          phòng.
-        </p>
       </Modal>
     </div>
   );

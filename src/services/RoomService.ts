@@ -1,6 +1,7 @@
 import {
   fail,
   ok,
+  minCoinsToPlay,
   normalizeConfig,
   type Room,
   type RoomPlayerSlot,
@@ -151,6 +152,17 @@ class RoomService {
       );
     }
 
+    const config = normalizeConfig(input.config);
+    if (input.gameId === 'tien-len') {
+      const required = minCoinsToPlay(config);
+      const balance = input.hostCoins ?? STARTING_COINS;
+      if (balance < required) {
+        return fail(
+          `Bạn cần tối thiểu ${required.toLocaleString('vi-VN')} xu để tạo bàn này (đủ chịu một ván thua nặng, kể cả bị chặt/thối Heo). Số dư hiện tại: ${balance.toLocaleString('vi-VN')} xu.`,
+        );
+      }
+    }
+
     const rooms = await this.readRooms();
     const now = Date.now();
     const host: RoomPlayerSlot = {
@@ -171,7 +183,7 @@ class RoomService {
       status: 'waiting',
       maxPlayers: input.maxPlayers,
       players: [host],
-      config: normalizeConfig(input.config),
+      config,
       password: input.visibility === 'private' ? input.password : undefined,
       hostName: input.hostName,
       createdAt: now,
@@ -207,6 +219,16 @@ class RoomService {
     }
     if (room.players.some((p) => p.id === user.id)) return ok(room);
     if (room.players.length >= room.maxPlayers) return fail('Phòng đã đầy.');
+
+    if (room.gameId === 'tien-len') {
+      const required = minCoinsToPlay(room.config);
+      const balance = user.coins ?? STARTING_COINS;
+      if (balance < required) {
+        return fail(
+          `Bạn cần tối thiểu ${required.toLocaleString('vi-VN')} xu để vào bàn này (đủ chịu một ván thua nặng, kể cả bị chặt/thối Heo). Số dư hiện tại: ${balance.toLocaleString('vi-VN')} xu.`,
+        );
+      }
+    }
 
     /**
      * Nếu phòng chưa có chủ phòng là người thật (ví dụ phòng demo toàn AI),

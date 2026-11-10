@@ -21,7 +21,6 @@ export function RoomCard({
   currentUserId,
   onJoin,
   onLeave,
-  onDelete,
   onOpen,
   compact = false,
 }: {
@@ -29,7 +28,6 @@ export function RoomCard({
   currentUserId?: string;
   onJoin: (room: Room) => void;
   onLeave: (room: Room) => void;
-  onDelete?: (room: Room) => void;
   onOpen?: (room: Room) => void;
   compact?: boolean;
 }) {
@@ -90,11 +88,6 @@ export function RoomCard({
           Cập nhật {formatRelativeTime(room.updatedAt)}
         </span>
         <div className="flex items-center gap-2">
-          {onDelete && isHost && (
-            <Button variant="ghost" size="sm" onClick={() => onDelete(room)}>
-              Xoá
-            </Button>
-          )}
           {joined ? (
             <>
               {onOpen && (

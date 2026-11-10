@@ -8,6 +8,7 @@ import {
   PAYOUT_MODE_LABEL,
   ROUNDS_OPTIONS,
   TURN_TIME_OPTIONS,
+  minCoinsToPlay,
   type AiDifficulty,
   type PayoutMode,
   type Room,
@@ -39,7 +40,7 @@ export function RoomsPage() {
   const navigate = useNavigate();
   const toast = useToast();
   const { user } = useAuth();
-  const { rooms, createRoom, joinRoom, leaveRoom, deleteRoom } = useRooms();
+  const { rooms, createRoom, joinRoom, leaveRoom } = useRooms();
 
   const [filter, setFilter] = useState<RoomFilter>('all');
   const [createOpen, setCreateOpen] = useState(false);
@@ -120,6 +121,16 @@ export function RoomsPage() {
       setFormError('Phòng riêng cần mật khẩu.');
       return;
     }
+    if (form.gameId === 'tien-len') {
+      const required = minCoinsToPlay(config);
+      const balance = user?.coins ?? 0;
+      if (balance < required) {
+        setFormError(
+          `Bạn cần tối thiểu ${required.toLocaleString('vi-VN')} xu để tạo bàn này (đủ chịu một ván thua nặng, kể cả bị chặt/thối Heo). Số dư hiện tại: ${balance.toLocaleString('vi-VN')} xu.`,
+        );
+        return;
+      }
+    }
     const game = games.find((g) => g.id === form.gameId);
     setCreating(true);
     const result = await createRoom({
@@ -151,6 +162,18 @@ export function RoomsPage() {
   };
 
   const doJoin = async (roomId: string, password?: string) => {
+    const room = rooms.find((r) => r.id === roomId);
+    if (room?.gameId === 'tien-len') {
+      const required = minCoinsToPlay(room.config);
+      const balance = user?.coins ?? 0;
+      if (balance < required) {
+        toast.error(
+          'Không thể tham gia phòng',
+          `Bạn cần tối thiểu ${required.toLocaleString('vi-VN')} xu để vào bàn này (đủ chịu một ván thua nặng, kể cả bị chặt/thối Heo). Số dư hiện tại: ${balance.toLocaleString('vi-VN')} xu.`,
+        );
+        return;
+      }
+    }
     setJoining(true);
     const result = await joinRoom(roomId, password);
     setJoining(false);
@@ -170,15 +193,6 @@ export function RoomsPage() {
       return;
     }
     toast.info(`Đã rời phòng "${room.name}"`);
-  };
-
-  const handleDelete = async (room: Room) => {
-    const result = await deleteRoom(room.id);
-    if (!result.ok) {
-      toast.error(result.error);
-      return;
-    }
-    toast.info(`Đã xoá phòng "${room.name}"`);
   };
 
   return (
@@ -224,7 +238,6 @@ export function RoomsPage() {
               currentUserId={user?.id}
               onJoin={handleJoin}
               onLeave={(r) => void handleLeave(r)}
-              onDelete={(r) => void handleDelete(r)}
               onOpen={(r) => navigate(`/rooms/${r.id}`)}
             />
           ))}

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
-import type { TienLenConfig } from '@/types';
+import { minCoinsToPlay, normalizeConfig, type TienLenConfig } from '@/types';
 import { asyncHandler } from '../http/asyncHandler';
 import { parseBody } from '../http/validation';
 import { badRequest, forbidden, notFound } from '../http/errors';
@@ -79,6 +79,14 @@ roomsRouter.post(
     }
 
     const me = await loadPublicUser(req.auth!.userId);
+    if (input.gameId === 'tien-len') {
+      const required = minCoinsToPlay(normalizeConfig(input.config as Partial<TienLenConfig> | undefined));
+      if (me.coins < required) {
+        throw badRequest(
+          `Bạn cần tối thiểu ${required.toLocaleString('vi-VN')} xu để tạo bàn này (đủ chịu một ván thua nặng, kể cả bị chặt/thối Heo). Số dư hiện tại: ${me.coins.toLocaleString('vi-VN')} xu.`,
+        );
+      }
+    }
     const room = await createRoom(
       { id: me.id, displayName: me.displayName, coins: me.coins },
       {
@@ -123,6 +131,14 @@ roomsRouter.post(
     }
 
     const coins = await currentCoins(req.auth!.userId);
+    if (!already && room.gameId === 'tien-len') {
+      const required = minCoinsToPlay(normalizeConfig(room.config as Partial<TienLenConfig>));
+      if (coins < required) {
+        throw badRequest(
+          `Bạn cần tối thiểu ${required.toLocaleString('vi-VN')} xu để vào bàn này (đủ chịu một ván thua nặng, kể cả bị chặt/thối Heo). Số dư hiện tại: ${coins.toLocaleString('vi-VN')} xu.`,
+        );
+      }
+    }
     await addMember(room, { id: req.auth!.userId, coins });
     const updated = await broadcastRoomUpdate(room.id);
     res.json(toClientRoom(updated ?? room));

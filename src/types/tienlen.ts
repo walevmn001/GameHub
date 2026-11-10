@@ -126,6 +126,24 @@ export function isStandardTable(config: TienLenConfig, seats: number): boolean {
   return config.maxPlayers === 4 && seats === 4;
 }
 
+/**
+ * Số xu tối thiểu cần có để TẠO hoặc VÀO một bàn Tiến Lên.
+ *
+ * Ước lượng "một ván thua nặng" mà người chơi có thể phải chi trả, cộng dồn:
+ *   1) Thua cược cơ bản — "Nhất ăn tất" = 1 mức cược, "Nhất và Nhì ăn" = tối đa 2 mức cược.
+ *   2) Bị chặt Heo — nặng nhất trong nhóm Heo là đôi Heo hoặc Heo đỏ.
+ *   3) Thối Heo — giữ tới 4 lá Heo (2 đôi) tới cuối ván = 2 × mức phạt đôi Heo.
+ * Không tính các tình huống hiếm (bị chặt tứ quý / 4 đôi thông) để tránh yêu cầu quá cao.
+ * Mặc định (cược 500): 500 × (1 + 4 + 8) = 6.500 xu.
+ */
+export function minCoinsToPlay(config: TienLenConfig): number {
+  const bet = config.baseBet;
+  const baseMultiplier = config.payoutMode === 'winner-takes-all' ? 1 : 2;
+  const cutMultiplier = Math.max(config.cutRates.pairTwo, config.cutRates.redTwo);
+  const thoiMultiplier = config.enableThoiPenalty ? 2 * config.cutRates.pairTwo : 0;
+  return bet * (baseMultiplier + cutMultiplier + thoiMultiplier);
+}
+
 /** Mô tả ngắn gọn cấu hình để hiển thị trong phòng chờ. */
 export function summarizeConfig(config: TienLenConfig): string {
   const parts = [
