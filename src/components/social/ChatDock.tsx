@@ -38,18 +38,26 @@ function ChatPanel({ onClose }: { onClose: () => void }) {
   const messages = active ? social.messagesOf(active.id) : [];
 
   useEffect(() => { if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight; }, [messages.length, social.activeChatId]);
+  // Do not depend on stickersLoading here: toggling it would clean up and cancel this request.
   useEffect(() => {
-    if (!showStickers || stickers.length || stickersLoading) return;
+    if (!showStickers || stickers.length > 0) return;
     let cancelled = false;
     setStickersLoading(true);
-    void socialService.trendingStickers().then((result) => {
-      if (cancelled) return;
-      if (result.ok) setStickers(result.data);
-      else setStickerError(result.error);
-      setStickersLoading(false);
-    });
+    setStickerError('');
+    void socialService.trendingStickers()
+      .then((result) => {
+        if (cancelled) return;
+        if (result.ok) setStickers(result.data);
+        else setStickerError(result.error);
+      })
+      .catch((error: unknown) => {
+        if (!cancelled) setStickerError(error instanceof Error ? error.message : 'Không tải được sticker.');
+      })
+      .finally(() => {
+        if (!cancelled) setStickersLoading(false);
+      });
     return () => { cancelled = true; };
-  }, [showStickers, stickers.length, stickersLoading]);
+  }, [showStickers, stickers.length]);
 
   const orderedFriends = useMemo(() => {
     const lastAt = new Map(social.conversations.map((c) => [c.friend.id, c.lastMessage?.at ?? 0]));
@@ -70,11 +78,7 @@ function ChatPanel({ onClose }: { onClose: () => void }) {
     if (!active || sending) return;
     setSending(true);
     const result = await socialService.sendSticker(active.id, sticker);
-    if (result.ok) {
-      // SocialContext owns live-message state; feed through its existing message sender for synchronization.
-      // The sticker endpoint response is persisted and broadcast; realtime updates this view.
-      setShowStickers(false);
-    }
+    if (result.ok) setShowStickers(false);
     setSending(false);
   };
 
@@ -102,7 +106,7 @@ function ChatPanel({ onClose }: { onClose: () => void }) {
         })}
       </div>
       {showStickers && <div className="max-h-48 overflow-y-auto border-t border-white/5 bg-base-900/80 p-2">
-        {stickersLoading ? <div className="flex justify-center p-4 text-slate-400"><LoaderCircle className="h-5 w-5 animate-spin" /></div> : stickerError ? <p className="p-3 text-center text-xs text-slate-400">{stickerError}</p> : stickers.length === 0 ? <p className="p-3 text-center text-xs text-slate-400">Không có sticker.</p> : <div className="grid grid-cols-5 gap-1">{stickers.map((sticker) => <button key={sticker.id} type="button" onClick={() => void handleSticker(sticker)} disabled={sending} className="rounded-lg p-1 hover:bg-white/10 disabled:opacity-50" aria-label="Gửi sticker"><img src={sticker.previewUrl} alt="" className="h-12 w-full object-contain" loading="lazy" /></button>)}</div>}
+        {stickersLoading ? <div className="flex justify-center p-4 text-slate-400"><LoaderCircle className="h-5 w-5 animate-spin" /></div> : stickerError ? <p className="p-3 text-center text-xs text-slate-400">{stickerError}</p> : stickers.length === 0 ? <p className="p-3 text-center text-xs text-slate-400">Không có sticker.</p> : <div className="grid grid-cols-5 gap-1">{stickers.map((sticker) => <button key={sticker.id} type="button" onClick={() => void handleSticker(sticker)} disabled={sending} className="rounded-lg p-1 hover:bg-white/10 disabled:opacity-50" aria-label="Gửi sticker"><img src={sticker.previewUrl} alt="'" className="h-12 w-full object-contain" loading="lazy" /></button>)}</div>}
         <p className="mt-1 text-center text-[10px] text-slate-500">Sticker từ MojiLaLa</p>
       </div>}
       <div className="flex items-center gap-2 border-t border-white/5 p-2">
