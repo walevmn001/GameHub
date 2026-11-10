@@ -21,6 +21,7 @@ import {
   Input,
   Modal,
   SectionHeader,
+  SegmentedControl,
   StatTile,
   Surface,
 } from '@/components/ui';
@@ -43,8 +44,11 @@ export function AdminPage() {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<'rooms' | 'users'>('rooms');
   const [query, setQuery] = useState('');
   const [debounced, setDebounced] = useState('');
+  const [roomQuery, setRoomQuery] = useState('');
+  const [debouncedRoomQuery, setDebouncedRoomQuery] = useState('');
   const [giftTarget, setGiftTarget] = useState<AdminUser | null>(null);
   const [giftAmount, setGiftAmount] = useState('1000');
   const [deleteTarget, setDeleteTarget] = useState<AdminUser | null>(null);
@@ -56,6 +60,17 @@ export function AdminPage() {
     const timer = setTimeout(() => setDebounced(query), 300);
     return () => clearTimeout(timer);
   }, [query]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedRoomQuery(roomQuery.trim().toLowerCase()), 250);
+    return () => clearTimeout(timer);
+  }, [roomQuery]);
+
+  const filteredRooms = rooms.filter(
+    (room) =>
+      room.name.toLowerCase().includes(debouncedRoomQuery) ||
+      room.id.toLowerCase().includes(debouncedRoomQuery),
+  );
 
   const load = useCallback(async () => {
     if (!isAdmin || !adminService.enabled) return;
@@ -206,121 +221,151 @@ export function AdminPage() {
         </div>
       )}
 
-      <section>
-        <SectionHeader
-          title="Quản lý phòng"
-          subtitle="Xoá phòng sẽ kết thúc ván đang chơi và đưa tất cả người chơi ra ngoài."
-          icon={<DoorOpen className="h-5 w-5" />}
-        />
-        <div className="flex flex-col gap-2">
-          {rooms.length === 0 ? (
-            <p className="text-xs text-slate-500">Hiện không có phòng đang hoạt động.</p>
-          ) : (
-            rooms.map((room) => (
-              <Surface key={room.id} className="flex flex-wrap items-center gap-3 p-3">
+      <SegmentedControl
+        value={activeTab}
+        onChange={setActiveTab}
+        className="w-full sm:w-fit"
+        options={[
+          {
+            value: 'rooms',
+            label: `Phòng (${rooms.length})`,
+            icon: <DoorOpen className="h-4 w-4" />,
+          },
+          {
+            value: 'users',
+            label: `Người dùng (${users.length})`,
+            icon: <Users className="h-4 w-4" />,
+          },
+        ]}
+      />
+
+      {activeTab === 'rooms' && (
+        <section role="tabpanel">
+          <SectionHeader
+            title="Quản lý phòng"
+            subtitle="Tìm theo tên hoặc ID. Xoá phòng sẽ đưa tất cả người chơi ra ngoài."
+            icon={<DoorOpen className="h-5 w-5" />}
+          />
+          <Input
+            placeholder="Tìm phòng theo tên hoặc ID…"
+            icon={<Search className="h-4 w-4" />}
+            value={roomQuery}
+            onChange={(event) => setRoomQuery(event.target.value)}
+          />
+          <div className="mt-3 flex flex-col gap-2">
+            {rooms.length === 0 ? (
+              <p className="text-xs text-slate-500">Hiện không có phòng đang hoạt động.</p>
+            ) : filteredRooms.length === 0 ? (
+              <p className="text-xs text-slate-500">Không tìm thấy phòng phù hợp.</p>
+            ) : (
+              filteredRooms.map((room) => (
+                <Surface key={room.id} className="flex flex-wrap items-center gap-3 p-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold text-slate-100">{room.name}</p>
+                    <p className="mt-0.5 truncate text-[11px] text-slate-500">
+                      {room.gameName} · chủ phòng: {room.hostName} · {room.players.length}/{room.maxPlayers} người
+                    </p>
+                    <p className="mt-1 break-all font-mono text-[11px] text-slate-500">
+                      ID: {room.id}
+                    </p>
+                  </div>
+                  <Badge tone={room.status === 'playing' ? 'amber' : 'green'}>
+                    {room.status === 'playing' ? 'Đang chơi' : 'Đang chờ'}
+                  </Badge>
+                  <Button
+                    size="sm"
+                    variant="danger"
+                    icon={<Trash2 className="h-4 w-4" />}
+                    loading={busyRoomId === room.id}
+                    onClick={() => setDeleteRoomTarget(room)}
+                  >
+                    Xoá phòng
+                  </Button>
+                </Surface>
+              ))
+            )}
+          </div>
+        </section>
+      )}
+
+      {activeTab === 'users' && (
+        <section role="tabpanel">
+          <Input
+            placeholder="Tìm theo tên đăng nhập hoặc tên hiển thị…"
+            icon={<Search className="h-4 w-4" />}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+
+          <div className="mt-3 flex flex-col gap-2">
+            {users.length === 0 && !loading && (
+              <p className="text-xs text-slate-500">Không tìm thấy người dùng phù hợp.</p>
+            )}
+            {users.map((item) => (
+              <Surface key={item.id} className="flex flex-wrap items-center gap-3 p-3">
+                <Avatar
+                  src={item.avatar}
+                  name={item.displayName}
+                  size="sm"
+                  status={item.online ? 'online' : 'offline'}
+                />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold text-slate-100">{room.name}</p>
-                  <p className="mt-0.5 truncate text-[11px] text-slate-500">
-                    {room.gameName} · chủ phòng: {room.hostName} · {room.players.length}/{room.maxPlayers} người
+                  <p className="flex items-center gap-2 truncate text-sm font-semibold text-slate-100">
+                    {item.displayName}
+                    {item.role === 'admin' && <Badge tone="purple">Quản trị</Badge>}
+                    {item.isGuest && <Badge tone="neutral">Khách</Badge>}
                   </p>
-                  <p className="mt-1 break-all font-mono text-[11px] text-slate-500">
-                    ID: {room.id}
+                  <p className="truncate text-[11px] text-slate-500">
+                    @{item.username} · {item.matches} trận · tham gia{' '}
+                    {formatDateTime(item.createdAt).split(' ')[0]}
                   </p>
                 </div>
-                <Badge tone={room.status === 'playing' ? 'amber' : 'green'}>
-                  {room.status === 'playing' ? 'Đang chơi' : 'Đang chờ'}
-                </Badge>
-                <Button
-                  size="sm"
-                  variant="danger"
-                  icon={<Trash2 className="h-4 w-4" />}
-                  loading={busyRoomId === room.id}
-                  onClick={() => setDeleteRoomTarget(room)}
-                >
-                  Xoá phòng
-                </Button>
+
+                <span className="inline-flex items-center gap-1 text-sm font-semibold text-amber-300">
+                  <Coins className="h-4 w-4" />
+                  {formatCoins(item.coins)}
+                </span>
+
+                <div className="flex items-center gap-1.5">
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    icon={<Gift className="h-4 w-4" />}
+                    disabled={busyId === item.id}
+                    onClick={() => {
+                      setGiftTarget(item);
+                      setGiftAmount('1000');
+                    }}
+                  >
+                    <span className="hidden sm:inline">Tặng xu</span>
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    icon={<UserCog className="h-4 w-4" />}
+                    loading={busyId === item.id}
+                    disabled={item.id === user.id}
+                    onClick={() => void handleToggleRole(item)}
+                  >
+                    <span className="hidden sm:inline">
+                      {item.role === 'admin' ? 'Thu quyền' : 'Cấp quyền'}
+                    </span>
+                  </Button>
+                  <button
+                    type="button"
+                    disabled={item.id === user.id}
+                    onClick={() => setDeleteTarget(item)}
+                    className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-rose-500/10 hover:text-rose-300 disabled:cursor-not-allowed disabled:opacity-40"
+                    aria-label="Xoá tài khoản"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
               </Surface>
-            ))
-          )}
-        </div>
-      </section>
-
-      <section>
-        <Input
-          placeholder="Tìm theo tên đăng nhập hoặc tên hiển thị…"
-          icon={<Search className="h-4 w-4" />}
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-
-        <div className="mt-3 flex flex-col gap-2">
-          {users.length === 0 && !loading && (
-            <p className="text-xs text-slate-500">Không tìm thấy người dùng phù hợp.</p>
-          )}
-          {users.map((item) => (
-            <Surface key={item.id} className="flex flex-wrap items-center gap-3 p-3">
-              <Avatar
-                src={item.avatar}
-                name={item.displayName}
-                size="sm"
-                status={item.online ? 'online' : 'offline'}
-              />
-              <div className="min-w-0 flex-1">
-                <p className="flex items-center gap-2 truncate text-sm font-semibold text-slate-100">
-                  {item.displayName}
-                  {item.role === 'admin' && <Badge tone="purple">Quản trị</Badge>}
-                  {item.isGuest && <Badge tone="neutral">Khách</Badge>}
-                </p>
-                <p className="truncate text-[11px] text-slate-500">
-                  @{item.username} · {item.matches} trận · tham gia{' '}
-                  {formatDateTime(item.createdAt).split(' ')[0]}
-                </p>
-              </div>
-
-              <span className="inline-flex items-center gap-1 text-sm font-semibold text-amber-300">
-                <Coins className="h-4 w-4" />
-                {formatCoins(item.coins)}
-              </span>
-
-              <div className="flex items-center gap-1.5">
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  icon={<Gift className="h-4 w-4" />}
-                  disabled={busyId === item.id}
-                  onClick={() => {
-                    setGiftTarget(item);
-                    setGiftAmount('1000');
-                  }}
-                >
-                  <span className="hidden sm:inline">Tặng xu</span>
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  icon={<UserCog className="h-4 w-4" />}
-                  loading={busyId === item.id}
-                  disabled={item.id === user.id}
-                  onClick={() => void handleToggleRole(item)}
-                >
-                  <span className="hidden sm:inline">
-                    {item.role === 'admin' ? 'Thu quyền' : 'Cấp quyền'}
-                  </span>
-                </Button>
-                <button
-                  type="button"
-                  disabled={item.id === user.id}
-                  onClick={() => setDeleteTarget(item)}
-                  className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-rose-500/10 hover:text-rose-300 disabled:cursor-not-allowed disabled:opacity-40"
-                  aria-label="Xoá tài khoản"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-            </Surface>
-          ))}
-        </div>
-      </section>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Tặng / trừ xu */}
       <Modal
