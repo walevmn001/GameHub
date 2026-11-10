@@ -8,7 +8,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import type { Room, RoomStatus, ServiceResult, CreateRoomInput } from '@/types';
 import { REALTIME_EVENTS } from '@/types';
 import { roomService } from '@/services/RoomService';
@@ -16,6 +16,7 @@ import { socketService } from '@/services/SocketService';
 import { onlineEnabled } from '@/services/backend';
 import { activityService } from '@/services/ActivityService';
 import { useAuth } from './AuthContext';
+import { useToast } from './ToastContext';
 
 interface RoomsContextValue {
   rooms: Room[];
@@ -26,6 +27,7 @@ interface RoomsContextValue {
   ) => Promise<ServiceResult<Room>>;
   joinRoom: (roomId: string, password?: string) => Promise<ServiceResult<Room>>;
   leaveRoom: (roomId: string) => Promise<ServiceResult<Room | null>>;
+  transferHost: (roomId: string, nextHostId: string) => Promise<ServiceResult<Room>>;
   startMatch: (roomId: string) => Promise<ServiceResult<Room>>;
   addBot: (roomId: string) => Promise<ServiceResult<Room>>;
   removeBot: (roomId: string, botId: string) => Promise<ServiceResult<Room>>;
@@ -39,6 +41,8 @@ const RoomsContext = createContext<RoomsContextValue | null>(null);
 export function RoomsProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
+  const toast = useToast();
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -92,14 +96,19 @@ export function RoomsProvider({ children }: { children: ReactNode }) {
         return next;
       });
     });
-    const offClosed = socketService.on(REALTIME_EVENTS.roomClosed, ({ roomId }) => {
+    const offClosed = socketService.on(REALTIME_EVENTS.roomClosed, ({ roomId, reason }) => {
       setRooms((prev) => prev.filter((r) => r.id !== roomId));
+      if (reason === 'admin' && socketService.currentRoomId === roomId) {
+        void socketService.leaveRoom(roomId);
+        toast.info('Phòng đã bị admin xóa.');
+        navigate('/rooms', { replace: true });
+      }
     });
     return () => {
       offUpdated();
       offClosed();
     };
-  }, []);
+  }, [navigate, toast]);
 
   const createRoom = useCallback<RoomsContextValue['createRoom']>(
     async (input) => {
@@ -159,6 +168,15 @@ export function RoomsProvider({ children }: { children: ReactNode }) {
     [refresh],
   );
 
+  const transferHost = useCallback<RoomsContextValue['transferHost']>(
+    async (roomId, nextHostId) => {
+      const result = await roomService.transferHost(roomId, user?.id ?? 'guest', nextHostId);
+      if (result.ok) await refresh();
+      return result;
+    },
+    [user?.id, refresh],
+  );
+
   const addBot = useCallback<RoomsContextValue['addBot']>(
     async (roomId) => {
       const result = await roomService.addBot(roomId);
@@ -206,6 +224,7 @@ export function RoomsProvider({ children }: { children: ReactNode }) {
       createRoom,
       joinRoom,
       leaveRoom,
+      transferHost,
       startMatch,
       addBot,
       removeBot,
@@ -213,7 +232,7 @@ export function RoomsProvider({ children }: { children: ReactNode }) {
       setStatus,
       getRoom,
     }),
-    [rooms, loading, refresh, createRoom, joinRoom, leaveRoom, startMatch, addBot, removeBot, deleteRoom, setStatus, getRoom],
+    [rooms, loading, refresh, createRoom, joinRoom, leaveRoom, transferHost, startMatch, addBot, removeBot, deleteRoom, setStatus, getRoom],
   );
 
   return <RoomsContext.Provider value={value}>{children}</RoomsContext.Provider>;
