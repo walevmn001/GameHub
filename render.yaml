@@ -35,6 +35,8 @@ services:
           property: connectionString
       - key: JWT_SECRET
         generateValue: true
+      - key: ADMIN_SETUP_KEY
+        generateValue: true
       - key: JWT_EXPIRES_IN
         value: 7d
       - key: STARTING_COINS
