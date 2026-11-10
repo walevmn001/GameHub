@@ -36,7 +36,7 @@ export function ChatBubble({
   if (type === 'sticker' && stickerId) {
     return (
       <div className={wrapper}>
-        <StickerImage stickerId={stickerId} size={56} className="drop-shadow-lg" />
+        <StickerImage stickerId={stickerId} size={40} className="drop-shadow-lg" />
       </div>
     );
   }

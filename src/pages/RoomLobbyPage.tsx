@@ -430,7 +430,7 @@ export function RoomLobbyPage() {
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
               )}
-              <div className="relative">
+              <div className="relative inline-flex">
                 <PlayerProfileButton
                   contact={{ id: player.id, displayName: player.name, avatar: player.avatar }}
                   summary={`${player.isBot ? 'Người máy' : player.isHost ? 'Chủ phòng' : 'Người chơi'} · ${player.coins.toLocaleString('vi-VN')} xu`}
