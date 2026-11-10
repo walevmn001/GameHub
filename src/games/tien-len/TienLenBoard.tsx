@@ -22,6 +22,7 @@ import { playSound, setSoundEnabled } from '@/utils/sound';
 import { cn } from '@/utils/cn';
 import { Badge, Button } from '@/components/ui';
 import { RoomChat } from '@/components/game/RoomChat';
+import { ChatDock } from '@/components/social/ChatDock';
 import { socketService } from '@/services/SocketService';
 import { useTienLenGame, type TienLenGameApi } from './useTienLenGame';
 import { useOnlineTienLenGame } from './useOnlineTienLenGame';
@@ -481,6 +482,7 @@ function TienLenBoardView({
       {landscape ? (
         <div className="relative h-full w-full">
           {board}
+          <ChatDock />
           <button
             type="button"
             onClick={() => setLandscape(false)}
@@ -490,7 +492,10 @@ function TienLenBoardView({
           </button>
         </div>
       ) : (
-        board
+        <>
+          {board}
+          <ChatDock />
+        </>
       )}
     </LandscapeFrame>
   );

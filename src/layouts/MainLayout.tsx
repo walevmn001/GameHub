@@ -22,7 +22,6 @@ export function GameLayout() {
   return (
     <div className="relative z-10 h-[100dvh] w-full overflow-hidden">
       <Outlet />
-      <ChatDock />
     </div>
   );
 }
