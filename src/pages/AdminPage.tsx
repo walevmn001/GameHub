@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import {
   Coins,
+  DoorOpen,
   Gift,
   Home,
   Search,
@@ -28,7 +29,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import { adminService } from '@/services/AdminService';
 import { formatCoins, formatDateTime } from '@/utils/format';
-import type { AdminStats, AdminUser } from '@/types';
+import type { AdminStats, AdminUser, Room } from '@/types';
 
 /** Bảng quản trị: số liệu, tặng xu, đổi quyền và xoá tài khoản. */
 export function AdminPage() {
@@ -40,13 +41,16 @@ export function AdminPage() {
 
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [users, setUsers] = useState<AdminUser[]>([]);
+  const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState('');
   const [debounced, setDebounced] = useState('');
   const [giftTarget, setGiftTarget] = useState<AdminUser | null>(null);
   const [giftAmount, setGiftAmount] = useState('1000');
   const [deleteTarget, setDeleteTarget] = useState<AdminUser | null>(null);
+  const [deleteRoomTarget, setDeleteRoomTarget] = useState<Room | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [busyRoomId, setBusyRoomId] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setDebounced(query), 300);
@@ -56,12 +60,14 @@ export function AdminPage() {
   const load = useCallback(async () => {
     if (!isAdmin || !adminService.enabled) return;
     setLoading(true);
-    const [statsResult, usersResult] = await Promise.all([
+    const [statsResult, usersResult, roomsResult] = await Promise.all([
       adminService.stats(),
       adminService.users(debounced),
+      adminService.rooms(),
     ]);
     if (statsResult.ok) setStats(statsResult.data);
     if (usersResult.ok) setUsers(usersResult.data);
+    if (roomsResult.ok) setRooms(roomsResult.data);
     setLoading(false);
   }, [debounced, isAdmin]);
 
@@ -144,6 +150,20 @@ export function AdminPage() {
     toast.info('Đã xoá tài khoản.');
   };
 
+  const handleDeleteRoom = async () => {
+    if (!deleteRoomTarget) return;
+    setBusyRoomId(deleteRoomTarget.id);
+    const result = await adminService.deleteRoom(deleteRoomTarget.id);
+    setBusyRoomId(null);
+    if (!result.ok) {
+      toast.error(result.error);
+      return;
+    }
+    setRooms((prev) => prev.filter((room) => room.id !== deleteRoomTarget.id));
+    toast.success('Đã xoá phòng', 'Người chơi trong phòng đã được đưa ra ngoài.');
+    setDeleteRoomTarget(null);
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <SectionHeader
@@ -185,6 +205,45 @@ export function AdminPage() {
           <StatTile label="Kết quả hiển thị" value={users.length} hint={loading ? 'Đang tải…' : undefined} />
         </div>
       )}
+
+      <section>
+        <SectionHeader
+          title="Quản lý phòng"
+          subtitle="Xoá phòng sẽ kết thúc ván đang chơi và đưa tất cả người chơi ra ngoài."
+          icon={<DoorOpen className="h-5 w-5" />}
+        />
+        <div className="flex flex-col gap-2">
+          {rooms.length === 0 ? (
+            <p className="text-xs text-slate-500">Hiện không có phòng đang hoạt động.</p>
+          ) : (
+            rooms.map((room) => (
+              <Surface key={room.id} className="flex flex-wrap items-center gap-3 p-3">
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold text-slate-100">{room.name}</p>
+                  <p className="mt-0.5 truncate text-[11px] text-slate-500">
+                    {room.gameName} · chủ phòng: {room.hostName} · {room.players.length}/{room.maxPlayers} người
+                  </p>
+                  <p className="mt-1 break-all font-mono text-[11px] text-slate-500">
+                    ID: {room.id}
+                  </p>
+                </div>
+                <Badge tone={room.status === 'playing' ? 'amber' : 'green'}>
+                  {room.status === 'playing' ? 'Đang chơi' : 'Đang chờ'}
+                </Badge>
+                <Button
+                  size="sm"
+                  variant="danger"
+                  icon={<Trash2 className="h-4 w-4" />}
+                  loading={busyRoomId === room.id}
+                  onClick={() => setDeleteRoomTarget(room)}
+                >
+                  Xoá phòng
+                </Button>
+              </Surface>
+            ))
+          )}
+        </div>
+      </section>
 
       <section>
         <Input
@@ -329,6 +388,38 @@ export function AdminPage() {
         }
       >
         <p className="text-sm text-slate-400">Hành động này không thể hoàn tác.</p>
+      </Modal>
+
+      {/* Admin xoá phòng */}
+      <Modal
+        open={Boolean(deleteRoomTarget)}
+        onClose={() => setDeleteRoomTarget(null)}
+        title="Xoá phòng?"
+        description={
+          deleteRoomTarget
+            ? `Phòng "${deleteRoomTarget.name}" sẽ bị xoá. Tất cả người chơi trong phòng sẽ bị đưa ra ngoài.`
+            : ''
+        }
+        size="sm"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setDeleteRoomTarget(null)}>
+              Huỷ
+            </Button>
+            <Button
+              variant="danger"
+              icon={<Trash2 className="h-4 w-4" />}
+              loading={busyRoomId === deleteRoomTarget?.id}
+              onClick={() => void handleDeleteRoom()}
+            >
+              Xoá phòng
+            </Button>
+          </>
+        }
+      >
+        <p className="text-sm text-slate-400">
+          Người chơi đang ở phòng sẽ nhận thông báo “Phòng đã bị admin xóa” và được chuyển về danh sách phòng.
+        </p>
       </Modal>
     </div>
   );
