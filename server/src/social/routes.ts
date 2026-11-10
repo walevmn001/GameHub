@@ -3,8 +3,6 @@ import { z } from 'zod';
 import { asyncHandler } from '../http/asyncHandler';
 import { parseBody } from '../http/validation';
 import { requireAuth } from '../auth/middleware';
-import { env } from '../env';
-import { ApiError } from '../http/errors';
 import { notifySocial, notifySocialUpdate, pushDirectMessage } from '../realtime/broadcast';
 import * as social from './service';
 
@@ -20,105 +18,9 @@ const sendRequestBody = z.object({
   targetId: z.string().min(1, 'Thiếu người nhận lời mời.'),
 });
 
-const stickerSchema = z.object({
-  id: z.string().min(1).max(200),
-  url: z.string().url().max(2048),
-  previewUrl: z.string().url().max(2048),
-  pageUrl: z.string().url().max(2048),
+const messageBody = z.object({
+  text: z.string().min(1, 'Nội dung tin nhắn trống.').max(500),
 });
-
-const messageBody = z
-  .object({
-    text: z.string().max(500).optional(),
-    sticker: stickerSchema.optional(),
-  })
-  .refine((body) => Boolean(body.sticker) || Boolean(body.text?.trim()), 'Nội dung tin nhắn trống.');
-
-function isAllowedStickerUrl(value: string, hostname: string): boolean {
-  try {
-    const url = new URL(value);
-    return url.protocol === 'https:' && url.hostname === hostname;
-  } catch {
-    return false;
-  }
-}
-
-interface StickerImage {
-  url?: unknown;
-  webp?: unknown;
-}
-
-interface StickerApiItem {
-  id?: unknown;
-  url?: unknown;
-  images?: {
-    fixed_height?: StickerImage;
-    fixed_height_small?: StickerImage;
-  };
-}
-
-interface StickerApiResponse {
-  data?: StickerApiItem[];
-}
-
-/** Trending stickers proxy: API key chỉ được dùng phía server, không lộ ra trình duyệt. */
-socialRouter.get(
-  '/stickers/trending',
-  asyncHandler(async (_req, res) => {
-    if (!env.stickerApiKey) {
-      throw new ApiError(503, 'Chưa cấu hình STICKER_API_KEY cho sticker.', 'sticker_unavailable');
-    }
-
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 8000);
-    try {
-      const response = await fetch(
-        'https://api.stickerapi.io/v2/stickers/trending?rating=g&lang=vi',
-        {
-          headers: { 'x-api-key': env.stickerApiKey, Accept: 'application/json' },
-          signal: controller.signal,
-        },
-      );
-      if (!response.ok) {
-        throw new ApiError(502, 'Không tải được sticker từ MojiLaLa.', 'sticker_provider_error');
-      }
-
-      const payload = (await response.json()) as StickerApiResponse;
-      const stickers = (payload.data ?? [])
-        .flatMap((item) => {
-          const image = typeof item.images?.fixed_height?.webp === 'string'
-            ? item.images.fixed_height.webp
-            : item.images?.fixed_height?.url;
-          const preview = typeof item.images?.fixed_height_small?.webp === 'string'
-            ? item.images.fixed_height_small.webp
-            : item.images?.fixed_height_small?.url;
-
-          if (
-            typeof item.id !== 'string' ||
-            typeof item.url !== 'string' ||
-            typeof image !== 'string' ||
-            typeof preview !== 'string'
-          ) {
-            return [];
-          }
-          if (
-            !isAllowedStickerUrl(image, 'cdn-stickers.mojilala.com') ||
-            !isAllowedStickerUrl(preview, 'cdn-stickers.mojilala.com') ||
-            !isAllowedStickerUrl(item.url, 'mojilala.com')
-          ) {
-            return [];
-          }
-          return [{ id: item.id, url: image, previewUrl: preview, pageUrl: item.url }];
-        })
-        .slice(0, 50);
-
-      res.setHeader('Cache-Control', 'private, max-age=300');
-      res.json(stickers);
-    } finally {
-      clearTimeout(timeout);
-    }
-  }),
-);
 
 /** Tổng hợp cho trang Bạn bè (bạn bè + lời mời đến/đi). */
 socialRouter.get(
@@ -235,22 +137,9 @@ socialRouter.get(
 socialRouter.post(
   '/messages/:friendId',
   asyncHandler(async (req, res) => {
-    const { text, sticker } = parseBody(messageBody, req.body);
+    const { text } = parseBody(messageBody, req.body);
     const userId = req.auth!.userId;
-    let messageText = text ?? '';
-
-    if (sticker) {
-      if (
-        !isAllowedStickerUrl(sticker.url, 'cdn-stickers.mojilala.com') ||
-        !isAllowedStickerUrl(sticker.previewUrl, 'cdn-stickers.mojilala.com') ||
-        !isAllowedStickerUrl(sticker.pageUrl, 'mojilala.com')
-      ) {
-        throw new ApiError(400, 'Sticker không hợp lệ.', 'invalid_sticker');
-      }
-      messageText = `[[gamehub-sticker:${encodeURIComponent(JSON.stringify(sticker))}]]`;
-    }
-
-    const message = await social.sendMessage(userId, req.params.friendId, messageText);
+    const message = await social.sendMessage(userId, req.params.friendId, text);
     pushDirectMessage(message);
     res.status(201).json(message);
   }),

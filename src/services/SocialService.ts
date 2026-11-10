@@ -1,7 +1,6 @@
 import {
   fail,
   ok,
-  type ChatSticker,
   type ConversationSummary,
   type DirectMessage,
   type DirectoryUser,
@@ -68,14 +67,6 @@ class SocialService {
   async sendMessage(friendId: string, text: string): Promise<ServiceResult<DirectMessage>> {
     if (!onlineEnabled) return unavailable();
     return api.request<DirectMessage>(`/social/messages/${friendId}`, { method: 'POST', body: { text } });
-  }
-  async sendSticker(friendId: string, sticker: ChatSticker): Promise<ServiceResult<DirectMessage>> {
-    if (!onlineEnabled) return unavailable();
-    return api.request<DirectMessage>(`/social/messages/${friendId}`, { method: 'POST', body: { sticker } });
-  }
-  async trendingStickers(): Promise<ServiceResult<ChatSticker[]>> {
-    if (!onlineEnabled) return unavailable();
-    return api.request<ChatSticker[]>('/social/stickers/trending');
   }
   async markRead(friendId: string): Promise<ServiceResult<true>> {
     if (!onlineEnabled) return unavailable();

@@ -32,45 +32,7 @@ export interface FriendRequestInfo {
   createdAt: number;
 }
 
-/** Sticker từ MojiLaLa, lưu cùng tin nhắn dưới dạng payload nhỏ. */
-export interface ChatSticker {
-  id: string;
-  url: string;
-  previewUrl: string;
-  pageUrl: string;
-}
-
-const STICKER_PREFIX = '[[gamehub-sticker:';
-
-export function encodeStickerMessage(sticker: ChatSticker): string {
-  return `${STICKER_PREFIX}${encodeURIComponent(JSON.stringify(sticker))}]]`;
-}
-
-export function decodeStickerMessage(text: string): ChatSticker | null {
-  if (!text.startsWith(STICKER_PREFIX) || !text.endsWith(']]')) return null;
-  try {
-    const value = JSON.parse(decodeURIComponent(text.slice(STICKER_PREFIX.length, -2))) as Partial<ChatSticker>;
-    if (typeof value.id !== 'string' || value.id.length > 200) return null;
-    const validUrl = (raw: unknown, hostname: string) => {
-      if (typeof raw !== 'string') return false;
-      try {
-        const url = new URL(raw);
-        return url.protocol === 'https:' && url.hostname === hostname;
-      } catch {
-        return false;
-      }
-    };
-    if (
-      !validUrl(value.url, 'cdn-stickers.mojilala.com') ||
-      !validUrl(value.previewUrl, 'cdn-stickers.mojilala.com') ||
-      !validUrl(value.pageUrl, 'mojilala.com')
-    ) return null;
-    return value as ChatSticker;
-  } catch {
-    return null;
-  }
-}
-
+/** Một tin nhắn riêng tư. */
 export interface DirectMessage {
   id: string;
   fromId: string;

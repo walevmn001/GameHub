@@ -13,7 +13,6 @@ export const env = {
   allowedOrigins: (process.env.ALLOWED_ORIGINS ?? '').split(',').map((origin) => origin.trim()).filter(Boolean),
   startingCoins: toNumber(process.env.STARTING_COINS, 5000),
   adminUsernames: (process.env.ADMIN_USERNAMES ?? '').split(',').map((name) => name.trim().toLowerCase()).filter(Boolean),
-  stickerApiKey: process.env.STICKER_API_KEY ?? '',
   isProd: process.env.NODE_ENV === 'production',
 } as const;
 
