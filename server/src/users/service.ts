@@ -1,4 +1,4 @@
-import type { MatchRecord as ClientMatchRecord, PublicUser, UserRole } from '@/types';
+import type { MatchRecord as ClientMatchRecord, PublicPlayerProfile, PublicUser, UserRole } from '@/types';
 import { prisma } from '../prisma';
 import { notFound } from '../http/errors';
 
@@ -44,6 +44,12 @@ function toClientMatch(row: UserRow['matches'][number]): ClientMatchRecord {
   };
 }
 
+function toStats(stats: UserRow['stats']) {
+  return stats
+    ? { matches: stats.matches, wins: stats.wins, losses: stats.losses, score: stats.score }
+    : { matches: 0, wins: 0, losses: 0, score: 0 };
+}
+
 /** Chuyển bản ghi CSDL thành `PublicUser` mà tầng UI đang dùng. */
 export function toPublicUser(user: UserRow): PublicUser {
   return {
@@ -53,14 +59,7 @@ export function toPublicUser(user: UserRow): PublicUser {
     avatar: user.avatar ?? '',
     coins: user.coins,
     createdAt: user.createdAt.getTime(),
-    stats: user.stats
-      ? {
-          matches: user.stats.matches,
-          wins: user.stats.wins,
-          losses: user.stats.losses,
-          score: user.stats.score,
-        }
-      : { matches: 0, wins: 0, losses: 0, score: 0 },
+    stats: toStats(user.stats),
     history: user.matches.map(toClientMatch),
     preferences: {
       sound: user.sound,
@@ -82,4 +81,59 @@ export async function loadPublicUser(userId: string): Promise<PublicUser> {
   });
   if (!user) throw notFound('Không tìm thấy người dùng.');
   return toPublicUser(user);
+}
+
+/** Hồ sơ công khai của người chơi khác: không bao gồm tuỳ chọn tài khoản. */
+export async function loadPlayerProfile(userId: string): Promise<PublicPlayerProfile> {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      username: true,
+      displayName: true,
+      avatar: true,
+      coins: true,
+      createdAt: true,
+      stats: { select: { matches: true, wins: true, losses: true, score: true } },
+      matches: {
+        orderBy: { createdAt: 'desc' },
+        take: 10,
+        select: {
+          id: true,
+          gameId: true,
+          gameName: true,
+          placement: true,
+          totalPlayers: true,
+          win: true,
+          score: true,
+          coinDelta: true,
+          durationMs: true,
+          createdAt: true,
+        },
+      },
+    },
+  });
+  if (!user) throw notFound('Không tìm thấy người chơi.');
+
+  return {
+    id: user.id,
+    username: user.username,
+    displayName: user.displayName,
+    avatar: user.avatar ?? '',
+    coins: user.coins,
+    createdAt: user.createdAt.getTime(),
+    stats: toStats(user.stats),
+    history: user.matches.map((match) => ({
+      id: match.id,
+      gameId: match.gameId,
+      gameName: match.gameName,
+      placement: match.placement,
+      totalPlayers: match.totalPlayers,
+      win: match.win,
+      score: match.score,
+      coinDelta: match.coinDelta,
+      durationMs: match.durationMs ?? undefined,
+      createdAt: match.createdAt.getTime(),
+    })),
+  };
 }

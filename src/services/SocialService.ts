@@ -5,6 +5,7 @@ import {
   type DirectMessage,
   type DirectoryUser,
   type FriendRequestInfo,
+  type PublicPlayerProfile,
   type ServiceResult,
   type SocialOverview,
 } from '@/types';
@@ -38,6 +39,11 @@ class SocialService {
   async search(query: string): Promise<ServiceResult<DirectoryUser[]>> {
     if (!onlineEnabled) return unavailable();
     return api.request<DirectoryUser[]>(`/social/search?q=${encodeURIComponent(query)}`);
+  }
+
+  async playerProfile(userId: string): Promise<ServiceResult<PublicPlayerProfile>> {
+    if (!onlineEnabled) return unavailable();
+    return api.request<PublicPlayerProfile>(`/users/${encodeURIComponent(userId)}/profile`);
   }
 
   async requests(): Promise<ServiceResult<{ incoming: FriendRequestInfo[]; outgoing: FriendRequestInfo[] }>> {

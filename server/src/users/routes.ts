@@ -5,7 +5,7 @@ import { asyncHandler } from '../http/asyncHandler';
 import { parseBody } from '../http/validation';
 import { unauthorized } from '../http/errors';
 import { requireAuth } from '../auth/middleware';
-import { loadPublicUser } from './service';
+import { loadPlayerProfile, loadPublicUser } from './service';
 
 export const usersRouter = Router();
 
@@ -19,6 +19,15 @@ const preferencesSchema = z.object({
   animations: z.boolean().optional(),
   preferLandscape: z.boolean().optional(),
 });
+
+/** Hồ sơ người chơi công khai, dùng trong phòng và danh sách bạn bè. */
+usersRouter.get(
+  '/:userId/profile',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    res.json(await loadPlayerProfile(req.params.userId));
+  }),
+);
 
 /** Hồ sơ người dùng hiện tại. */
 usersRouter.get(

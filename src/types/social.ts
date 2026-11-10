@@ -24,6 +24,18 @@ export interface DirectoryUser {
   createdAt: number;
 }
 
+/** Hồ sơ công khai của người chơi, dùng trong cửa sổ xem hồ sơ. */
+export interface PublicPlayerProfile {
+  id: string;
+  username: string;
+  displayName: string;
+  avatar: string;
+  coins: number;
+  createdAt: number;
+  stats: PlayerStats;
+  history: MatchRecord[];
+}
+
 /** Lời mời kết bạn kèm thông tin người gửi/nhận. */
 export interface FriendRequestInfo {
   id: string;
