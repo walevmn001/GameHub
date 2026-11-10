@@ -9,6 +9,7 @@ import { RegisterPage } from '@/pages/RegisterPage';
 import { ProfilePage } from '@/pages/ProfilePage';
 import { SettingsPage } from '@/pages/SettingsPage';
 import { FriendsPage } from '@/pages/FriendsPage';
+import { ShopPage } from '@/pages/ShopPage';
 import { AdminPage } from '@/pages/AdminPage';
 import { PlayGamePage } from '@/pages/PlayGamePage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
@@ -29,6 +30,7 @@ export default function App() {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/friends" element={<FriendsPage />} />
+        <Route path="/shop" element={<ShopPage />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>

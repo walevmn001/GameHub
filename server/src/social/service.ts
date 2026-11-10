@@ -1,5 +1,6 @@
 import { prisma } from '../prisma';
 import { badRequest, conflict, forbidden, notFound } from '../http/errors';
+import { canUseItem } from '../shop/service';
 import { isOnline } from '../realtime/presence';
 import type {
   ConversationSummary,
@@ -7,6 +8,7 @@ import type {
   DirectoryUser,
   FriendRelation,
   FriendRequestInfo,
+  MessageType,
   SocialOverview,
   UserRole,
 } from '@/types';
@@ -57,15 +59,21 @@ function toDirectMessage(row: {
   id: string;
   senderId: string;
   recipientId: string;
+  type: string;
   text: string;
+  stickerId: string | null;
   readAt: Date | null;
   createdAt: Date;
 }): DirectMessage {
+  const isSticker = row.type === 'sticker' && Boolean(row.stickerId);
+  const type: MessageType = isSticker ? 'sticker' : 'text';
   return {
     id: row.id,
     fromId: row.senderId,
     toId: row.recipientId,
+    type,
     text: row.text,
+    stickerId: isSticker ? row.stickerId : null,
     at: row.createdAt.getTime(),
     readAt: row.readAt ? row.readAt.getTime() : null,
   };
@@ -326,14 +334,12 @@ export async function markConversationRead(userId: string, otherId: string): Pro
   });
 }
 
-/** Gửi tin nhắn riêng (chỉ cho bạn bè). */
+/** Gửi tin nhắn riêng (chỉ cho bạn bè). Nội dung là văn bản HOẶC nhãn dán đã sở hữu. */
 export async function sendMessage(
   userId: string,
   otherId: string,
-  text: string,
+  input: { text?: string; stickerId?: string },
 ): Promise<DirectMessage> {
-  const trimmed = text.trim().slice(0, MAX_MESSAGE_LENGTH);
-  if (!trimmed) throw badRequest('Nội dung tin nhắn trống.');
   if (userId === otherId) throw badRequest('Không thể tự nhắn tin cho chính mình.');
 
   const target = await prisma.user.findUnique({ where: { id: otherId }, select: { id: true } });
@@ -342,8 +348,21 @@ export async function sendMessage(
     throw forbidden('Bạn chỉ có thể nhắn tin cho bạn bè.');
   }
 
+  const stickerId = input.stickerId?.trim();
+  if (stickerId) {
+    if (!(await canUseItem(userId, stickerId))) {
+      throw forbidden('Bạn chưa mở khoá nhãn dán này.');
+    }
+    const row = await prisma.directMessage.create({
+      data: { senderId: userId, recipientId: otherId, type: 'sticker', text: '', stickerId },
+    });
+    return toDirectMessage(row);
+  }
+
+  const trimmed = (input.text ?? '').trim().slice(0, MAX_MESSAGE_LENGTH);
+  if (!trimmed) throw badRequest('Nội dung tin nhắn trống.');
   const row = await prisma.directMessage.create({
-    data: { senderId: userId, recipientId: otherId, text: trimmed },
+    data: { senderId: userId, recipientId: otherId, type: 'text', text: trimmed, stickerId: null },
   });
   return toDirectMessage(row);
 }

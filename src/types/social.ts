@@ -1,3 +1,4 @@
+import type { MessageType } from './shop';
 import type { MatchRecord, PlayerStats, UserRole } from './user';
 
 /** Kiểu dữ liệu cho tính năng xã hội: bạn bè, tìm người chơi và tin nhắn riêng. */
@@ -37,9 +38,20 @@ export interface DirectMessage {
   id: string;
   fromId: string;
   toId: string;
+  /** Văn bản hoặc nhãn dán. */
+  type: MessageType;
+  /** Nội dung văn bản; rỗng khi `type === 'sticker'`. */
   text: string;
+  /** Id nhãn dán trong danh mục cửa hàng; null khi là tin nhắn văn bản. */
+  stickerId: string | null;
   at: number;
   readAt: number | null;
+}
+
+/** Nội dung tối thiểu để gửi một tin nhắn (văn bản HOẶC nhãn dán). */
+export interface OutgoingMessage {
+  text?: string;
+  stickerId?: string;
 }
 
 export interface ConversationSummary {

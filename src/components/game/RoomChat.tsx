@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { MessageSquare, Send, X } from 'lucide-react';
+import { MessageSquare, Send, Smile, X } from 'lucide-react';
 import { REALTIME_EVENTS, type ChatMessage } from '@/types';
 import { socketService } from '@/services/SocketService';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import { Avatar } from '@/components/ui';
+import { StickerImage } from '@/components/chat/StickerImage';
+import { StickerPicker } from '@/components/chat/StickerPicker';
 import { formatRelativeTime } from '@/utils/format';
 import { cn } from '@/utils/cn';
 
@@ -32,6 +34,7 @@ export function RoomChat({
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [draft, setDraft] = useState('');
   const [sending, setSending] = useState(false);
+  const [showStickers, setShowStickers] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Nhận tin nhắn của đúng phòng này; reset khi đổi phòng.
@@ -50,17 +53,29 @@ export function RoomChat({
     if (el) el.scrollTop = el.scrollHeight;
   }, [messages.length]);
 
-  const handleSend = async () => {
+  const sendText = async () => {
     const text = draft.trim();
-    if (!text) return;
+    if (!text || sending) return;
     setSending(true);
-    const result = await socketService.sendChat(text);
+    const result = await socketService.sendChat({ text });
     setSending(false);
     if (!result.ok) {
       toast.error(result.error);
       return;
     }
     setDraft('');
+  };
+
+  const sendSticker = async (stickerId: string) => {
+    if (sending) return;
+    setSending(true);
+    const result = await socketService.sendChat({ stickerId });
+    setSending(false);
+    if (!result.ok) {
+      toast.error(result.error);
+      return;
+    }
+    setShowStickers(false);
   };
 
   return (
@@ -95,8 +110,9 @@ export function RoomChat({
         ) : (
           messages.map((message) => {
             const mine = message.fromId === user?.id;
+            const isSticker = message.type === 'sticker' && Boolean(message.stickerId);
             return (
-              <div key={`${message.at}-${message.fromId}-${message.text}`} className={cn('flex gap-2', mine && 'flex-row-reverse')}>
+              <div key={`${message.at}-${message.fromId}-${message.stickerId ?? message.text}`} className={cn('flex gap-2', mine && 'flex-row-reverse')}>
                 <Avatar src="" name={message.from} size="xs" />
                 <div className={cn('min-w-0 max-w-[80%]', mine && 'text-right')}>
                   {!mine && (
@@ -104,17 +120,24 @@ export function RoomChat({
                       {message.from}
                     </p>
                   )}
-                  <div
-                    className={cn(
-                      'inline-block rounded-2xl px-3 py-1.5 text-sm',
-                      mine ? 'bg-neon-purple/25 text-slate-100' : 'bg-white/5 text-slate-200',
-                    )}
-                  >
-                    <p className="whitespace-pre-wrap break-words text-left">{message.text}</p>
-                    <p className={cn('mt-0.5 text-[10px] text-slate-500', mine ? 'text-right' : 'text-left')}>
-                      {formatRelativeTime(message.at)}
-                    </p>
-                  </div>
+                  {isSticker ? (
+                    <div className={cn('flex flex-col gap-0.5', mine ? 'items-end' : 'items-start')}>
+                      <StickerImage stickerId={message.stickerId!} size={80} />
+                      <p className="text-[10px] text-slate-500">{formatRelativeTime(message.at)}</p>
+                    </div>
+                  ) : (
+                    <div
+                      className={cn(
+                        'inline-block rounded-2xl px-3 py-1.5 text-sm',
+                        mine ? 'bg-neon-purple/25 text-slate-100' : 'bg-white/5 text-slate-200',
+                      )}
+                    >
+                      <p className="whitespace-pre-wrap break-words text-left">{message.text}</p>
+                      <p className={cn('mt-0.5 text-[10px] text-slate-500', mine ? 'text-right' : 'text-left')}>
+                        {formatRelativeTime(message.at)}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             );
@@ -122,15 +145,30 @@ export function RoomChat({
         )}
       </div>
 
+      {/* Bộ chọn nhãn dán */}
+      {showStickers && <StickerPicker onPick={(id) => void sendSticker(id)} />}
+
       {/* Ô nhập */}
       <div className="flex items-center gap-2 border-t border-white/5 p-2">
+        <button
+          type="button"
+          onClick={() => setShowStickers((value) => !value)}
+          className={cn(
+            'inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-300 hover:bg-white/10',
+            showStickers && 'bg-white/10 text-neon-cyan',
+          )}
+          aria-label="Chọn nhãn dán"
+          title="Chọn nhãn dán"
+        >
+          <Smile className="h-5 w-5" />
+        </button>
         <input
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault();
-              void handleSend();
+              void sendText();
             }
           }}
           placeholder="Nhập tin nhắn…"
@@ -139,7 +177,7 @@ export function RoomChat({
         />
         <button
           type="button"
-          onClick={() => void handleSend()}
+          onClick={() => void sendText()}
           disabled={sending || draft.trim().length === 0}
           className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-neon-purple to-neon-violet text-white transition-opacity disabled:opacity-40"
           aria-label="Gửi"

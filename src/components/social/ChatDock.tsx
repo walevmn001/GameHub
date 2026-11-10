@@ -1,33 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, MessageSquare, Search, Send, Smile, X } from 'lucide-react';
 import { Avatar, Badge } from '@/components/ui';
+import { StickerImage } from '@/components/chat/StickerImage';
+import { StickerPicker } from '@/components/chat/StickerPicker';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSocial } from '@/contexts/SocialContext';
 import { formatRelativeTime } from '@/utils/format';
 import { cn } from '@/utils/cn';
-
-// First-party sticker pack: no third-party API, key, CORS or backend proxy required.
-const STICKERS = [
-  { emoji: '😂', label: 'Cười lớn' },
-  { emoji: '😍', label: 'Yêu thích' },
-  { emoji: '🥳', label: 'Ăn mừng' },
-  { emoji: '😎', label: 'Ngầu' },
-  { emoji: '😭', label: 'Khóc' },
-  { emoji: '😡', label: 'Tức giận' },
-  { emoji: '🤔', label: 'Suy nghĩ' },
-  { emoji: '👋', label: 'Xin chào' },
-  { emoji: '👍', label: 'Đồng ý' },
-  { emoji: '❤️', label: 'Trái tim' },
-  { emoji: '🔥', label: 'Tuyệt vời' },
-  { emoji: '🎉', label: 'Chúc mừng' },
-  { emoji: '🥺', label: 'Đáng yêu' },
-  { emoji: '🤝', label: 'Bắt tay' },
-  { emoji: '💯', label: '100 điểm' },
-];
-
-function isSticker(text: string): boolean {
-  return STICKERS.some((sticker) => sticker.emoji === text);
-}
 
 export function ChatDock() {
   const { user } = useAuth();
@@ -85,23 +64,27 @@ function ChatPanel({ onClose }: { onClose: () => void }) {
       .sort((a, b) => (lastAt.get(b.id) ?? 0) - (lastAt.get(a.id) ?? 0));
   }, [social.friends, social.conversations, query]);
 
-  const send = async (text: string) => {
-    if (!active || sending) return;
+  const sendText = async () => {
+    const text = draft.trim();
+    if (!active || sending || !text) return;
     setSending(true);
     try {
-      const result = await social.sendMessage(active.id, text);
-      if (result.ok) {
-        if (text === draft.trim()) setDraft('');
-        setShowStickers(false);
-      }
+      const result = await social.sendMessage(active.id, { text });
+      if (result.ok) setDraft('');
     } finally {
       setSending(false);
     }
   };
 
-  const handleSend = () => {
-    const text = draft.trim();
-    if (text) void send(text);
+  const sendSticker = async (stickerId: string) => {
+    if (!active || sending) return;
+    setSending(true);
+    try {
+      const result = await social.sendMessage(active.id, { stickerId });
+      if (result.ok) setShowStickers(false);
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -132,42 +115,26 @@ function ChatPanel({ onClose }: { onClose: () => void }) {
               <p className="mt-6 text-center text-xs text-slate-500">Chưa có tin nhắn. Hãy gửi lời chào!</p>
             ) : messages.map((message) => {
               const mine = message.fromId === user?.id;
-              const sticker = isSticker(message.text);
+              const isSticker = message.type === 'sticker' && Boolean(message.stickerId);
               return (
                 <div key={message.id} className={cn('flex', mine ? 'justify-end' : 'justify-start')}>
-                  <div className={cn('max-w-[80%] rounded-2xl px-3 py-1.5 text-sm', mine ? 'bg-neon-purple/25 text-slate-100' : 'bg-white/5 text-slate-200')}>
-                    {sticker ? (
-                      <span role="img" aria-label="Sticker" className="block text-5xl leading-tight">{message.text}</span>
-                    ) : (
+                  {isSticker ? (
+                    <div className={cn('flex flex-col gap-0.5', mine ? 'items-end' : 'items-start')}>
+                      <StickerImage stickerId={message.stickerId!} size={96} />
+                      <p className="text-[10px] text-slate-500">{formatRelativeTime(message.at)}</p>
+                    </div>
+                  ) : (
+                    <div className={cn('max-w-[80%] rounded-2xl px-3 py-1.5 text-sm', mine ? 'bg-neon-purple/25 text-slate-100' : 'bg-white/5 text-slate-200')}>
                       <p className="whitespace-pre-wrap break-words">{message.text}</p>
-                    )}
-                    <p className="mt-0.5 text-right text-[10px] text-slate-500">{formatRelativeTime(message.at)}</p>
-                  </div>
+                      <p className="mt-0.5 text-right text-[10px] text-slate-500">{formatRelativeTime(message.at)}</p>
+                    </div>
+                  )}
                 </div>
               );
             })}
           </div>
 
-          {showStickers && (
-            <div className="max-h-48 overflow-y-auto border-t border-white/5 bg-base-900/80 p-2">
-              <div className="grid grid-cols-5 gap-1">
-                {STICKERS.map(({ emoji, label }) => (
-                  <button
-                    key={emoji}
-                    type="button"
-                    onClick={() => void send(emoji)}
-                    disabled={sending}
-                    className="rounded-lg p-2 text-3xl transition-colors hover:bg-white/10 disabled:opacity-50"
-                    aria-label={`Gửi sticker: ${label}`}
-                    title={label}
-                  >
-                    {emoji}
-                  </button>
-                ))}
-              </div>
-              <p className="mt-1 text-center text-[10px] text-slate-500">Sticker GameHub</p>
-            </div>
-          )}
+          {showStickers && <StickerPicker onPick={(id) => void sendSticker(id)} />}
 
           <div className="flex items-center gap-2 border-t border-white/5 p-2">
             <button
@@ -185,7 +152,7 @@ function ChatPanel({ onClose }: { onClose: () => void }) {
               onKeyDown={(event) => {
                 if (event.key === 'Enter' && !event.shiftKey) {
                   event.preventDefault();
-                  handleSend();
+                  void sendText();
                 }
               }}
               placeholder="Nhập tin nhắn…"
@@ -194,7 +161,7 @@ function ChatPanel({ onClose }: { onClose: () => void }) {
             />
             <button
               type="button"
-              onClick={handleSend}
+              onClick={() => void sendText()}
               disabled={sending || draft.trim().length === 0}
               className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-neon-purple to-neon-violet text-white disabled:opacity-40"
               aria-label="Gửi"
@@ -228,7 +195,11 @@ function ChatPanel({ onClose }: { onClose: () => void }) {
                       {unreadCount > 0 && <Badge tone="rose">{unreadCount}</Badge>}
                     </span>
                     <span className="mt-0.5 block truncate text-[11px] text-slate-500">
-                      {conversation?.lastMessage ? (isSticker(conversation.lastMessage.text) ? 'Đã gửi nhãn dán' : conversation.lastMessage.text) : 'Chưa có tin nhắn'}
+                      {conversation?.lastMessage
+                        ? conversation.lastMessage.type === 'sticker'
+                          ? 'Đã gửi nhãn dán'
+                          : conversation.lastMessage.text
+                        : 'Chưa có tin nhắn'}
                     </span>
                   </span>
                 </button>

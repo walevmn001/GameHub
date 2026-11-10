@@ -18,9 +18,15 @@ const sendRequestBody = z.object({
   targetId: z.string().min(1, 'Thiếu người nhận lời mời.'),
 });
 
-const messageBody = z.object({
-  text: z.string().min(1, 'Nội dung tin nhắn trống.').max(500),
-});
+// Tin nhắn là VĂN BẢN hoặc NHÃN DÁN; phải có ít nhất một trong hai phần nội dung.
+const messageBody = z
+  .object({
+    text: z.string().max(500).optional(),
+    stickerId: z.string().max(64).optional(),
+  })
+  .refine((value) => Boolean(value.stickerId?.trim()) || Boolean(value.text?.trim()), {
+    message: 'Nội dung tin nhắn trống.',
+  });
 
 /** Tổng hợp cho trang Bạn bè (bạn bè + lời mời đến/đi). */
 socialRouter.get(
@@ -133,13 +139,13 @@ socialRouter.get(
   }),
 );
 
-/** Gửi tin nhắn riêng cho bạn bè. */
+/** Gửi tin nhắn riêng cho bạn bè (văn bản hoặc nhãn dán). */
 socialRouter.post(
   '/messages/:friendId',
   asyncHandler(async (req, res) => {
-    const { text } = parseBody(messageBody, req.body);
+    const { text, stickerId } = parseBody(messageBody, req.body);
     const userId = req.auth!.userId;
-    const message = await social.sendMessage(userId, req.params.friendId, text);
+    const message = await social.sendMessage(userId, req.params.friendId, { text, stickerId });
     pushDirectMessage(message);
     res.status(201).json(message);
   }),

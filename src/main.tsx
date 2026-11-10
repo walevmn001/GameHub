@@ -5,6 +5,7 @@ import App from './App';
 import './index.css';
 import { ToastProvider } from '@/contexts/ToastContext';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { ShopProvider } from '@/contexts/ShopContext';
 import { RoomChatProvider } from '@/contexts/RoomChatContext';
 import { SocialProvider } from '@/contexts/SocialContext';
 import { RoomsProvider } from '@/contexts/RoomsContext';
@@ -18,13 +19,15 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <HashRouter>
       <ToastProvider>
         <AuthProvider>
-          <RoomChatProvider>
-            <SocialProvider>
-              <RoomsProvider>
-                <App />
-              </RoomsProvider>
-            </SocialProvider>
-          </RoomChatProvider>
+          <ShopProvider>
+            <RoomChatProvider>
+              <SocialProvider>
+                <RoomsProvider>
+                  <App />
+                </RoomsProvider>
+              </SocialProvider>
+            </RoomChatProvider>
+          </ShopProvider>
         </AuthProvider>
       </ToastProvider>
     </HashRouter>

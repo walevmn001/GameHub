@@ -5,5 +5,6 @@ export * from './user';
 export * from './game-registry';
 export * from './room';
 export * from './social';
+export * from './shop';
 export * from './admin';
 export * from './realtime';

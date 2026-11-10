@@ -8,6 +8,7 @@ import {
   Menu,
   Settings,
   ShieldCheck,
+  ShoppingBag,
   User as UserIcon,
   UserRound,
   Users,
@@ -34,6 +35,7 @@ const BASE_NAV_LINKS: NavItem[] = [
   { to: '/', label: 'Trang chủ', icon: <Gamepad2 className="h-4 w-4" /> },
   { to: '/games', label: 'Trò chơi', icon: <Gamepad2 className="h-4 w-4" /> },
   { to: '/rooms', label: 'Phòng chơi', icon: <Users className="h-4 w-4" /> },
+  { to: '/shop', label: 'Cửa hàng', icon: <ShoppingBag className="h-4 w-4" /> },
 ];
 
 export function Navbar() {

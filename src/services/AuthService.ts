@@ -335,6 +335,25 @@ class AuthService {
     return ok(toPublicUser(account));
   }
 
+  /**
+   * Trừ xu cục bộ (chế độ Local/Demo) sau khi mua vật phẩm trong cửa hàng.
+   * Ở chế độ trực tuyến, server tự trừ xu trong giao dịch mua — không dùng hàm này.
+   */
+  async spendCoins(amount: number): Promise<ServiceResult<PublicUser>> {
+    if (amount <= 0) return fail('Số xu cần trừ không hợp lệ.');
+    const account = await this.readCurrentAccount();
+    if (!account) return fail('Bạn cần đăng nhập để mua vật phẩm.');
+    if (account.coins < amount) return fail('Bạn không đủ xu để mua vật phẩm này.');
+
+    account.coins -= amount;
+    account.updatedAt = Date.now();
+    const accounts = await this.readAccounts();
+    const index = accounts.findIndex((a) => a.id === account.id);
+    accounts[index] = account;
+    await this.writeAccounts(accounts);
+    return ok(toPublicUser(account));
+  }
+
   async clearHistory(): Promise<ServiceResult<PublicUser>> {
     if (this.online) {
       const result = await api.request<PublicUser>('/users/me/matches', { method: 'DELETE' });

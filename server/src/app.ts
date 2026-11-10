@@ -6,6 +6,7 @@ import { usersRouter } from './users/routes';
 import { gamesRouter } from './games/routes';
 import { roomsRouter } from './rooms/routes';
 import { socialRouter } from './social/routes';
+import { shopRouter } from './shop/routes';
 import { adminRouter } from './admin/routes';
 import { errorHandler, notFoundHandler } from './http/errors';
 
@@ -31,6 +32,7 @@ export function createApp(): express.Express {
   app.use('/api/games', gamesRouter);
   app.use('/api/rooms', roomsRouter);
   app.use('/api/social', socialRouter);
+  app.use('/api/shop', shopRouter);
   app.use('/api/admin', adminRouter);
 
   app.use(notFoundHandler);

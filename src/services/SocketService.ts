@@ -3,6 +3,7 @@ import {
   REALTIME_EVENTS,
   type AckResult,
   type ClientToServerEvents,
+  type OutgoingMessage,
   type ServerToClientEvents,
 } from '@/types';
 import { BACKEND_URL, readToken } from './backend';
@@ -142,9 +143,9 @@ class SocketService {
     return this.ackEmit((socket, done) => socket.emit(REALTIME_EVENTS.matchSync, {}, done));
   }
 
-  sendChat(text: string): Promise<AckResult> {
+  sendChat(input: OutgoingMessage): Promise<AckResult> {
     return this.ackEmit((socket, done) =>
-      socket.emit(REALTIME_EVENTS.chatSend, { text }, done),
+      socket.emit(REALTIME_EVENTS.chatSend, input, done),
     );
   }
 }

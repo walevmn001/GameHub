@@ -17,6 +17,7 @@ import {
   type DirectoryUser,
   type FriendRelation,
   type FriendRequestInfo,
+  type OutgoingMessage,
   type ServiceResult,
   type SocialNotification,
   type SocialOverview,
@@ -62,7 +63,7 @@ interface SocialContextValue {
   openChat: (contact: ChatContact) => void;
   closeChat: (userId: string) => void;
   setActiveChat: (userId: string | null) => void;
-  sendMessage: (userId: string, text: string) => Promise<ServiceResult<DirectMessage>>;
+  sendMessage: (userId: string, input: OutgoingMessage) => Promise<ServiceResult<DirectMessage>>;
 }
 
 const SocialContext = createContext<SocialContextValue | null>(null);
@@ -321,8 +322,8 @@ export function SocialProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const sendMessage = useCallback<SocialContextValue['sendMessage']>(
-    async (userId, text) => {
-      const result = await socialService.sendMessage(userId, text);
+    async (userId, input) => {
+      const result = await socialService.sendMessage(userId, input);
       if (result.ok) {
         const message = result.data;
         setMessages((prev) => {

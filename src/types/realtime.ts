@@ -1,7 +1,8 @@
 import type { Card, Combo } from './game';
 import type { TienLenConfig } from './tienlen';
 import type { Room } from './room';
-import type { DirectMessage } from './social';
+import type { DirectMessage, OutgoingMessage } from './social';
+import type { MessageType } from './shop';
 import type { MatchSettlement } from '@/game-engine/tienlen/money';
 import type { PlayRecord } from '@/game-engine/tienlen/engine';
 
@@ -42,7 +43,12 @@ export interface ChatMessage {
   roomId: string;
   fromId: string;
   from: string;
+  /** Văn bản hoặc nhãn dán. */
+  type: MessageType;
+  /** Nội dung văn bản; rỗng khi `type === 'sticker'`. */
   text: string;
+  /** Id nhãn dán trong danh mục cửa hàng; null khi là tin nhắn văn bản. */
+  stickerId: string | null;
   at: number;
 }
 
@@ -88,7 +94,7 @@ export interface MatchView {
 export interface ClientToServerEvents {
   'room:join': (payload: { roomId: string }, ack?: (result: AckResult) => void) => void;
   'room:leave': (payload: { roomId: string }, ack?: (result: AckResult) => void) => void;
-  'chat:send': (payload: { text: string }, ack?: (result: AckResult) => void) => void;
+  'chat:send': (payload: OutgoingMessage, ack?: (result: AckResult) => void) => void;
   'match:play': (payload: { cardIds: string[] }, ack?: (result: AckResult) => void) => void;
   'match:pass': (payload: Record<string, never>, ack?: (result: AckResult) => void) => void;
   'match:sync': (payload: Record<string, never>, ack?: (result: AckResult) => void) => void;

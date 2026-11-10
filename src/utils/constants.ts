@@ -15,6 +15,8 @@ export const STORAGE_KEYS = {
   settings: 'settings',
   /** JWT khi kết nối backend trực tuyến. */
   token: 'auth-token',
+  /** Tiền tố khoá lưu danh sách vật phẩm đã mua (ghép thêm id người dùng). */
+  shopOwned: 'shop-owned',
 } as const;
 
 /** Số xu khởi tạo cho tài khoản thử nghiệm. */

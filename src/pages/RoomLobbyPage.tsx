@@ -438,7 +438,7 @@ export function RoomLobbyPage() {
                 >
                   <Avatar src={player.avatar} name={player.name} size="md" ring={player.isHost} />
                 </PlayerProfileButton>
-                {bubble && <ChatBubble text={bubble.text} />}
+                {bubble && <ChatBubble type={bubble.type} text={bubble.text} stickerId={bubble.stickerId} />}
               </div>
               <p className="flex w-full items-center justify-center gap-1 truncate text-xs font-semibold text-slate-200">
                 {player.isHost && <Crown className="h-3 w-3 shrink-0 text-amber-400" />}

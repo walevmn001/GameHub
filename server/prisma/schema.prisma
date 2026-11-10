@@ -40,6 +40,7 @@ model User {
   friendshipsB     Friendship[]    @relation("FriendshipB")
   sentMessages     DirectMessage[] @relation("DmSender")
   receivedMessages DirectMessage[] @relation("DmRecipient")
+  purchases        Purchase[]
 }
 
 model Stats {
@@ -142,10 +143,27 @@ model DirectMessage {
   sender      User      @relation("DmSender", fields: [senderId], references: [id], onDelete: Cascade)
   recipientId String
   recipient   User      @relation("DmRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  /// text (văn bản) | sticker (nhãn dán). Mặc định "text" để tương thích dữ liệu cũ.
+  type        String    @default("text")
   text        String
+  /// Id nhãn dán trong danh mục cửa hàng; null khi là tin nhắn văn bản.
+  stickerId   String?
   readAt      DateTime?
   createdAt   DateTime  @default(now())
 
   @@index([senderId, recipientId, createdAt])
   @@index([recipientId, readAt])
+}
+
+/// Vật phẩm người dùng đã mua trong cửa hàng (nhãn dán, khung chat, skin bài, khung avatar...).
+/// Vật phẩm MIỄN PHÍ không lưu ở đây (xem `isFreeItem` trong src/data/shopCatalog.ts).
+model Purchase {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  itemId    String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, itemId])
+  @@index([userId])
 }

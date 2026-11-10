@@ -5,6 +5,7 @@ import {
   type DirectMessage,
   type DirectoryUser,
   type FriendRequestInfo,
+  type OutgoingMessage,
   type PublicPlayerProfile,
   type ServiceResult,
   type SocialOverview,
@@ -64,9 +65,9 @@ class SocialService {
     if (!onlineEnabled) return unavailable();
     return api.request<DirectMessage[]>(`/social/messages/${friendId}`);
   }
-  async sendMessage(friendId: string, text: string): Promise<ServiceResult<DirectMessage>> {
+  async sendMessage(friendId: string, input: OutgoingMessage): Promise<ServiceResult<DirectMessage>> {
     if (!onlineEnabled) return unavailable();
-    return api.request<DirectMessage>(`/social/messages/${friendId}`, { method: 'POST', body: { text } });
+    return api.request<DirectMessage>(`/social/messages/${friendId}`, { method: 'POST', body: input });
   }
   async markRead(friendId: string): Promise<ServiceResult<true>> {
     if (!onlineEnabled) return unavailable();

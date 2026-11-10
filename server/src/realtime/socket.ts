@@ -4,6 +4,7 @@ import { prisma } from '../prisma';
 import { getRoomRow, addMember, removeMember, setStatus } from '../rooms/service';
 import { abortMatch, hasMatch, passInMatch, playInMatch, syncMatch } from '../matches/manager';
 import { friendIdsOf } from '../social/service';
+import { canUseItem } from '../shop/service';
 import {
   broadcastPresence,
   broadcastRoomClosed,
@@ -131,22 +132,54 @@ export function registerSocketHandlers(io: AppServer): void {
       }
     });
 
-    socket.on(REALTIME_EVENTS.chatSend, (payload, ack) => {
+    socket.on(REALTIME_EVENTS.chatSend, async (payload, ack) => {
       const roomId = socket.data.roomId;
-      const text = (payload?.text ?? '').trim().slice(0, MAX_CHAT_LENGTH);
-      if (!roomId || !text) {
-        ack?.({ ok: false, error: 'Nội dung tin nhắn trống.' });
+      if (!roomId) {
+        ack?.({ ok: false, error: 'Bạn chưa ở trong phòng.' });
         return;
       }
-      const message: ChatMessage = {
-        roomId,
-        fromId: socket.data.userId,
-        from: socket.data.displayName,
-        text,
-        at: Date.now(),
-      };
-      io.to(roomChannel(roomId)).emit(REALTIME_EVENTS.chatMessage, message);
-      ack?.({ ok: true });
+      try {
+        // Nhãn dán: xác thực quyền sở hữu rồi phát cho cả phòng.
+        const stickerId = payload?.stickerId?.trim();
+        if (stickerId) {
+          if (!(await canUseItem(socket.data.userId, stickerId))) {
+            ack?.({ ok: false, error: 'Bạn chưa mở khoá nhãn dán này.' });
+            return;
+          }
+          const stickerMessage: ChatMessage = {
+            roomId,
+            fromId: socket.data.userId,
+            from: socket.data.displayName,
+            type: 'sticker',
+            text: '',
+            stickerId,
+            at: Date.now(),
+          };
+          io.to(roomChannel(roomId)).emit(REALTIME_EVENTS.chatMessage, stickerMessage);
+          ack?.({ ok: true });
+          return;
+        }
+
+        const text = (payload?.text ?? '').trim().slice(0, MAX_CHAT_LENGTH);
+        if (!text) {
+          ack?.({ ok: false, error: 'Nội dung tin nhắn trống.' });
+          return;
+        }
+        const message: ChatMessage = {
+          roomId,
+          fromId: socket.data.userId,
+          from: socket.data.displayName,
+          type: 'text',
+          text,
+          stickerId: null,
+          at: Date.now(),
+        };
+        io.to(roomChannel(roomId)).emit(REALTIME_EVENTS.chatMessage, message);
+        ack?.({ ok: true });
+      } catch (error) {
+        console.error('[socket] chat:send', error);
+        ack?.({ ok: false, error: 'Không thể gửi tin nhắn.' });
+      }
     });
 
     socket.on(REALTIME_EVENTS.matchPlay, async (payload, ack) => {
