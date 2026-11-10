@@ -430,15 +430,15 @@ export function RoomLobbyPage() {
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
               )}
-              <div className="relative w-fit">
+              <div className="relative">
                 <PlayerProfileButton
                   contact={{ id: player.id, displayName: player.name, avatar: player.avatar }}
                   summary={`${player.isBot ? 'Người máy' : player.isHost ? 'Chủ phòng' : 'Người chơi'} · ${player.coins.toLocaleString('vi-VN')} xu`}
                   disableSocial={player.isBot}
                 >
                   <Avatar src={player.avatar} name={player.name} size="md" ring={player.isHost} />
+                  {bubble && <ChatBubble type={bubble.type} text={bubble.text} stickerId={bubble.stickerId} />}
                 </PlayerProfileButton>
-                {bubble && <ChatBubble type={bubble.type} text={bubble.text} stickerId={bubble.stickerId} />}
               </div>
               <p className="flex w-full items-center justify-center gap-1 truncate text-xs font-semibold text-slate-200">
                 {player.isHost && <Crown className="h-3 w-3 shrink-0 text-amber-400" />}

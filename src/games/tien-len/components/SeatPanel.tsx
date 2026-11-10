@@ -62,13 +62,13 @@ export function SeatPanel({
             size={horizontal ? 'md' : 'sm'}
             ring={isTurn}
           />
+          {bubble && <ChatBubble type={bubble.type} text={bubble.text} stickerId={bubble.stickerId} />}
         </PlayerProfileButton>
         {finished && (
           <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-[9px] font-bold text-white">
             {(player.placement ?? 0) === 1 ? <Crown className="h-3 w-3" /> : player.placement}
           </span>
         )}
-        {bubble && <ChatBubble type={bubble.type} text={bubble.text} stickerId={bubble.stickerId} />}
       </div>
 
       <div className={cn('min-w-0', !horizontal && 'text-center')}>
