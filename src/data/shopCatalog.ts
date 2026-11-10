@@ -39,7 +39,7 @@ export const SHOP_KINDS: { kind: ShopItemKind; label: string; note: string }[] =
 ];
 
 export const SHOP_ITEMS: readonly ShopItem[] = [
-  // ----- Bộ MIỄN PHÍ: Biểu cảm cơ bản -----
+  // ----- Bộ "Biểu cảm cơ bản" — miễn phí -----
   { id: 'smile', kind: 'sticker', pack: 'basic', name: 'Vui vẻ', description: 'Nụ cười thân thiện', price: 0, file: 'stickers/smile.svg' },
   { id: 'laugh', kind: 'sticker', pack: 'basic', name: 'Cười lớn', description: 'Cười không nhặt được mồm', price: 0, file: 'stickers/laugh.svg' },
   { id: 'love', kind: 'sticker', pack: 'basic', name: 'Yêu thích', description: 'Mắt trái tim', price: 0, file: 'stickers/love.svg' },
@@ -49,21 +49,21 @@ export const SHOP_ITEMS: readonly ShopItem[] = [
   { id: 'cool', kind: 'sticker', pack: 'basic', name: 'Ngầu', description: 'Đeo kính râm', price: 0, file: 'stickers/cool.svg' },
   { id: 'sleep', kind: 'sticker', pack: 'basic', name: 'Buồn ngủ', description: 'Đang ngủ ngon', price: 0, file: 'stickers/sleep.svg' },
 
-  // ----- Bộ BÁN: Tiến Lên vui nhộn (800 xu) -----
-  { id: 'win', kind: 'sticker', pack: 'tienlen', name: 'Thắng rồi!', description: 'Tay cầm cúp vô địch', price: 800, file: 'stickers/win.svg' },
-  { id: 'pig', kind: 'sticker', pack: 'tienlen', name: 'Chặt heo!', description: 'Chú heo hồng ngơ ngác', price: 800, file: 'stickers/pig.svg' },
-  { id: 'bomb', kind: 'sticker', pack: 'tienlen', name: 'Tới trắng!', description: 'Quả bom nổ tung', price: 800, file: 'stickers/bomb.svg' },
-  { id: 'fire', kind: 'sticker', pack: 'tienlen', name: 'Sung mãn', description: 'Ngọn lửa bùng cháy', price: 800, file: 'stickers/fire.svg' },
-  { id: 'lucky', kind: 'sticker', pack: 'tienlen', name: 'Vận may', description: 'Cỏ bốn lá may mắn', price: 800, file: 'stickers/lucky.svg' },
-  { id: 'pass', kind: 'sticker', pack: 'tienlen', name: 'Bỏ lượt', description: 'Bàn tay xin bỏ lượt', price: 800, file: 'stickers/pass.svg' },
+  // ----- Bộ "Tiến Lên vui nhộn" — hiện MIỄN PHÍ (đặt price > 0 để bán bằng xu) -----
+  { id: 'win', kind: 'sticker', pack: 'tienlen', name: 'Thắng rồi!', description: 'Tay cầm cúp vô địch', price: 0, file: 'stickers/win.svg' },
+  { id: 'pig', kind: 'sticker', pack: 'tienlen', name: 'Chặt heo!', description: 'Chú heo hồng ngơ ngác', price: 0, file: 'stickers/pig.svg' },
+  { id: 'bomb', kind: 'sticker', pack: 'tienlen', name: 'Tới trắng!', description: 'Quả bom nổ tung', price: 0, file: 'stickers/bomb.svg' },
+  { id: 'fire', kind: 'sticker', pack: 'tienlen', name: 'Sung mãn', description: 'Ngọn lửa bùng cháy', price: 0, file: 'stickers/fire.svg' },
+  { id: 'lucky', kind: 'sticker', pack: 'tienlen', name: 'Vận may', description: 'Cỏ bốn lá may mắn', price: 0, file: 'stickers/lucky.svg' },
+  { id: 'pass', kind: 'sticker', pack: 'tienlen', name: 'Bỏ lượt', description: 'Bàn tay xin bỏ lượt', price: 0, file: 'stickers/pass.svg' },
 
-  // ----- Bộ BÁN: Dễ thương (500 xu) -----
-  { id: 'cat', kind: 'sticker', pack: 'cute', name: 'Mèo con', description: 'Chú mèo đáng yêu', price: 500, file: 'stickers/cat.svg' },
-  { id: 'dog', kind: 'sticker', pack: 'cute', name: 'Cún con', description: 'Chú cún lông xù', price: 500, file: 'stickers/dog.svg' },
-  { id: 'bear', kind: 'sticker', pack: 'cute', name: 'Gấu con', description: 'Chú gấu nâu', price: 500, file: 'stickers/bear.svg' },
-  { id: 'rabbit', kind: 'sticker', pack: 'cute', name: 'Thỏ con', description: 'Chú thỏ tai dài', price: 500, file: 'stickers/rabbit.svg' },
-  { id: 'frog', kind: 'sticker', pack: 'cute', name: 'Ếch con', description: 'Chú ếch xanh', price: 500, file: 'stickers/frog.svg' },
-  { id: 'chick', kind: 'sticker', pack: 'cute', name: 'Gà con', description: 'Chú gà vàng óng', price: 500, file: 'stickers/chick.svg' },
+  // ----- Bộ "Dễ thương" — hiện MIỄN PHÍ (đặt price > 0 để bán bằng xu) -----
+  { id: 'cat', kind: 'sticker', pack: 'cute', name: 'Mèo con', description: 'Chú mèo đáng yêu', price: 0, file: 'stickers/cat.svg' },
+  { id: 'dog', kind: 'sticker', pack: 'cute', name: 'Cún con', description: 'Chú cún lông xù', price: 0, file: 'stickers/dog.svg' },
+  { id: 'bear', kind: 'sticker', pack: 'cute', name: 'Gấu con', description: 'Chú gấu nâu', price: 0, file: 'stickers/bear.svg' },
+  { id: 'rabbit', kind: 'sticker', pack: 'cute', name: 'Thỏ con', description: 'Chú thỏ tai dài', price: 0, file: 'stickers/rabbit.svg' },
+  { id: 'frog', kind: 'sticker', pack: 'cute', name: 'Ếch con', description: 'Chú ếch xanh', price: 0, file: 'stickers/frog.svg' },
+  { id: 'chick', kind: 'sticker', pack: 'cute', name: 'Gà con', description: 'Chú gà vàng óng', price: 0, file: 'stickers/chick.svg' },
 ];
 
 const ITEMS_BY_ID = new Map(SHOP_ITEMS.map((item) => [item.id, item]));

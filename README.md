@@ -152,7 +152,7 @@ Chi tiết kiến trúc xem tại [ARCHITECTURE.md](./ARCHITECTURE.md).
 - Rời phòng/ngắt kết nối: máy chủ xoá ghế; nếu đang chơi thì dừng ván và báo người còn lại.
 - **Xã hội:** trang `/friends` (tìm người chơi, gửi/chấp nhận/từ chối lời mời, huỷ kết bạn), trạng thái online, **kết bạn ngay trong phòng chờ và trong trận**, **chat riêng** qua khung chat nổi (`ChatDock`) — có đếm tin chưa đọc.
 - **Chat trong phòng:** khung trò chuyện chung cho mọi người đang ở cùng phòng/bàn (phòng chờ và trong ván đấu trực tuyến).
-- **Nhãn dán & Cửa hàng:** nhãn dán dùng được ở **cả ba nơi** — chat riêng, chat phòng chờ và trong trận; có loại **miễn phí** và loại **mua bằng xu**; kèm **cửa hàng riêng** tại `/shop` (chi tiết & cách mở rộng ở [mục 8](#8-nhãn-dán--cửa-hàng-shop)).
+- **Nhãn dán & Cửa hàng:** nhãn dán dùng được ở **cả ba nơi** — chat riêng, chat phòng chờ và trong trận; **hiện tất cả nhãn dán đều miễn phí** (hệ thống vẫn hỗ trợ bán bằng xu khi đặt `price > 0`); kèm **cửa hàng riêng** tại `/shop` (chi tiết & cách mở rộng ở [mục 8](#8-nhãn-dán--cửa-hàng-shop)).
 - **Hồ sơ:** đổi tên hiển thị + **tải ảnh đại diện lên** (data URI, tối đa 256 KB).
 - **Bảng quản trị** (`/admin`, chỉ tài khoản có `role = admin`): số liệu tổng quan, tìm người dùng, **tặng/trừ xu**, **cấp/thu quyền admin**, **xoá tài khoản**. Quyền admin được bootstrap qua biến môi trường `ADMIN_USERNAMES`.
 
@@ -187,6 +187,8 @@ Hai chế độ hoạt động khác nhau (theo đúng kiến trúc chung):
 
 - `price: 0` → **miễn phí**; `price > 0` → **bán bằng xu**.
 - Đổi/tạo `pack` mới → cửa hàng tự có nhóm mới (không cần sửa component).
+
+> Hiện tại **tất cả** nhãn dán trong danh mục đều đặt `price: 0` (miễn phí). Muốn bán thì chỉ cần sửa `price` của nhãn đó thành số xu mong muốn.
 
 ### 8.3. Mở rộng sang loại vật phẩm khác (khung chat, skin bài, khung avatar)
 
