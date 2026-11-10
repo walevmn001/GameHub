@@ -9,9 +9,11 @@ import type { ShopItem, ShopItemKind } from '@/types';
  *  hay API trình duyệt.
  *
  *  ➜ Cách thêm một NHÃN DÁN mới:
- *      1. Thả tệp ảnh vào `public/stickers/<id>.svg` (đặt tên = `id`).
+ *      1. Có ảnh: đặt tệp vào `public/stickers/<id>.svg` HOẶC host ảnh ở nơi khác
+ *         (GitHub/jsDelivr, Cloudinary, S3...) và điền URL TUYỆT ĐỐI vào `file`.
  *      2. Thêm một mục vào `SHOP_ITEMS` bên dưới (đặt `price: 0` để MIỄN PHÍ).
  *    Không cần sửa gì khác — cửa hàng, bộ chọn nhãn dán và server tự nhận.
+ *    (Server chỉ xác thực theo `id` nên KHÔNG cần biết ảnh nằm ở đâu.)
  *
  *  ➜ Cách thêm LOẠI vật phẩm mới (khung chat, skin bài, khung avatar...):
  *      1. Thêm giá trị vào `ShopItemKind` trong `src/types/shop.ts`.

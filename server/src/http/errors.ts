@@ -32,11 +32,6 @@ export function conflict(message: string): ApiError {
   return new ApiError(409, message, 'conflict');
 }
 
-/** Lỗi khi dịch vụ bên thứ ba (ví dụ Stipop) trả về dữ liệu không hợp lệ / gặp sự cố. */
-export function badGateway(message = 'Dịch vụ bên ngoài tạm thời không phản hồi.'): ApiError {
-  return new ApiError(502, message, 'bad_gateway');
-}
-
 /** Middleware xử lý lỗi cuối chuỗi — luôn trả về `{ error: { code, message } }`. */
 export function errorHandler(
   error: unknown,

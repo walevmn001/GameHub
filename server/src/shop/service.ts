@@ -2,7 +2,6 @@ import { getShopItem, isFreeItem } from '@/data/shopCatalog';
 import type { PurchaseResult } from '@/types';
 import { prisma } from '../prisma';
 import { badRequest, conflict, notFound } from '../http/errors';
-import { isStipopStickerUrl } from './stipop';
 
 /**
  * Nghiệp vụ cửa hàng: quyền sở hữu vật phẩm và mua bằng xu.
@@ -24,10 +23,6 @@ export async function listPurchases(userId: string): Promise<string[]> {
 
 /** true nếu người dùng được phép dùng vật phẩm (miễn phí HOẶC đã mua). */
 export async function canUseItem(userId: string, itemId: string): Promise<boolean> {
-  // Nhãn dán Stipop: ảnh nằm trên CDN của Stipop, không có trong danh mục cửa hàng
-  // nên chỉ cần đúng định dạng URL là cho phép gửi.
-  if (isStipopStickerUrl(itemId)) return true;
-
   const item = getShopItem(itemId);
   if (!item) return false;
   if (isFreeItem(item)) return true;

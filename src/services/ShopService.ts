@@ -1,4 +1,4 @@
-import { fail, ok, type PurchaseResult, type ServiceResult, type StipopFeed, type StipopPackDetail } from '@/types';
+import { fail, ok, type PurchaseResult, type ServiceResult } from '@/types';
 import { getShopItem, isFreeItem } from '@/data/shopCatalog';
 import { STORAGE_KEYS } from '@/utils/constants';
 import { storage } from './StorageService';
@@ -53,29 +53,6 @@ class ShopService {
     const next = [...current, itemId];
     await storage.write(ownedKey(userId), next);
     return ok({ coins: spend.data.coins, owned: next });
-  }
-
-  /**
-   * Danh sách gói nhãn dán Stipop (lấy qua server — key được giữ bí mật ở server).
-   * Chế độ cục bộ hoặc server chưa cấu hình key ⇒ trả `{ enabled: false }` để UI tự ẩn.
-   */
-  async stipopPacks(options?: {
-    sort?: 'trending' | 'new';
-    limit?: number;
-  }): Promise<ServiceResult<StipopFeed>> {
-    if (!onlineEnabled) return ok({ enabled: false, packs: [] });
-
-    const params = new URLSearchParams();
-    if (options?.sort) params.set('sort', options.sort);
-    if (options?.limit) params.set('limit', String(options.limit));
-    const query = params.toString();
-    return api.request<StipopFeed>(`/shop/stipop/packs${query ? `?${query}` : ''}`);
-  }
-
-  /** Chi tiết một gói Stipop kèm danh sách URL nhãn dán. */
-  async stipopPack(packId: string): Promise<ServiceResult<StipopPackDetail>> {
-    if (!onlineEnabled) return fail('Nhãn dán Stipop chỉ khả dụng khi chơi trực tuyến.');
-    return api.request<StipopPackDetail>(`/shop/stipop/packs/${encodeURIComponent(packId)}`);
   }
 }
 

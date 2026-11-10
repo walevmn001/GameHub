@@ -21,8 +21,11 @@ export interface ShopItem {
   /** Giá bằng xu. `0` = MIỄN PHÍ (mặc định đã sở hữu, không cần mua). */
   price: number;
   /**
-   * Đường dẫn ảnh tĩnh tương đối trong thư mục `public` (ví dụ `stickers/smile.svg`).
-   * Chỉ dùng cho nhãn dán. Không có `file` thì dùng `emoji` thay thế.
+   * Ảnh của nhãn dán. Có thể là:
+   * - Đường dẫn TƯƠNG ĐỐI trong thư mục `public` (ví dụ `stickers/smile.svg`).
+   * - HOẶC URL TUYỆT ĐỐI (`https://...`) trỏ tới ảnh host bên ngoài (GitHub/jsDelivr,
+   *   Cloudinary, S3...) — dùng khi KHÔNG muốn lưu ảnh trên server web.
+   * Không có `file` thì dùng `emoji` thay thế.
    */
   file?: string;
   /** Ký tự emoji dùng khi vật phẩm không có tệp ảnh. */
@@ -38,37 +41,3 @@ export interface PurchaseResult {
 /** Loại nội dung một tin nhắn chat: văn bản thuần hoặc nhãn dán. */
 export type MessageType = 'text' | 'sticker';
 
-/* --------------------------------------------------------------------------
- * Nhãn dán Stipop (lấy từ API bên thứ ba).
- * Chỉ khả dụng khi server cấu hình `STIPOP_API_KEY`; server đóng vai trò proxy để
- * giữ key bí mật. Ảnh nằm trên CDN `img.stipop.io` nên `url` được dùng TRỰC TIẾP
- * làm `stickerId` khi gửi.
- * ------------------------------------------------------------------------ */
-
-/** Một gói nhãn dán Stipop. */
-export interface StipopPack {
-  id: string;
-  name: string;
-  /** Tên tác giả — BẮT BUỘC hiển thị (yêu cầu của Stipop để tránh vấn đề bản quyền). */
-  artist: string;
-  /** Ảnh đại diện của gói. */
-  image: string;
-  animated: boolean;
-}
-
-/** Một nhãn dán trong gói Stipop. */
-export interface StipopSticker {
-  /** URL ảnh trên CDN của Stipop — dùng trực tiếp làm `stickerId`. */
-  url: string;
-}
-
-/** Chi tiết một gói Stipop (kèm danh sách nhãn dán). */
-export interface StipopPackDetail extends StipopPack {
-  stickers: StipopSticker[];
-}
-
-/** Kết quả danh sách gói Stipop. `enabled = false` khi server chưa cấu hình API key. */
-export interface StipopFeed {
-  enabled: boolean;
-  packs: StipopPack[];
-}

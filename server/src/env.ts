@@ -13,11 +13,6 @@ export const env = {
   allowedOrigins: (process.env.ALLOWED_ORIGINS ?? '').split(',').map((origin) => origin.trim()).filter(Boolean),
   startingCoins: toNumber(process.env.STARTING_COINS, 5000),
   adminUsernames: (process.env.ADMIN_USERNAMES ?? '').split(',').map((name) => name.trim().toLowerCase()).filter(Boolean),
-  /**
-   * API key của Stipop (https://dashboard.stipop.io). Để TRỐNG thì tính năng nhãn dán
-   * Stipop tự động bị tắt (cửa hàng và bộ chọn nhãn dán ẩn phần Stipop, không báo lỗi).
-   */
-  stipopApiKey: process.env.STIPOP_API_KEY ?? '',
   isProd: process.env.NODE_ENV === 'production',
 } as const;
 
