@@ -5,31 +5,17 @@ function toNumber(value: string | undefined, fallback: number): number {
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
-/** Cấu hình đọc từ biến môi trường, có giá trị mặc định an toàn cho môi trường phát triển. */
 export const env = {
   port: toNumber(process.env.PORT, 4000),
   databaseUrl: process.env.DATABASE_URL ?? '',
   jwtSecret: process.env.JWT_SECRET ?? 'dev-insecure-secret-change-me',
   jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? '7d',
-  allowedOrigins: (process.env.ALLOWED_ORIGINS ?? '')
-    .split(',')
-    .map((origin) => origin.trim())
-    .filter(Boolean),
+  allowedOrigins: (process.env.ALLOWED_ORIGINS ?? '').split(',').map((origin) => origin.trim()).filter(Boolean),
   startingCoins: toNumber(process.env.STARTING_COINS, 5000),
-  /**
-   * Danh sách username được tự động cấp quyền admin (phân tách bằng dấu phẩy).
-   * Dùng để "bootstrap" quản trị viên đầu tiên mà không cần thao tác CSDL thủ công.
-   */
-  adminUsernames: (process.env.ADMIN_USERNAMES ?? '')
-    .split(',')
-    .map((name) => name.trim().toLowerCase())
-    .filter(Boolean),
+  adminUsernames: (process.env.ADMIN_USERNAMES ?? '').split(',').map((name) => name.trim().toLowerCase()).filter(Boolean),
+  stickerApiKey: process.env.STICKER_API_KEY ?? '',
   isProd: process.env.NODE_ENV === 'production',
 } as const;
 
-if (!env.databaseUrl) {
-  console.warn('[env] Thiếu DATABASE_URL — server sẽ không truy cập được cơ sở dữ liệu.');
-}
-if (env.isProd && env.jwtSecret.startsWith('dev-insecure')) {
-  console.warn('[env] JWT_SECRET chưa được đổi khi chạy production!');
-}
+if (!env.databaseUrl) console.warn('[env] Thiếu DATABASE_URL — server sẽ không truy cập được cơ sở dữ liệu.');
+if (env.isProd && env.jwtSecret.startsWith('dev-insecure')) console.warn('[env] JWT_SECRET chưa được đổi khi chạy production!');
