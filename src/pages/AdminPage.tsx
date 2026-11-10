@@ -21,7 +21,6 @@ import {
   Input,
   Modal,
   SectionHeader,
-  SegmentedControl,
   StatTile,
   Surface,
 } from '@/components/ui';
@@ -44,7 +43,7 @@ export function AdminPage() {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'rooms' | 'users'>('rooms');
+  const [activeTab, setActiveTab] = useState<'rooms' | 'users' | null>(null);
   const [query, setQuery] = useState('');
   const [debounced, setDebounced] = useState('');
   const [roomQuery, setRoomQuery] = useState('');
@@ -221,26 +220,49 @@ export function AdminPage() {
         </div>
       )}
 
-      <SegmentedControl
-        value={activeTab}
-        onChange={setActiveTab}
-        className="w-full sm:w-fit"
-        options={[
-          {
-            value: 'rooms',
-            label: `Phòng (${rooms.length})`,
-            icon: <DoorOpen className="h-4 w-4" />,
-          },
-          {
-            value: 'users',
-            label: `Người dùng (${users.length})`,
-            icon: <Users className="h-4 w-4" />,
-          },
-        ]}
-      />
+      <div
+        role="tablist"
+        aria-label="Danh sách quản trị"
+        className="inline-flex w-full gap-1 rounded-xl border border-white/10 bg-base-900/70 p-1 sm:w-fit"
+      >
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeTab === 'rooms'}
+          aria-controls="admin-rooms-panel"
+          onClick={() => setActiveTab((current) => (current === 'rooms' ? null : 'rooms'))}
+          className={`inline-flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors sm:flex-none ${
+            activeTab === 'rooms'
+              ? 'bg-neon-purple/20 text-neon-purple ring-1 ring-neon-purple/40'
+              : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'
+          }`}
+        >
+          <DoorOpen className="h-4 w-4" />
+          Phòng ({rooms.length})
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeTab === 'users'}
+          aria-controls="admin-users-panel"
+          onClick={() => setActiveTab((current) => (current === 'users' ? null : 'users'))}
+          className={`inline-flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors sm:flex-none ${
+            activeTab === 'users'
+              ? 'bg-neon-purple/20 text-neon-purple ring-1 ring-neon-purple/40'
+              : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'
+          }`}
+        >
+          <Users className="h-4 w-4" />
+          Người dùng ({users.length})
+        </button>
+      </div>
+
+      {activeTab === null && (
+        <p className="text-xs text-slate-500">Chọn Phòng hoặc Người dùng để mở danh sách.</p>
+      )}
 
       {activeTab === 'rooms' && (
-        <section role="tabpanel">
+        <section id="admin-rooms-panel" role="tabpanel">
           <SectionHeader
             title="Quản lý phòng"
             subtitle="Tìm theo tên hoặc ID. Xoá phòng sẽ đưa tất cả người chơi ra ngoài."
@@ -289,7 +311,7 @@ export function AdminPage() {
       )}
 
       {activeTab === 'users' && (
-        <section role="tabpanel">
+        <section id="admin-users-panel" role="tabpanel">
           <Input
             placeholder="Tìm theo tên đăng nhập hoặc tên hiển thị…"
             icon={<Search className="h-4 w-4" />}
