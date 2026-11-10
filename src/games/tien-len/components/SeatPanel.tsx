@@ -62,7 +62,6 @@ export function SeatPanel({
             size={horizontal ? 'md' : 'sm'}
             ring={isTurn}
           />
-          {bubble && <ChatBubble type={bubble.type} text={bubble.text} stickerId={bubble.stickerId} />}
         </PlayerProfileButton>
         {finished && (
           <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-[9px] font-bold text-white">
@@ -70,6 +69,16 @@ export function SeatPanel({
           </span>
         )}
       </div>
+
+      {bubble && (
+        <ChatBubble
+          type={bubble.type}
+          text={bubble.text}
+          stickerId={bubble.stickerId}
+          floating={false}
+          className={cn(horizontal && 'max-w-[8rem]')}
+        />
+      )}
 
       <div className={cn('min-w-0', !horizontal && 'text-center')}>
         <p className="flex items-center justify-center gap-1 truncate text-xs font-semibold text-slate-200">
