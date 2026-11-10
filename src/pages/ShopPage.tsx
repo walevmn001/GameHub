@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useShop } from '@/contexts/ShopContext';
 import { Button, SectionHeader, Surface } from '@/components/ui';
 import { StickerImage } from '@/components/chat/StickerImage';
+import { StipopStickers } from '@/components/chat/StipopStickers';
 import { formatCoins } from '@/utils/format';
 import { cn } from '@/utils/cn';
 
@@ -124,6 +125,12 @@ export function ShopPage() {
           );
         })}
       </div>
+
+      {/* Nhãn dán Stipop — chỉ là khu vực XEM (gửi nhãn dán làm trong khung chat).
+          Tự ẩn hoàn toàn khi server chưa cấu hình STIPOP_API_KEY. */}
+      {activeKind === 'sticker' && (
+        <StipopStickers className="mt-6 rounded-2xl border border-white/5" />
+      )}
     </div>
   );
 }

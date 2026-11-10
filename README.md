@@ -152,24 +152,29 @@ Chi tiết kiến trúc xem tại [ARCHITECTURE.md](./ARCHITECTURE.md).
 - Rời phòng/ngắt kết nối: máy chủ xoá ghế; nếu đang chơi thì dừng ván và báo người còn lại.
 - **Xã hội:** trang `/friends` (tìm người chơi, gửi/chấp nhận/từ chối lời mời, huỷ kết bạn), trạng thái online, **kết bạn ngay trong phòng chờ và trong trận**, **chat riêng** qua khung chat nổi (`ChatDock`) — có đếm tin chưa đọc.
 - **Chat trong phòng:** khung trò chuyện chung cho mọi người đang ở cùng phòng/bàn (phòng chờ và trong ván đấu trực tuyến).
-- **Nhãn dán & Cửa hàng:** nhãn dán dùng được ở **cả ba nơi** — chat riêng, chat phòng chờ và trong trận; **hiện tất cả nhãn dán đều miễn phí** (hệ thống vẫn hỗ trợ bán bằng xu khi đặt `price > 0`); kèm **cửa hàng riêng** tại `/shop` (chi tiết & cách mở rộng ở [mục 8](#8-nhãn-dán--cửa-hàng-shop)).
+- **Nhãn dán & Cửa hàng:** nhãn dán dùng được ở **cả ba nơi** — chat riêng, chat phòng chờ và trong trận; **hiện tất cả nhãn dán đều miễn phí** (hệ thống vẫn hỗ trợ bán bằng xu khi đặt `price > 0`); kèm **cửa hàng riêng** tại `/shop`; hỗ trợ **thêm nhãn dán từ Stipop API** (bật bằng `STIPOP_API_KEY`, chi tiết ở [mục 8](#8-nhãn-dán--cửa-hàng-shop)).
 - **Hồ sơ:** đổi tên hiển thị + **tải ảnh đại diện lên** (data URI, tối đa 256 KB).
 - **Bảng quản trị** (`/admin`, chỉ tài khoản có `role = admin`): số liệu tổng quan, tìm người dùng, **tặng/trừ xu**, **cấp/thu quyền admin**, **xoá tài khoản**. Quyền admin được bootstrap qua biến môi trường `ADMIN_USERNAMES`.
 
 ## 8. Nhãn dán & Cửa hàng (Shop)
 
-Hệ thống nhãn dán dùng **file ảnh tĩnh** trong `public/stickers/` (SVG/PNG/GIF) — không tốn RAM tiến trình Node, CSDL chỉ lưu **quyền sở hữu** chứ không lưu ảnh. Nhãn dán dùng chung cho **cả ba loại chat**: chat riêng (`ChatDock`), chat phòng chờ và chat trong trận (`RoomChat`).
+Hệ thống nhãn dán có **hai nguồn**:
+1. **File ảnh tĩnh** trong `public/stickers/` (SVG/PNG/GIF) — không tốn RAM tiến trình Node, CSDL chỉ lưu **quyền sở hữu** chứ không lưu ảnh. Đây là danh mục do dự án tự quản lý.
+2. **Nhãn dán Stipop** (API bên thứ ba) — server làm **proxy** giữ API key, client chỉ nhận metadata + URL ảnh trên CDN Stipop (xem [8.5](#85-nhãn-dán-stipop-api)).
+
+Nhãn dán dùng chung cho **cả ba loại chat**: chat riêng (`ChatDock`), chat phòng chờ và chat trong trận (`RoomChat`).
 
 ### 8.1. Thành phần chính
 
 | Tầng | Tệp | Vai trò |
 | --- | --- | --- |
 | **Danh mục (nguồn duy nhất)** | `src/data/shopCatalog.ts` | Khai báo gói, loại, vật phẩm, giá và file ảnh. **Dùng chung client + server** nên giá/quyền không bao giờ lệch. |
-| Kiểu dữ liệu | `src/types/shop.ts` | `ShopItem`, `ShopItemKind`, `MessageType`. |
-| Hiển thị/chọn | `src/components/chat/StickerPicker.tsx`, `StickerImage.tsx` | Bảng chọn nhãn dán (nhãn chưa mua hiện ổ khoá → dẫn tới `/shop`) và cách render ảnh. |
-| Trạng thái/nghiệp vụ | `src/contexts/ShopContext.tsx`, `src/services/ShopService.ts` | Quyền sở hữu, mua vật phẩm, đồng bộ số xu. |
-| Trang cửa hàng | `src/pages/ShopPage.tsx` (route `/shop`) | Tab theo loại vật phẩm, nút mua. |
-| Backend | `server/src/shop/{service,routes}.ts`, model `Purchase` | Mua + trừ xu trong **một giao dịch**; socket/social **xác thực quyền sở hữu** trước khi cho gửi nhãn dán. |
+| Kiểu dữ liệu | `src/types/shop.ts` | `ShopItem`, `ShopItemKind`, `MessageType`, `StipopPack`, `StipopPackDetail`, `StipopFeed`. |
+| Hiển thị/chọn | `src/components/chat/StickerPicker.tsx`, `StickerImage.tsx` | Bảng chọn nhãn dán (nhãn chưa mua hiện ổ khoá → dẫn tới `/shop`) và cách render ảnh (hỗ trợ cả `id` danh mục lẫn **URL ảnh Stipop**). |
+| Nhãn dán Stipop | `src/components/chat/StipopStickers.tsx` | Duyệt gói/nhãn Stipop; có `onPick` ⇒ gửi (dùng trong bộ chọn), không có ⇒ chỉ xem (dùng ở cửa hàng). **Tự ẩn** khi chưa cấu hình key. |
+| Trạng thái/nghiệp vụ | `src/contexts/ShopContext.tsx`, `src/services/ShopService.ts` | Quyền sở hữu, mua vật phẩm, đồng bộ số xu, gọi API Stipop (`stipopPacks`/`stipopPack`). |
+| Trang cửa hàng | `src/pages/ShopPage.tsx` (route `/shop`) | Tab theo loại vật phẩm, nút mua, khu vực xem nhãn Stipop. |
+| Backend | `server/src/shop/{service,routes,stipop}.ts`, model `Purchase` | Mua + trừ xu trong **một giao dịch**; socket/social **xác thực quyền sở hữu** trước khi cho gửi nhãn dán; `stipop.ts` làm **proxy** giữ API key. |
 
 Hai chế độ hoạt động khác nhau (theo đúng kiến trúc chung):
 - **Local/Demo:** quyền sở hữu lưu ở `LocalStorage` (key `shop-owned:<userId>`), mua thì trừ xu cục bộ qua `AuthService.spendCoins`.
@@ -208,6 +213,35 @@ npm --prefix server run prisma:push       # đồng bộ schema vào CSDL
 ```
 
 > Khi deploy trên Render, Web Service đã tự chạy `prisma:push` lúc khởi động nên không cần làm tay.
+
+### 8.5. Nhãn dán Stipop (API)
+
+Ngoài danh mục tĩnh, ứng dụng có thể lấy thêm nhãn dán từ **[Stipop](https://docs.stipop.io)**. Server đóng vai trò **proxy** để **API key không bao giờ lộ ra client**; ảnh nhãn dán nằm trên CDN `img.stipop.io` nên client tải trực tiếp.
+
+**Bật tính năng** — chỉ cần đặt biến môi trường cho server:
+
+```
+STIPOP_API_KEY=<key lấy tại https://dashboard.stipop.io>
+```
+
+- **Để trống** ⇒ tính năng **tự tắt**: `GET /api/shop/stipop/packs` trả `{ enabled: false }`, và mọi nơi (cửa hàng, bộ chọn nhãn dán) **tự ẩn** phần Stipop, không báo lỗi.
+- Trên Render: thêm biến này trong **Environment** của Web Service rồi deploy lại.
+
+**Luồng dữ liệu:**
+
+| Bước | Endpoint/Thành phần | Việc |
+| --- | --- | --- |
+| 1 | `GET /api/shop/stipop/packs?sort=trending&limit=24` | Server gọi Stipop `GET /package` (hoặc `/package/new`), trả `{ enabled, packs[] }`. |
+| 2 | `GET /api/shop/stipop/packs/:packId` | Server gọi `GET /package/:id`, trả chi tiết gói + mảng `stickers[].url` (đã thêm `?d=300x300` để tối ưu ảnh). |
+| 3 | `StipopStickers.tsx` | Hiển thị gói + grid nhãn. Chọn nhãn ⇒ `onPick(url)` gửi đi. |
+
+**Gửi nhãn Stipop:** `stickerId` của tin nhắn chấp nhận **id danh mục** HOẶC **URL ảnh Stipop** (`https://...stipop.io/...`). Server cho phép URL Stipop hợp lệ mà không cần kiểm tra trong danh mục cửa hàng (`isStipopStickerUrl` trong `server/src/shop/stipop.ts`), nên gói/nhãn mới từ API dùng được ngay.
+
+**Lưu ý bản quyền:** theo điều khoản Stipop, giao diện hiển thị nhãn dán **phải ghi rõ tên tác giả** — `StipopStickers` đã hiển thị `Tác giả: <artistName>`.
+
+**Chỉnh sửa nhanh** (nếu cần):
+- Đổi kích thước ảnh, timeout, base URL ⇒ sửa hằng số ở đầu `server/src/shop/stipop.ts`.
+- Đổi số gói/sắp xếp ⇒ sửa tham số trong `StipopStickers.tsx` (`sort`, `limit`).
 
 ## 9. Triển khai lên GitHub & Render
 

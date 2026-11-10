@@ -19,10 +19,11 @@ const sendRequestBody = z.object({
 });
 
 // Tin nhắn là VĂN BẢN hoặc NHÃN DÁN; phải có ít nhất một trong hai phần nội dung.
+// `stickerId` có thể là id trong danh mục cửa hàng HOẶC URL ảnh Stipop (dài hơn 64 ký tự).
 const messageBody = z
   .object({
     text: z.string().max(500).optional(),
-    stickerId: z.string().max(64).optional(),
+    stickerId: z.string().max(512).optional(),
   })
   .refine((value) => Boolean(value.stickerId?.trim()) || Boolean(value.text?.trim()), {
     message: 'Nội dung tin nhắn trống.',

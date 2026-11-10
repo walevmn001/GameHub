@@ -4,11 +4,13 @@ import { stickerPacks } from '@/data/shopCatalog';
 import { useShop } from '@/contexts/ShopContext';
 import { cn } from '@/utils/cn';
 import { StickerImage } from './StickerImage';
+import { StipopStickers } from './StipopStickers';
 
 /**
  * Bộ chọn nhãn dán — dùng chung cho MỌI khung trò chuyện (chat riêng, phòng chờ, trong trận).
  * - Nhãn dán đã sở hữu: bấm để gửi (`onPick`).
  * - Nhãn dán chưa mở khoá: hiện ổ khoá, bấm để mở trang Cửa hàng.
+ * - Thêm phần NHÃN DÁN STIPOP (nguồn API ngoài) ở cuối, tự ẩn nếu server chưa cấu hình.
  *
  * Danh sách lấy trực tiếp từ `src/data/shopCatalog.ts` nên thêm nhãn dán mới
  * không cần sửa component này.
@@ -62,6 +64,9 @@ export function StickerPicker({
           </div>
         </div>
       ))}
+
+      {/* Nhãn dán Stipop (API ngoài) — tự ẩn khi server chưa cấu hình STIPOP_API_KEY. */}
+      <StipopStickers onPick={onPick} />
     </div>
   );
 }
