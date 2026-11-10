@@ -304,11 +304,44 @@ class RoomService {
     const room = rooms[index];
     room.players = room.players.filter((p) => p.id !== playerId);
     if (room.players.length === 0) {
-      room.status = 'closed';
-    } else if (!room.players.some((p) => p.isHost)) {
+      await this.writeRooms(rooms.filter((item) => item.id !== id));
+      return ok(null);
+    }
+    if (!room.players.some((p) => p.isHost)) {
       room.players[0].isHost = true;
       room.hostName = room.players[0].name;
     }
+    room.updatedAt = Date.now();
+    rooms[index] = room;
+    await this.writeRooms(rooms);
+    return ok(room);
+  }
+
+  async transferHost(
+    id: string,
+    currentHostId: string,
+    nextHostId: string,
+  ): Promise<ServiceResult<Room>> {
+    if (this.online) {
+      const result = await api.request<Room>(`/rooms/${encodeURIComponent(id)}/host`, {
+        method: 'PATCH',
+        body: { newHostId: nextHostId },
+      });
+      return result.ok ? ok(result.data) : fail(result.error);
+    }
+
+    const rooms = await this.readRooms();
+    const index = rooms.findIndex((room) => room.id === id);
+    if (index === -1) return fail('Không tìm thấy phòng.');
+    const room = rooms[index];
+    if (!room.players.some((player) => player.id === currentHostId && player.isHost)) {
+      return fail('Chỉ chủ phòng mới có thể chuyển quyền.');
+    }
+    const nextHost = room.players.find((player) => player.id === nextHostId && !player.isBot);
+    if (!nextHost) return fail('Hãy chọn người chơi thật đang ở trong phòng.');
+
+    room.players = room.players.map((player) => ({ ...player, isHost: player.id === nextHostId }));
+    room.hostName = nextHost.name;
     room.updatedAt = Date.now();
     rooms[index] = room;
     await this.writeRooms(rooms);
