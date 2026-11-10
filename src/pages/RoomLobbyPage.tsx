@@ -38,6 +38,8 @@ import {
 import { NoticeBanner } from '@/components/common/NoticeBanner';
 import { FriendButton } from '@/components/social/FriendButton';
 import { RoomChat } from '@/components/game/RoomChat';
+import { ChatBubble } from '@/components/game/ChatBubble';
+import { useRoomChat } from '@/contexts/RoomChatContext';
 import { cn } from '@/utils/cn';
 
 const STATUS_LABEL: Record<Room['status'], string> = {
@@ -63,6 +65,7 @@ export function RoomLobbyPage() {
   const toast = useToast();
   const { user } = useAuth();
   const { getRoom, joinRoom, leaveRoom, addBot, removeBot, deleteRoom, setStatus, startMatch, rooms } = useRooms();
+  const { bubbleFor } = useRoomChat();
 
   const [room, setRoom] = useState<Room | null>(null);
   const [loading, setLoading] = useState(true);
@@ -342,7 +345,9 @@ export function RoomLobbyPage() {
           </span>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {room.players.map((player) => (
+          {room.players.map((player) => {
+            const bubble = onlineEnabled ? bubbleFor(player.id) : null;
+            return (
             <div
               key={player.id}
               className={cn(
@@ -361,7 +366,10 @@ export function RoomLobbyPage() {
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
               )}
-              <Avatar src={player.avatar} name={player.name} size="md" ring={player.isHost} />
+              <div className="relative">
+                <Avatar src={player.avatar} name={player.name} size="md" ring={player.isHost} />
+                {bubble && <ChatBubble text={bubble.text} />}
+              </div>
               <p className="flex w-full items-center justify-center gap-1 truncate text-xs font-semibold text-slate-200">
                 {player.isHost && <Crown className="h-3 w-3 shrink-0 text-amber-400" />}
                 <span className="truncate">{player.name}</span>
@@ -387,7 +395,8 @@ export function RoomLobbyPage() {
                 />
               )}
             </div>
-          ))}
+            );
+          })}
 
           {Array.from({ length: emptySeats }).map((_, index) => (
             <div

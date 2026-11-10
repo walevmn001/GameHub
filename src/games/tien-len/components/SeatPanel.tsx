@@ -2,6 +2,8 @@ import { Bot, CheckCircle2, Coins, Crown } from 'lucide-react';
 import type { TienLenPlayer } from '@/game-engine/tienlen';
 import { Avatar } from '@/components/ui';
 import { FriendButton } from '@/components/social/FriendButton';
+import { ChatBubble } from '@/components/game/ChatBubble';
+import { useRoomChat } from '@/contexts/RoomChatContext';
 import { cn } from '@/utils/cn';
 
 export type SeatPosition = 'top' | 'left' | 'right';
@@ -32,6 +34,9 @@ export function SeatPanel({
   const horizontal = position === 'top';
   const showSocial = online && !player.isBot;
 
+  const { bubbleFor } = useRoomChat();
+  const bubble = showSocial ? bubbleFor(player.id) : null;
+
   return (
     <div
       className={cn(
@@ -56,6 +61,7 @@ export function SeatPanel({
             {(player.placement ?? 0) === 1 ? <Crown className="h-3 w-3" /> : player.placement}
           </span>
         )}
+        {bubble && <ChatBubble text={bubble.text} />}
       </div>
 
       <div className={cn('min-w-0', !horizontal && 'text-center')}>
