@@ -83,6 +83,12 @@ export function PlayerProfileButton({
             <p className="mt-1 break-all font-mono text-[11px] text-slate-500">
               ID: {contact.id}
             </p>
+            {!disableSocial && (
+              <FriendButton
+                contact={contact}
+                className="mt-2 h-8 rounded-lg px-3 text-[11px] shadow-md shadow-purple-500/20 hover:shadow-purple-500/30"
+              />
+            )}
           </div>
 
           {loading && <p className="text-xs text-slate-400">Đang tải hồ sơ…</p>}
@@ -117,8 +123,6 @@ export function PlayerProfileButton({
               </div>
             </div>
           )}
-
-          {!disableSocial && <FriendButton contact={contact} />}
         </div>
       </Modal>
     </>
