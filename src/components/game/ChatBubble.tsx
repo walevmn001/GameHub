@@ -36,15 +36,15 @@ export function ChatBubble({
   if (type === 'sticker' && stickerId) {
     return (
       <div className={wrapper}>
-        <StickerImage stickerId={stickerId} size={40} className="drop-shadow-lg" />
+        <StickerImage stickerId={stickerId} size={80} className="drop-shadow-lg" />
       </div>
     );
   }
 
   return (
     <div className={wrapper}>
-      <div className="relative max-w-[9rem] rounded-xl bg-slate-100 px-2.5 py-1 shadow-soft">
-        <p className="line-clamp-2 break-words text-center text-[11px] font-medium leading-snug text-slate-900">
+      <div className="relative max-w-[11rem] rounded-xl bg-slate-100 px-3 py-1.5 shadow-soft">
+        <p className="line-clamp-2 break-words text-center text-[13px] font-medium leading-snug text-slate-900">
           {text}
         </p>
       </div>
