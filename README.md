@@ -111,24 +111,26 @@ npm --prefix server start       # chạy bản đã build
 
 ```
 src/                       # Giao diện React
-├── components/            # UI dùng chung (ui/, game/, layout/, common/, social/)
-├── pages/                 # Trang theo route (kể cả FriendsPage, AdminPage)
+├── components/            # UI dùng chung (ui/, game/, layout/, common/, social/, chat/)
+├── pages/                 # Trang theo route (kể cả FriendsPage, AdminPage, ShopPage)
 ├── layouts/               # MainLayout, GameLayout
 ├── games/                 # Game Registry + bàn chơi từng game (tien-len/)
 ├── game-engine/           # Logic game thuần (tienlen/)
-├── services/              # ApiService, SocketService, RoomService, AuthService, SocialService, AdminService, ...
-├── contexts/              # Toast, Auth, Rooms, Social
-├── types/                 # Kiểu dữ liệu dùng chung (kể cả social, admin, hợp đồng realtime)
+├── data/                  # Danh mục dùng chung client + server (gameRegistry, shopCatalog)
+├── services/              # ApiService, SocketService, RoomService, AuthService, SocialService, ShopService, AdminService, ...
+├── contexts/              # Toast, Auth, Rooms, Social, Shop
+├── types/                 # Kiểu dữ liệu dùng chung (social, admin, shop, hợp đồng realtime)
 └── utils/                 # constants, format, id, crypto, avatar, images, cn
 
 server/                    # Backend Express + Socket.IO + Prisma
-├── prisma/schema.prisma   # Mô hình dữ liệu (User, Room, RoomMember, MatchHistory, FriendRequest, Friendship, DirectMessage, ...)
+├── prisma/schema.prisma   # Mô hình dữ liệu (User, Room, RoomMember, MatchHistory, FriendRequest, Friendship, DirectMessage, Purchase, ...)
 └── src/
     ├── auth/              # JWT + middleware (requireAuth, requireAdmin)
     ├── rooms/             # REST phòng chơi + service
     ├── matches/           # Quản lý ván online (engine, view, ghi lịch sử)
     ├── realtime/          # Socket.IO (socket.ts, broadcast.ts, io.ts, presence.ts)
     ├── social/            # REST bạn bè + tin nhắn riêng
+    ├── shop/              # REST cửa hàng: mua vật phẩm + xác thực quyền sở hữu
     ├── admin/             # REST quản trị (số liệu, tặng xu, phân quyền, xoá tài khoản)
     ├── games/ users/      # Route danh mục game, hồ sơ người dùng
     └── app.ts index.ts    # Khởi tạo Express + server
@@ -150,10 +152,62 @@ Chi tiết kiến trúc xem tại [ARCHITECTURE.md](./ARCHITECTURE.md).
 - Rời phòng/ngắt kết nối: máy chủ xoá ghế; nếu đang chơi thì dừng ván và báo người còn lại.
 - **Xã hội:** trang `/friends` (tìm người chơi, gửi/chấp nhận/từ chối lời mời, huỷ kết bạn), trạng thái online, **kết bạn ngay trong phòng chờ và trong trận**, **chat riêng** qua khung chat nổi (`ChatDock`) — có đếm tin chưa đọc.
 - **Chat trong phòng:** khung trò chuyện chung cho mọi người đang ở cùng phòng/bàn (phòng chờ và trong ván đấu trực tuyến).
+- **Nhãn dán & Cửa hàng:** nhãn dán dùng được ở **cả ba nơi** — chat riêng, chat phòng chờ và trong trận; có loại **miễn phí** và loại **mua bằng xu**; kèm **cửa hàng riêng** tại `/shop` (chi tiết & cách mở rộng ở [mục 8](#8-nhãn-dán--cửa-hàng-shop)).
 - **Hồ sơ:** đổi tên hiển thị + **tải ảnh đại diện lên** (data URI, tối đa 256 KB).
 - **Bảng quản trị** (`/admin`, chỉ tài khoản có `role = admin`): số liệu tổng quan, tìm người dùng, **tặng/trừ xu**, **cấp/thu quyền admin**, **xoá tài khoản**. Quyền admin được bootstrap qua biến môi trường `ADMIN_USERNAMES`.
 
-## 8. Triển khai lên GitHub & Render
+## 8. Nhãn dán & Cửa hàng (Shop)
+
+Hệ thống nhãn dán dùng **file ảnh tĩnh** trong `public/stickers/` (SVG/PNG/GIF) — không tốn RAM tiến trình Node, CSDL chỉ lưu **quyền sở hữu** chứ không lưu ảnh. Nhãn dán dùng chung cho **cả ba loại chat**: chat riêng (`ChatDock`), chat phòng chờ và chat trong trận (`RoomChat`).
+
+### 8.1. Thành phần chính
+
+| Tầng | Tệp | Vai trò |
+| --- | --- | --- |
+| **Danh mục (nguồn duy nhất)** | `src/data/shopCatalog.ts` | Khai báo gói, loại, vật phẩm, giá và file ảnh. **Dùng chung client + server** nên giá/quyền không bao giờ lệch. |
+| Kiểu dữ liệu | `src/types/shop.ts` | `ShopItem`, `ShopItemKind`, `MessageType`. |
+| Hiển thị/chọn | `src/components/chat/StickerPicker.tsx`, `StickerImage.tsx` | Bảng chọn nhãn dán (nhãn chưa mua hiện ổ khoá → dẫn tới `/shop`) và cách render ảnh. |
+| Trạng thái/nghiệp vụ | `src/contexts/ShopContext.tsx`, `src/services/ShopService.ts` | Quyền sở hữu, mua vật phẩm, đồng bộ số xu. |
+| Trang cửa hàng | `src/pages/ShopPage.tsx` (route `/shop`) | Tab theo loại vật phẩm, nút mua. |
+| Backend | `server/src/shop/{service,routes}.ts`, model `Purchase` | Mua + trừ xu trong **một giao dịch**; socket/social **xác thực quyền sở hữu** trước khi cho gửi nhãn dán. |
+
+Hai chế độ hoạt động khác nhau (theo đúng kiến trúc chung):
+- **Local/Demo:** quyền sở hữu lưu ở `LocalStorage` (key `shop-owned:<userId>`), mua thì trừ xu cục bộ qua `AuthService.spendCoins`.
+- **Trực tuyến:** mua qua `POST /api/shop/purchases`, server là nguồn chân lý; vật phẩm **miễn phí không lưu** vào danh sách sở hữu.
+
+### 8.2. Thêm một nhãn dán mới
+
+1. Thả file vào `public/stickers/` — tên file nên trùng `id` (ví dụ `star.svg`). Nếu là SVG thủ công, **nhúng id gradient riêng** để tránh trùng id khi nhiều ảnh cùng trang.
+2. Thêm một mục vào `SHOP_ITEMS` trong `src/data/shopCatalog.ts`:
+
+```ts
+{ id: 'star', kind: 'sticker', pack: 'cute', name: 'Ngôi sao',
+  description: 'Toả sáng rực rỡ', price: 500, file: 'stickers/star.svg' }
+```
+
+- `price: 0` → **miễn phí**; `price > 0` → **bán bằng xu**.
+- Đổi/tạo `pack` mới → cửa hàng tự có nhóm mới (không cần sửa component).
+
+### 8.3. Mở rộng sang loại vật phẩm khác (khung chat, skin bài, khung avatar)
+
+1. Thêm giá trị mới vào `ShopItemKind` (`src/types/shop.ts`).
+2. Thêm nhãn hiển thị tiếng Việt vào `SHOP_KINDS` (`src/data/shopCatalog.ts`).
+3. Thêm vật phẩm cùng `kind` đó vào `SHOP_ITEMS`.
+
+**Cửa hàng tự tạo tab theo loại và tự ẩn loại chưa có vật phẩm — không phải sửa `ShopPage`.**
+
+### 8.4. Lưu ý khi đổi CSDL
+
+Schema thêm model `Purchase` và 2 cột `type`/`stickerId` cho `DirectMessage`. Sau khi sửa schema, chạy:
+
+```bash
+npm --prefix server run prisma:generate   # sinh Prisma Client
+npm --prefix server run prisma:push       # đồng bộ schema vào CSDL
+```
+
+> Khi deploy trên Render, Web Service đã tự chạy `prisma:push` lúc khởi động nên không cần làm tay.
+
+## 9. Triển khai lên GitHub & Render
 
 Repo hiện tại: `walevmn001/GameHub`, nhánh `main`. **Render tự deploy lại mỗi khi push `main`.**
 
@@ -176,7 +230,7 @@ Dự án kèm [render.yaml](./render.yaml) để deploy bằng **Blueprint**, g�
 > Khác biệt Web Service vs Blueprint: **Blueprint** tạo cả cụm (DB + backend + frontend) từ `render.yaml` trong một lần;
 > **Web Service** chỉ tạo thủ công **một** service. Với dự án này nên dùng Blueprint.
 
-## 9. Tình hình hiện tại & nhật ký gần đây
+## 10. Tình hình hiện tại & nhật ký gần đây
 
 - **Phiên bản:** 0.1.0. Backend đã hoạt động; chơi online realtime đã chạy được.
 - **Kiểm tra chất lượng:** `npm run typecheck` ✅ · `npm run build` ✅ · `npm --prefix server run typecheck` ✅.
@@ -185,6 +239,7 @@ Dự án kèm [render.yaml](./render.yaml) để deploy bằng **Blueprint**, g�
 
 | Commit | Nội dung |
 | --- | --- |
+| `b277859` | **feat:** nhãn dán + cửa hàng — nhãn dán dùng ở **cả 3 loại chat** (riêng / phòng chờ / trong trận), có loại miễn phí và loại **mua bằng xu**, kèm **cửa hàng `/shop`**. Thêm file tĩnh `public/stickers/*.svg`, danh mục chung `data/shopCatalog.ts`, `types/shop.ts`, `components/chat/*`, `ShopContext`, `ShopService`, `ShopPage`; thêm model `Purchase` + cột `type`/`stickerId` cho `DirectMessage`, xác thực quyền gửi nhãn dán ở socket/social. (Xem [mục 8](#8-nhãn-dán--cửa-hàng-shop).) |
 | `ec466c8` | **fix:** lá bài đang chọn không còn che các lá sau; rời phòng (kể cả điều hướng/thoát bàn) xoá đúng người chơi khỏi phòng. Sửa: `PlayerHand.tsx` (z-index theo thứ tự DOM), `SocketService.ts`/`RoomsContext.tsx` (tự rời khi rời trang), `TienLenBoard.tsx` (thoát bàn → lobby khi đối thủ rời ván), `server/src/realtime/socket.ts` (đưa phòng về `waiting`, phát `server:error`). |
 | `98b6fe9` | chore(render): tên service duy nhất (`-walevmn`) + chạy `prisma db push` lúc runtime. |
 
@@ -194,7 +249,7 @@ Dự án kèm [render.yaml](./render.yaml) để deploy bằng **Blueprint**, g�
 - Các game khác: Phỏm, Xì Dách, Mậu Binh, Cờ Caro, Xếp Hình 2048.
 - Đóng gói Android/iOS bằng Capacitor (xem [FUTURE_MOBILE_PLAN.md](./FUTURE_MOBILE_PLAN.md)).
 
-## 10. Tài liệu dự án
+## 11. Tài liệu dự án
 
 | Tài liệu | Nội dung |
 | --- | --- |
@@ -204,6 +259,6 @@ Dự án kèm [render.yaml](./render.yaml) để deploy bằng **Blueprint**, g�
 | [GAME_REGISTRY.md](./GAME_REGISTRY.md) | Hướng dẫn thêm trò chơi mới |
 | [FUTURE_MOBILE_PLAN.md](./FUTURE_MOBILE_PLAN.md) | Kế hoạch đóng gói thành app Android/iOS |
 
-## 11. Giấy phép
+## 12. Giấy phép
 
 Dự án cá nhân phục vụ mục đích học tập và thử nghiệm.
