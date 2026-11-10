@@ -1,7 +1,7 @@
 import { Bot, CheckCircle2, Coins, Crown } from 'lucide-react';
 import type { TienLenPlayer } from '@/game-engine/tienlen';
 import { Avatar } from '@/components/ui';
-import { FriendButton } from '@/components/social/FriendButton';
+import { PlayerProfileButton } from '@/components/social/PlayerProfileButton';
 import { ChatBubble } from '@/components/game/ChatBubble';
 import { useRoomChat } from '@/contexts/RoomChatContext';
 import { cn } from '@/utils/cn';
@@ -36,6 +36,7 @@ export function SeatPanel({
 
   const { bubbleFor } = useRoomChat();
   const bubble = showSocial ? bubbleFor(player.id) : null;
+  const profileRole = player.isBot ? 'Người máy' : finished ? placeLabel ?? 'Đã hoàn thành' : 'Người chơi';
 
   return (
     <div
@@ -50,12 +51,18 @@ export function SeatPanel({
         {isTurn && (
           <span className="absolute inset-0 animate-pulse-ring rounded-full border-2 border-neon-cyan" />
         )}
-        <Avatar
-          src={player.avatar}
-          name={player.name}
-          size={horizontal ? 'md' : 'sm'}
-          ring={isTurn}
-        />
+        <PlayerProfileButton
+          contact={{ id: player.id, displayName: player.name, avatar: player.avatar }}
+          summary={`${profileRole} · ${player.hand.length} lá còn lại`}
+          disableSocial={player.isBot}
+        >
+          <Avatar
+            src={player.avatar}
+            name={player.name}
+            size={horizontal ? 'md' : 'sm'}
+            ring={isTurn}
+          />
+        </PlayerProfileButton>
         {finished && (
           <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-[9px] font-bold text-white">
             {(player.placement ?? 0) === 1 ? <Crown className="h-3 w-3" /> : player.placement}
@@ -100,15 +107,6 @@ export function SeatPanel({
           ) : null}
         </div>
 
-        {/* Kết bạn / nhắn tin với đối thủ thật */}
-        {showSocial && (
-          <div className={cn('mt-1.5 flex', !horizontal && 'justify-center')}>
-            <FriendButton
-              compact={!horizontal}
-              contact={{ id: player.id, displayName: player.name, avatar: player.avatar }}
-            />
-          </div>
-        )}
       </div>
 
       {/* Úp bài đối thủ */}
