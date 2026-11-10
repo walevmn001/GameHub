@@ -141,17 +141,26 @@ export async function removeMember(
   await prisma.roomMember.deleteMany({ where: { roomId: room.id, userId } });
 
   const fresh = await getRoomRow(room.id);
-  if (!fresh || fresh.members.length === 0) {
+  const remainingPeople =
+    fresh?.members.filter((remaining) => !remaining.isBot && remaining.userId !== null) ?? [];
+  if (!fresh || remainingPeople.length === 0) {
     await deleteRoom(room.id);
     return { room: null, closed: true };
   }
 
   if (member.isHost) {
-    const nextHost = fresh.members.find((m) => !m.isBot) ?? fresh.members[0];
-    await prisma.roomMember.updateMany({ where: { id: nextHost.id }, data: { isHost: true } });
-    if (nextHost.userId) {
-      await prisma.room.updateMany({ where: { id: room.id }, data: { hostId: nextHost.userId } });
-    }
+    const nextHost = remainingPeople[0];
+    await prisma.$transaction([
+      prisma.roomMember.updateMany({
+        where: { roomId: room.id },
+        data: { isHost: false },
+      }),
+      prisma.roomMember.update({ where: { id: nextHost.id }, data: { isHost: true } }),
+      prisma.room.update({
+        where: { id: room.id },
+        data: { hostId: nextHost.userId! },
+      }),
+    ]);
   }
 
   return { room: await getRoomRow(room.id), closed: false };

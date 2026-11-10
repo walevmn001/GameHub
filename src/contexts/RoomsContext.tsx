@@ -98,9 +98,9 @@ export function RoomsProvider({ children }: { children: ReactNode }) {
     });
     const offClosed = socketService.on(REALTIME_EVENTS.roomClosed, ({ roomId, reason }) => {
       setRooms((prev) => prev.filter((r) => r.id !== roomId));
-      if (reason === 'admin' && socketService.currentRoomId === roomId) {
+      if (socketService.currentRoomId === roomId) {
         void socketService.leaveRoom(roomId);
-        toast.info('Phòng đã bị admin xóa.');
+        toast.info(reason === 'admin' ? 'Phòng đã bị admin xóa.' : 'Chủ phòng đã xóa phòng.');
         navigate('/rooms', { replace: true });
       }
     });
@@ -162,7 +162,12 @@ export function RoomsProvider({ children }: { children: ReactNode }) {
   const deleteRoom = useCallback<RoomsContextValue['deleteRoom']>(
     async (roomId) => {
       const result = await roomService.deleteRoom(roomId);
-      if (result.ok) await refresh();
+      if (result.ok) {
+        if (onlineEnabled && socketService.currentRoomId === roomId) {
+          await socketService.leaveRoom(roomId);
+        }
+        await refresh();
+      }
       return result;
     },
     [refresh],

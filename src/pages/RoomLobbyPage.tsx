@@ -69,6 +69,7 @@ export function RoomLobbyPage() {
     joinRoom,
     leaveRoom,
     transferHost,
+    deleteRoom,
     addBot,
     removeBot,
     setStatus,
@@ -84,6 +85,8 @@ export function RoomLobbyPage() {
   const [joining, setJoining] = useState(false);
   const [busyBot, setBusyBot] = useState(false);
   const [hostLeaveOpen, setHostLeaveOpen] = useState(false);
+  const [deleteRoomOpen, setDeleteRoomOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [successorId, setSuccessorId] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
 
@@ -237,9 +240,9 @@ export function RoomLobbyPage() {
       return;
     }
     const firstSuccessor = room?.players.find((player) => !player.isBot && player.id !== currentUserId);
-    // Không còn người thật khác để nhận quyền: rời luôn, phòng tự xoá nếu không còn ai.
+    // Không còn người thật khác để nhận quyền: xác nhận xoá phòng thay vì giao cho bot.
     if (!firstSuccessor) {
-      void leaveAsMember();
+      setDeleteRoomOpen(true);
       return;
     }
     setSuccessorId(firstSuccessor.id);
@@ -271,6 +274,20 @@ export function RoomLobbyPage() {
     setHostLeaveOpen(false);
     toast.info(`Đã chuyển quyền phòng "${room.name}" và rời phòng.`);
     navigate('/rooms');
+  };
+
+  const confirmDeleteRoom = async () => {
+    if (!room || deleting) return;
+    setDeleting(true);
+    const result = await deleteRoom(room.id);
+    setDeleting(false);
+    if (!result.ok) {
+      toast.error('Không thể xóa phòng', result.error);
+      return;
+    }
+    setDeleteRoomOpen(false);
+    if (!onlineEnabled) toast.info(`Đã xóa phòng "${room.name}".`);
+    navigate('/rooms', { replace: true });
   };
 
   const handleJoin = async () => {
@@ -552,6 +569,13 @@ export function RoomLobbyPage() {
               >
                 Rời phòng
               </Button>
+              <Button
+                variant="danger"
+                icon={<Trash2 className="h-4 w-4" />}
+                onClick={() => setDeleteRoomOpen(true)}
+              >
+                Xóa phòng
+              </Button>
             </div>
             {!playable ? (
               <p className="text-[11px] text-amber-300">
@@ -586,6 +610,33 @@ export function RoomLobbyPage() {
           </>
         )}
       </Surface>
+
+      <Modal
+        open={deleteRoomOpen}
+        onClose={() => setDeleteRoomOpen(false)}
+        title="Xóa phòng"
+        description={`Phòng "${room?.name ?? ''}" và toàn bộ ghế sẽ bị xóa. Người chơi khác được đưa về danh sách phòng.`}
+        size="sm"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setDeleteRoomOpen(false)}>
+              Hủy
+            </Button>
+            <Button
+              variant="danger"
+              icon={<Trash2 className="h-4 w-4" />}
+              loading={deleting}
+              onClick={() => void confirmDeleteRoom()}
+            >
+              Xóa phòng
+            </Button>
+          </>
+        }
+      >
+        <p className="text-sm text-slate-400">
+          Thao tác này không thể hoàn tác. Nếu chỉ muốn rời đi và giữ phòng, hãy chọn “Rời phòng”.
+        </p>
+      </Modal>
 
       <Modal
         open={hostLeaveOpen}

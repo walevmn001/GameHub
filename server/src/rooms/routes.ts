@@ -38,6 +38,7 @@ const createSchema = z.object({
 
 const joinSchema = z.object({ password: z.string().max(64).optional() });
 const statusSchema = z.object({ status: z.enum(['waiting', 'playing', 'closed']) });
+const transferHostSchema = z.object({ newHostId: z.string().min(1) });
 
 async function currentCoins(userId: string): Promise<number> {
   const user = await prisma.user.findUnique({ where: { id: userId }, select: { coins: true } });
@@ -159,6 +160,46 @@ roomsRouter.post(
     if (result.closed) broadcastRoomClosed(room.id);
     else await broadcastRoomUpdate(room.id);
     res.json({ ok: true });
+  }),
+);
+
+/** Chủ phòng chuyển quyền cho một người chơi thật đang ở trong phòng. */
+roomsRouter.patch(
+  '/:roomId/host',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const { newHostId } = parseBody(transferHostSchema, req.body);
+    const room = await getRoomRow(req.params.roomId);
+    if (!room) throw notFound('Không tìm thấy phòng.');
+    if (!isHost(room, req.auth!.userId)) throw forbidden('Chỉ chủ phòng mới có thể chuyển quyền.');
+
+    await prisma.$transaction(async (tx) => {
+      const current = await tx.room.findUnique({
+        where: { id: room.id },
+        include: { members: true },
+      });
+      if (!current) throw notFound('Không tìm thấy phòng.');
+      if (current.hostId !== req.auth!.userId) {
+        throw forbidden('Bạn không còn là chủ phòng.');
+      }
+
+      const nextHost = current.members.find(
+        (member) => member.userId === newHostId && !member.isBot,
+      );
+      if (!nextHost) throw badRequest('Người nhận phải là người chơi thật đang ở trong phòng.');
+
+      await tx.roomMember.updateMany({
+        where: { roomId: current.id },
+        data: { isHost: false },
+      });
+      await tx.roomMember.update({ where: { id: nextHost.id }, data: { isHost: true } });
+      await tx.room.update({ where: { id: current.id }, data: { hostId: newHostId } });
+    });
+
+    const updated = await getRoomRow(room.id);
+    if (!updated) throw notFound('Không tìm thấy phòng.');
+    const broadcasted = await broadcastRoomUpdate(room.id);
+    res.json(toClientRoom(broadcasted ?? updated));
   }),
 );
 
