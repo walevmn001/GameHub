@@ -25,7 +25,11 @@ export function ChatDock() {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="fixed bottom-4 right-4 z-40 inline-flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-neon-purple to-neon-cyan text-white shadow-glow transition-transform hover:scale-105"
+          className="fixed z-40 inline-flex h-12 w-12 shrink-0 aspect-square items-center justify-center rounded-full bg-gradient-to-br from-neon-purple to-neon-cyan text-white shadow-glow"
+          style={{
+            bottom: 'calc(env(safe-area-inset-bottom) + 1rem)',
+            right: 'calc(env(safe-area-inset-right) + 1rem)',
+          }}
           aria-label="Mở trò chuyện"
         >
           <MessageSquare className="h-5 w-5" />
