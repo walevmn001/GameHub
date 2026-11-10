@@ -30,6 +30,7 @@ export const SHOP_PACKS: Record<string, string> = {
   basic: 'Biểu cảm cơ bản',
   tienlen: 'Tiến Lên vui nhộn',
   cute: 'Dễ thương',
+  hangseed9: 'Hangseed9',
 };
 
 /** Thông tin hiển thị cho từng loại vật phẩm trong cửa hàng (thứ tự = thứ tự tab). */
@@ -66,6 +67,39 @@ export const SHOP_ITEMS: readonly ShopItem[] = [
   { id: 'rabbit', kind: 'sticker', pack: 'cute', name: 'Thỏ con', description: 'Chú thỏ tai dài', price: 0, file: 'stickers/rabbit.svg' },
   { id: 'frog', kind: 'sticker', pack: 'cute', name: 'Ếch con', description: 'Chú ếch xanh', price: 0, file: 'stickers/frog.svg' },
   { id: 'chick', kind: 'sticker', pack: 'cute', name: 'Gà con', description: 'Chú gà vàng óng', price: 0, file: 'stickers/chick.svg' },
+
+  // ----- Bộ "Hangseed9" — ảnh .webp host ngoài trên GitHub qua jsDelivr (miễn phí) -----
+  // Ảnh nằm ở repo: https://github.com/walevmn001/Sticker (nhánh main) → KHÔNG cần đặt file trong dự án.
+  { id: 'hangseed9-agad-cqaaiuoiva', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 01', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgAD-CQAAiUOiVA.webp' },
+  { id: 'hangseed9-agad-riaamppkve', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 02', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgAD-RIAAmPPkVE.webp' },
+  { id: 'hangseed9-agad-xwaagoqkfa', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 03', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgAD-xwAAgoqkFA.webp' },
+  { id: 'hangseed9-agad2beaauowmve', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 04', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgAD2BEAAuowmVE.webp' },
+  { id: 'hangseed9-agad2x8aalf1ifa', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 05', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgAD2x8AAlf1iFA.webp' },
+  { id: 'hangseed9-agad3byaalyaofe', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 06', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgAD3BYAAlyAoFE.webp' },
+  { id: 'hangseed9-agad3xsaathnmfa', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 07', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgAD3xsAAtHNmFA.webp' },
+  { id: 'hangseed9-agad4gwaaih0gvm', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 08', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgAD4gwAAih0GVM.webp' },
+  { id: 'hangseed9-agad4heaaqbxcr4', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 09', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgAD4hEAAqbxcR4.webp' },
+  { id: 'hangseed9-agad4xeaaqbxcr4', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 10', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgAD4xEAAqbxcR4.webp' },
+  { id: 'hangseed9-agad5xeaaqbxcr4', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 11', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgAD5xEAAqbxcR4.webp' },
+  { id: 'hangseed9-agad6bcaavtdove', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 12', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgAD6BcAAvtDoVE.webp' },
+  { id: 'hangseed9-agad6reaaqbxcr4', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 13', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgAD6REAAqbxcR4.webp' },
+  { id: 'hangseed9-agad6gsaamwievm', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 14', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgAD6gsAAmwiEVM.webp' },
+  { id: 'hangseed9-agad6h4aam9uifa', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 15', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgAD6h4AAm9UiFA.webp' },
+  { id: 'hangseed9-agad6haaalmxmve', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 16', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgAD6hAAAlmxmVE.webp' },
+  { id: 'hangseed9-agad7aoaal4liva', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 17', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgAD7AoAAl4LIVA.webp' },
+  { id: 'hangseed9-agad7rgaapjnofe', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 18', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgAD7RgAApjnoFE.webp' },
+  { id: 'hangseed9-agad7heaaqbxcr4', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 19', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgAD7hEAAqbxcR4.webp' },
+  { id: 'hangseed9-agad7huaahaeofe', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 20', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgAD7hUAAhaeoFE.webp' },
+  { id: 'hangseed9-agad7xeaaqbxcr4', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 21', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgAD7xEAAqbxcR4.webp' },
+  { id: 'hangseed9-agad9xwaavygova', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 22', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgAD9xwAAvYgoVA.webp' },
+  { id: 'hangseed9-agadaiaaaq07kfa', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 23', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgADAiAAAq07kFA.webp' },
+  { id: 'hangseed9-agadcb4aalcsifa', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 24', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgADCB4AAlCsiFA.webp' },
+  { id: 'hangseed9-agaddcaaapvqiva', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 25', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgADDCAAApVqiVA.webp' },
+  { id: 'hangseed9-agadeawaaryqevm', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 26', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgADEAwAArYQEVM.webp' },
+  { id: 'hangseed9-agadehqaakywqfe', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 27', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgADEhQAAkywqFE.webp' },
+  { id: 'hangseed9-agadfqwaatujefm', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 28', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgADFQwAAtUjEFM.webp' },
+  { id: 'hangseed9-agadfryaah7oove', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 29', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgADFRYAAh7OoVE.webp' },
+  { id: 'hangseed9-agadfhuaakswkfe', kind: 'sticker', pack: 'hangseed9', name: 'Hangseed 30', description: 'Nhãn dán Hangseed9', price: 0, file: 'https://cdn.jsdelivr.net/gh/walevmn001/Sticker@main/HANGSEED9-AgADFhUAAksWkFE.webp' },
 ];
 
 const ITEMS_BY_ID = new Map(SHOP_ITEMS.map((item) => [item.id, item]));
