@@ -14,6 +14,7 @@ export function PlayerHand({
   disabled = false,
   animateDeal = false,
   dealKey = 0,
+  skinId,
 }: {
   cards: Card[];
   selected: string[];
@@ -23,6 +24,7 @@ export function PlayerHand({
   disabled?: boolean;
   animateDeal?: boolean;
   dealKey?: number;
+  skinId?: string | null;
 }) {
   return (
     <div className="flex w-full items-end justify-center px-1">
@@ -46,6 +48,7 @@ export function PlayerHand({
                 selected={isSelected}
                 disabled={disabled}
                 animate={animateDeal}
+                skinId={skinId}
                 onClick={() => !disabled && onToggle(card.id)}
                 style={animateDeal ? { animationDelay: `${index * 45}ms` } : undefined}
               />

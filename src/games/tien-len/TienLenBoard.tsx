@@ -16,6 +16,7 @@ import type { GameBoardProps } from '@/games/types';
 import { REALTIME_EVENTS } from '@/types';
 import { describeCombo } from '@/game-engine/tienlen';
 import { useAuth } from '@/contexts/AuthContext';
+import { useShop } from '@/contexts/ShopContext';
 import { useIsMobile, useIsPortrait } from '@/hooks/useMediaQuery';
 import { makeAvatarDataUri } from '@/utils/avatar';
 import { playSound, setSoundEnabled } from '@/utils/sound';
@@ -78,13 +79,21 @@ export default function TienLenBoard(props: GameBoardProps) {
 /** Bàn chơi cục bộ — luật chạy tại chỗ với AI. */
 function LocalTienLenBoard({ onExit, onMatchEnd, config, seats }: GameBoardProps) {
   const { user } = useAuth();
+  const { loadout } = useShop();
   const playerName = user?.displayName ?? 'Bạn';
   const playerAvatar = useMemo(
     () => (user?.avatar && user.avatar.length > 0 ? user.avatar : makeAvatarDataUri(playerName)),
     [user?.avatar, playerName],
   );
 
-  const game = useTienLenGame({ playerName, playerAvatar, config, seats, onMatchEnd });
+  const game = useTienLenGame({
+    playerName,
+    playerAvatar,
+    config,
+    seats,
+    playerCardSkinId: loadout.cardSkin,
+    onMatchEnd,
+  });
   return <TienLenBoardView game={game} onExit={onExit} onRematch={game.restart} />;
 }
 
@@ -354,6 +363,7 @@ function TienLenBoardView({
           <TableCenter
             combo={state.lastCombo}
             playerName={centerPlayerName}
+            skinId={state.lastPlaySeat === null ? null : players[state.lastPlaySeat]?.cardSkinId}
             comboLabel={state.lastCombo ? describeCombo(state.lastCombo) : null}
             animKey={game.cardAnimKey}
             timer={timer}
@@ -419,6 +429,7 @@ function TienLenBoardView({
             disabled={!interactive || !game.isHumanTurn}
             animateDeal={game.dealing}
             dealKey={game.dealSeq}
+            skinId={human.cardSkinId}
           />
         </div>
 

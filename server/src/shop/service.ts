@@ -1,5 +1,5 @@
-import { getShopItem, isFreeItem } from '@/data/shopCatalog';
-import type { PurchaseResult } from '@/types';
+import { getShopItem, isFreeItem, SHOP_KINDS } from '@/data/shopCatalog';
+import type { PurchaseResult, ShopItemKind, ShopLoadout } from '@/types';
 import { prisma } from '../prisma';
 import { badRequest, conflict, notFound } from '../http/errors';
 
@@ -31,6 +31,55 @@ export async function canUseItem(userId: string, itemId: string): Promise<boolea
     select: { id: true },
   });
   return Boolean(found);
+}
+
+/** Vật phẩm đang trang bị theo từng loại của người dùng. */
+export async function getLoadout(userId: string): Promise<ShopLoadout> {
+  const rows = await prisma.userLoadout.findMany({
+    where: { userId },
+    select: { kind: true, itemId: true },
+  });
+  const loadout: ShopLoadout = {};
+  for (const row of rows) {
+    if (SHOP_KINDS.some((entry) => entry.kind === row.kind)) {
+      loadout[row.kind as ShopItemKind] = row.itemId;
+    }
+  }
+  return loadout;
+}
+
+/** Trang bị một vật phẩm đã sở hữu hoặc tháo vật phẩm hiện tại. */
+export async function setLoadoutItem(
+  userId: string,
+  kind: ShopItemKind,
+  itemId: string | null,
+): Promise<ShopLoadout> {
+  if (!SHOP_KINDS.some((entry) => entry.kind === kind)) throw badRequest('Loại vật phẩm không hợp lệ.');
+  if (itemId === null) {
+    await prisma.userLoadout.deleteMany({ where: { userId, kind } });
+    return getLoadout(userId);
+  }
+
+  const item = getShopItem(itemId);
+  if (!item || item.kind !== kind) throw notFound('Vật phẩm không đúng loại trang bị.');
+  if (!(await canUseItem(userId, itemId))) throw badRequest('Bạn cần sở hữu vật phẩm trước khi trang bị.');
+
+  await prisma.userLoadout.upsert({
+    where: { userId_kind: { userId, kind } },
+    create: { userId, kind, itemId },
+    update: { itemId },
+  });
+  return getLoadout(userId);
+}
+
+/** Snapshot skin bài theo người chơi, lấy một lần lúc bắt đầu ván. */
+export async function getCardSkinsForUsers(userIds: string[]): Promise<Map<string, string>> {
+  if (userIds.length === 0) return new Map();
+  const rows = await prisma.userLoadout.findMany({
+    where: { userId: { in: userIds }, kind: 'cardSkin' },
+    select: { userId: true, itemId: true },
+  });
+  return new Map(rows.map((row) => [row.userId, row.itemId]));
 }
 
 /** Mua một vật phẩm: ghi quyền sở hữu và trừ xu trong cùng một giao dịch. */

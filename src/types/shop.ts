@@ -32,6 +32,9 @@ export interface ShopItem {
   emoji?: string;
 }
 
+/** Vật phẩm đang trang bị theo loại; mở rộng được cho các loại cosmetic sau này. */
+export type ShopLoadout = Partial<Record<ShopItemKind, string>>;
+
 /** Kết quả sau khi mua: số xu còn lại và danh sách id vật phẩm đã mua. */
 export interface PurchaseResult {
   coins: number;
@@ -40,4 +43,3 @@ export interface PurchaseResult {
 
 /** Loại nội dung một tin nhắn chat: văn bản thuần hoặc nhãn dán. */
 export type MessageType = 'text' | 'sticker';
-

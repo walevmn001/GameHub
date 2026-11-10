@@ -18,6 +18,8 @@ export interface TienLenSeatConfig {
   isBot: boolean;
   /** Số dư xu hiện có (dùng để hiển thị trong phòng chơi). */
   coins?: number;
+  /** Mã skin bài công khai đã chốt khi bắt đầu ván. */
+  cardSkinId?: string | null;
 }
 
 export interface TienLenPlayer extends TienLenSeatConfig {

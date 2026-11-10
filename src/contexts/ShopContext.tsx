@@ -7,7 +7,13 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { fail, type PurchaseResult, type ServiceResult } from '@/types';
+import {
+  fail,
+  type PurchaseResult,
+  type ServiceResult,
+  type ShopItemKind,
+  type ShopLoadout,
+} from '@/types';
 import { getShopItem, isFreeItem } from '@/data/shopCatalog';
 import { shopService } from '@/services/ShopService';
 import { useAuth } from './AuthContext';
@@ -18,9 +24,12 @@ interface ShopContextValue {
   enabled: boolean;
   /** Danh sách id vật phẩm đã mua (không gồm vật phẩm miễn phí). */
   ownedIds: string[];
+  /** Vật phẩm đang trang bị theo loại. */
+  loadout: ShopLoadout;
   loading: boolean;
   refresh: () => Promise<void>;
   purchase: (itemId: string) => Promise<ServiceResult<PurchaseResult>>;
+  equip: (kind: ShopItemKind, itemId: string | null) => Promise<ServiceResult<ShopLoadout>>;
   /** true nếu người dùng được phép dùng vật phẩm (miễn phí HOẶC đã mua). */
   isOwned: (itemId: string) => boolean;
 }
@@ -38,16 +47,22 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   const enabled = Boolean(user);
 
   const [ownedIds, setOwnedIds] = useState<string[]>([]);
+  const [loadout, setLoadout] = useState<ShopLoadout>({});
   const [loading, setLoading] = useState(false);
 
   const refresh = useCallback(async () => {
     if (!myId) {
       setOwnedIds([]);
+      setLoadout({});
       return;
     }
     setLoading(true);
-    const result = await shopService.owned(myId);
-    if (result.ok) setOwnedIds(result.data);
+    const [ownedResult, loadoutResult] = await Promise.all([
+      shopService.owned(myId),
+      shopService.loadout(myId),
+    ]);
+    if (ownedResult.ok) setOwnedIds(ownedResult.data);
+    if (loadoutResult.ok) setLoadout(loadoutResult.data);
     setLoading(false);
   }, [myId]);
 
@@ -55,6 +70,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!myId) {
       setOwnedIds([]);
+      setLoadout({});
       return;
     }
     void refresh();
@@ -92,9 +108,28 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     [myId, refreshUser, toast],
   );
 
+  const equip = useCallback<ShopContextValue['equip']>(
+    async (kind, itemId) => {
+      if (!myId) {
+        const message = 'Bạn cần đăng nhập để trang bị vật phẩm.';
+        toast.error(message);
+        return fail(message);
+      }
+      const result = await shopService.equip(myId, kind, itemId);
+      if (result.ok) {
+        setLoadout(result.data);
+        toast.success(itemId ? 'Đã trang bị vật phẩm.' : 'Đã tháo vật phẩm.');
+      } else {
+        toast.error(result.error);
+      }
+      return result;
+    },
+    [myId, toast],
+  );
+
   const value = useMemo<ShopContextValue>(
-    () => ({ enabled, ownedIds, loading, refresh, purchase, isOwned }),
-    [enabled, ownedIds, loading, refresh, purchase, isOwned],
+    () => ({ enabled, ownedIds, loadout, loading, refresh, purchase, equip, isOwned }),
+    [enabled, ownedIds, loadout, loading, refresh, purchase, equip, isOwned],
   );
 
   return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>;

@@ -2,10 +2,8 @@ import { useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { KeyRound, LogIn, Sparkles, User as UserIcon } from 'lucide-react';
 import { Button, Input, Surface } from '@/components/ui';
-import { NoticeBanner } from '@/components/common/NoticeBanner';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
-import { LOCAL_ACCOUNT_NOTICE } from '@/utils/constants';
 
 export function LoginPage() {
   const { user, login, loginAsGuest } = useAuth();
@@ -43,7 +41,7 @@ export function LoginPage() {
       toast.error(result.error);
       return;
     }
-    toast.info('Bạn đang chơi với tư cách khách. Dữ liệu vẫn lưu trên thiết bị này.');
+    toast.info('Bạn đang chơi với tư cách khách.');
     navigate('/');
   };
 
@@ -52,14 +50,9 @@ export function LoginPage() {
       <div className="text-center">
         <h1 className="text-2xl font-extrabold text-slate-100">Đăng nhập</h1>
         <p className="mt-1 text-sm text-slate-400">
-          Tiếp tục với tài khoản đã tạo trên thiết bị này.
+          Tiếp tục với tài khoản của bạn.
         </p>
       </div>
-
-      <NoticeBanner variant="warning" title="Lưu ý về tài khoản">
-        {LOCAL_ACCOUNT_NOTICE} Mật khẩu được băm trước khi lưu, nhưng đây không phải giải pháp
-        xác thực an toàn để dùng cho sản phẩm thật.
-      </NoticeBanner>
 
       <Surface className="p-4 sm:p-5">
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">

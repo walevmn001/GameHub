@@ -3,11 +3,10 @@ import { Navigate } from 'react-router-dom';
 import { KeyRound, MonitorSmartphone, Settings as SettingsIcon, ShieldAlert, Volume2, Wand2 } from 'lucide-react';
 import { Button, Input, SectionHeader, Surface } from '@/components/ui';
 import { Switch } from '@/components/ui/Switch';
-import { NoticeBanner } from '@/components/common/NoticeBanner';
 import { FullPageLoader } from '@/components/ui';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
-import { APP_NAME, APP_VERSION, LOCAL_ACCOUNT_NOTICE } from '@/utils/constants';
+import { APP_NAME, APP_VERSION } from '@/utils/constants';
 
 export function SettingsPage() {
   const { user, initializing, updatePreferences, changePassword, eraseDeviceData } = useAuth();
@@ -50,13 +49,9 @@ export function SettingsPage() {
     <div className="mx-auto flex max-w-2xl flex-col gap-6">
       <SectionHeader
         title="Cài đặt tài khoản"
-        subtitle="Tuỳ chọn trải nghiệm và bảo mật cục bộ"
+        subtitle="Tuỳ chỉnh trải nghiệm và bảo mật tài khoản"
         icon={<SettingsIcon className="h-5 w-5" />}
       />
-
-      <NoticeBanner variant="warning" title="Chỉ áp dụng trên thiết bị này">
-        {LOCAL_ACCOUNT_NOTICE}
-      </NoticeBanner>
 
       {/* Tuỳ chọn trải nghiệm */}
       <Surface className="p-4 sm:p-5">

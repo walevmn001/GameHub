@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Gamepad2, Github } from 'lucide-react';
-import { APP_NAME, APP_VERSION, LOCAL_ACCOUNT_NOTICE } from '@/utils/constants';
+import { APP_NAME, APP_TAGLINE, APP_VERSION } from '@/utils/constants';
 
 export function Footer() {
   return (
@@ -16,11 +16,8 @@ export function Footer() {
             </span>
           </div>
           <p className="mt-3 max-w-md text-xs leading-relaxed text-slate-500">
-            Nền tảng chơi game mini trên trình duyệt. Phiên bản hiện tại chạy hoàn toàn cục bộ:
-            tài khoản, phòng chơi và lịch sử trận đấu chỉ được lưu trên thiết bị của bạn.
-          </p>
-          <p className="mt-3 rounded-xl border border-amber-500/20 bg-amber-500/5 p-2.5 text-[11px] leading-relaxed text-amber-300/90">
-            {LOCAL_ACCOUNT_NOTICE}
+            {APP_TAGLINE}. Khám phá Tiến Lên Miền Nam, thử chiến thuật qua từng lượt bài và sưu
+            tầm vật phẩm theo phong cách của bạn.
           </p>
         </div>
 

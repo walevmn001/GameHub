@@ -1,4 +1,4 @@
-import { fail, ok, type PurchaseResult, type ServiceResult } from '@/types';
+import { fail, ok, type PurchaseResult, type ServiceResult, type ShopItemKind, type ShopLoadout } from '@/types';
 import { getShopItem, isFreeItem } from '@/data/shopCatalog';
 import { STORAGE_KEYS } from '@/utils/constants';
 import { storage } from './StorageService';
@@ -22,6 +22,10 @@ function ownedKey(userId: string): string {
   return `${STORAGE_KEYS.shopOwned}:${userId}`;
 }
 
+function loadoutKey(userId: string): string {
+  return `${STORAGE_KEYS.shopLoadout}:${userId}`;
+}
+
 class ShopService {
   get online(): boolean {
     return onlineEnabled;
@@ -31,6 +35,37 @@ class ShopService {
   async owned(userId: string): Promise<ServiceResult<string[]>> {
     if (onlineEnabled) return api.request<string[]>('/shop/purchases');
     return ok((await storage.read<string[]>(ownedKey(userId))) ?? []);
+  }
+
+  async loadout(userId: string): Promise<ServiceResult<ShopLoadout>> {
+    if (onlineEnabled) return api.request<ShopLoadout>('/shop/loadout');
+    return ok((await storage.read<ShopLoadout>(loadoutKey(userId))) ?? {});
+  }
+
+  async equip(
+    userId: string,
+    kind: ShopItemKind,
+    itemId: string | null,
+  ): Promise<ServiceResult<ShopLoadout>> {
+    if (onlineEnabled) {
+      return api.request<ShopLoadout>('/shop/loadout', {
+        method: 'PUT',
+        body: { kind, itemId },
+      });
+    }
+
+    const current = (await storage.read<ShopLoadout>(loadoutKey(userId))) ?? {};
+    if (itemId) {
+      const item = getShopItem(itemId);
+      if (!item || item.kind !== kind) return fail('Vật phẩm không đúng loại trang bị.');
+      const owned = isFreeItem(item) || (await storage.read<string[]>(ownedKey(userId)) ?? []).includes(itemId);
+      if (!owned) return fail('Bạn cần sở hữu vật phẩm trước khi trang bị.');
+      current[kind] = itemId;
+    } else {
+      delete current[kind];
+    }
+    await storage.write(loadoutKey(userId), current);
+    return ok(current);
   }
 
   /** Mua một vật phẩm bằng xu. */

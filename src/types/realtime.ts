@@ -61,6 +61,8 @@ export interface MatchSeatView {
   isBot: boolean;
   coins: number;
   handCount: number;
+  /** Skin bài công khai đã trang bị khi ván bắt đầu. */
+  cardSkinId?: string | null;
   placement: number | null;
   isYou: boolean;
 }

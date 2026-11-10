@@ -16,6 +16,27 @@ shopRouter.use(requireAuth);
 const purchaseBody = z.object({
   itemId: z.string().min(1, 'Thiếu mã vật phẩm.'),
 });
+const loadoutBody = z.object({
+  kind: z.enum(['sticker', 'chatFrame', 'cardSkin', 'avatarFrame']),
+  itemId: z.string().min(1).nullable(),
+});
+
+/** Vật phẩm đang trang bị của người dùng. */
+shopRouter.get(
+  '/loadout',
+  asyncHandler(async (req, res) => {
+    res.json(await shop.getLoadout(req.auth!.userId));
+  }),
+);
+
+/** Trang bị hoặc tháo một vật phẩm đã sở hữu. */
+shopRouter.put(
+  '/loadout',
+  asyncHandler(async (req, res) => {
+    const { kind, itemId } = parseBody(loadoutBody, req.body);
+    res.json(await shop.setLoadoutItem(req.auth!.userId, kind, itemId));
+  }),
+);
 
 /** Danh sách id vật phẩm người dùng đã mua. */
 shopRouter.get(

@@ -9,7 +9,7 @@ import {
   type ReactNode,
 } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import type { Room, RoomStatus, ServiceResult, CreateRoomInput } from '@/types';
+import { fail, type Room, type RoomStatus, type ServiceResult, type CreateRoomInput } from '@/types';
 import { REALTIME_EVENTS } from '@/types';
 import { roomService } from '@/services/RoomService';
 import { socketService } from '@/services/SocketService';
@@ -112,11 +112,16 @@ export function RoomsProvider({ children }: { children: ReactNode }) {
 
   const createRoom = useCallback<RoomsContextValue['createRoom']>(
     async (input) => {
-      const name = user?.displayName ?? 'Khách';
-      const avatar = user?.avatar ?? '';
+      if (!user) {
+        const message = 'Bạn cần đăng nhập hoặc tạo tài khoản để tạo phòng.';
+        toast.info('Bạn cần đăng nhập', message);
+        return fail(message);
+      }
+      const name = user.displayName;
+      const avatar = user.avatar;
       const result = await roomService.createRoom(
-        { ...input, hostName: name, hostAvatar: avatar, hostCoins: user?.coins },
-        user?.id ?? 'guest',
+        { ...input, hostName: name, hostAvatar: avatar, hostCoins: user.coins },
+        user.id,
       );
       if (result.ok) {
         await activityService.log('room', `Tạo phòng "${result.data.name}".`);
@@ -124,18 +129,23 @@ export function RoomsProvider({ children }: { children: ReactNode }) {
       }
       return result;
     },
-    [user, refresh],
+    [user, refresh, toast],
   );
 
   const joinRoom = useCallback<RoomsContextValue['joinRoom']>(
     async (roomId, password) => {
+      if (!user) {
+        const message = 'Bạn cần đăng nhập hoặc tạo tài khoản để vào phòng.';
+        toast.info('Bạn cần đăng nhập', message);
+        return fail(message);
+      }
       const result = await roomService.joinRoom(
         roomId,
         {
-          id: user?.id ?? 'guest',
-          name: user?.displayName ?? 'Khách',
-          avatar: user?.avatar ?? '',
-          coins: user?.coins,
+          id: user.id,
+          name: user.displayName,
+          avatar: user.avatar,
+          coins: user.coins,
         },
         password,
       );
@@ -145,7 +155,7 @@ export function RoomsProvider({ children }: { children: ReactNode }) {
       }
       return result;
     },
-    [user, refresh],
+    [user, refresh, toast],
   );
 
   const leaveRoom = useCallback<RoomsContextValue['leaveRoom']>(

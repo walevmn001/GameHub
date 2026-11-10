@@ -31,17 +31,23 @@ export const SHOP_PACKS: Record<string, string> = {
   tienlen: 'Tiến Lên vui nhộn',
   cute: 'Dễ thương',
   hangseed9: 'Hangseed9',
+  'card-styles': 'Bộ bài sưu tầm',
 };
 
 /** Thông tin hiển thị cho từng loại vật phẩm trong cửa hàng (thứ tự = thứ tự tab). */
 export const SHOP_KINDS: { kind: ShopItemKind; label: string; note: string }[] = [
   { kind: 'sticker', label: 'Nhãn dán', note: 'Gửi trong mọi khung trò chuyện' },
   { kind: 'chatFrame', label: 'Khung chat', note: 'Sắp ra mắt' },
-  { kind: 'cardSkin', label: 'Skin bài', note: 'Sắp ra mắt' },
+  { kind: 'cardSkin', label: 'Skin bộ bài', note: 'Trang trí mặt và lưng bài' },
   { kind: 'avatarFrame', label: 'Khung avatar', note: 'Sắp ra mắt' },
 ];
 
 export const SHOP_ITEMS: readonly ShopItem[] = [
+  // ----- Skin bộ bài — áp dụng riêng cho bài của người trang bị -----
+  { id: 'card-skin-sakura', kind: 'cardSkin', pack: 'card-styles', name: 'Hoa anh đào', description: 'Sắc hồng dịu dàng cùng họa tiết hoa anh đào.', price: 1800, emoji: '🌸' },
+  { id: 'card-skin-dragon', kind: 'cardSkin', pack: 'card-styles', name: 'Rồng', description: 'Sắc ngọc lục bảo và ánh vàng uy nghi.', price: 2400, emoji: '🐉' },
+  { id: 'card-skin-knight', kind: 'cardSkin', pack: 'card-styles', name: 'Hiệp sĩ', description: 'Giáp bạc xanh lạnh dành cho chiến binh.', price: 2400, emoji: '⚔️' },
+
   // ----- Bộ "Biểu cảm cơ bản" — miễn phí -----
   { id: 'smile', kind: 'sticker', pack: 'basic', name: 'Vui vẻ', description: 'Nụ cười thân thiện', price: 0, file: 'stickers/smile.svg' },
   { id: 'laugh', kind: 'sticker', pack: 'basic', name: 'Cười lớn', description: 'Cười không nhặt được mồm', price: 0, file: 'stickers/laugh.svg' },

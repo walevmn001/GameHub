@@ -1,14 +1,15 @@
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { Coins, Lock, ShoppingBag, Sparkles } from 'lucide-react';
 import type { ShopItem, ShopItemKind } from '@/types';
 import { SHOP_KINDS, SHOP_PACKS, isFreeItem, itemsOfKind } from '@/data/shopCatalog';
 import { useAuth } from '@/contexts/AuthContext';
 import { useShop } from '@/contexts/ShopContext';
-import { Button, SectionHeader, Surface } from '@/components/ui';
+import { Button, FullPageLoader, SectionHeader, Surface } from '@/components/ui';
 import { StickerImage } from '@/components/chat/StickerImage';
 import { formatCoins } from '@/utils/format';
 import { cn } from '@/utils/cn';
+import { getCardSkinTheme } from '@/utils/cardSkins';
 
 /**
  * Trang Cửa hàng — bán vật phẩm bằng xu (nhãn dán, khung chat, skin bài, khung avatar...).
@@ -17,9 +18,8 @@ import { cn } from '@/utils/cn';
  * tự hiển thị, không cần sửa component. Vật phẩm `price = 0` là MIỄN PHÍ (không cần mua).
  */
 export function ShopPage() {
-  const { user } = useAuth();
-  const { isOwned, purchase, loading } = useShop();
-  const navigate = useNavigate();
+  const { user, initializing } = useAuth();
+  const { isOwned, purchase, equip, loadout, loading } = useShop();
 
   // Chỉ hiện tab của những loại đang có vật phẩm (loại "sắp ra mắt" sẽ tự ẩn).
   const tabs = useMemo(
@@ -28,8 +28,10 @@ export function ShopPage() {
   );
   const [activeKind, setActiveKind] = useState<ShopItemKind>(tabs[0]?.kind ?? 'sticker');
   const [buyingId, setBuyingId] = useState<string | null>(null);
-
   const items = useMemo(() => itemsOfKind(activeKind), [activeKind]);
+
+  if (initializing) return <FullPageLoader label="Đang tải cửa hàng…" />;
+  if (!user) return <Navigate to="/login" replace state={{ from: '/shop' }} />;
 
   const handleBuy = async (item: ShopItem) => {
     setBuyingId(item.id);
@@ -47,25 +49,12 @@ export function ShopPage() {
         subtitle="Mở khoá nhãn dán và vật phẩm bằng xu của bạn."
         icon={<ShoppingBag className="h-5 w-5" />}
         action={
-          user ? (
-            <span className="inline-flex items-center gap-1.5 rounded-xl border border-white/5 bg-base-900/70 px-3 py-2 text-sm font-semibold text-amber-300">
-              <Coins className="h-4 w-4" />
-              {formatCoins(user.coins)}
-            </span>
-          ) : undefined
+          <span className="inline-flex items-center gap-1.5 rounded-xl border border-white/5 bg-base-900/70 px-3 py-2 text-sm font-semibold text-amber-300">
+            <Coins className="h-4 w-4" />
+            {formatCoins(user.coins)}
+          </span>
         }
       />
-
-      {!user && (
-        <Surface className="mb-4 flex flex-wrap items-center justify-between gap-3 p-4">
-          <p className="text-sm text-slate-300">
-            Bạn cần đăng nhập để mua và sử dụng vật phẩm.
-          </p>
-          <Button size="sm" onClick={() => navigate('/login')}>
-            Đăng nhập
-          </Button>
-        </Surface>
-      )}
 
       {/* Tab loại vật phẩm */}
       <div className="mb-5 flex flex-wrap gap-2">
@@ -91,6 +80,7 @@ export function ShopPage() {
           const owned = isOwned(item.id);
           const free = isFreeItem(item);
           const buying = buyingId === item.id;
+          const equipped = loadout[item.kind] === item.id;
           return (
             <Surface key={item.id} interactive className="flex flex-col items-center gap-2 p-4 text-center">
               <div className="flex h-20 w-20 items-center justify-center">
@@ -104,7 +94,17 @@ export function ShopPage() {
                 </p>
               </div>
 
-              {owned ? (
+              {owned && item.kind === 'cardSkin' ? (
+                <Button
+                  size="sm"
+                  fullWidth
+                  variant={equipped ? 'secondary' : 'outline'}
+                  disabled={loading || equipped}
+                  onClick={() => void equip(item.kind, item.id)}
+                >
+                  {equipped ? 'Đang trang bị' : 'Trang bị'}
+                </Button>
+              ) : owned ? (
                 <span className="inline-flex items-center gap-1 rounded-xl bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-300">
                   <Sparkles className="h-3.5 w-3.5" /> {free ? 'Miễn phí' : 'Đã sở hữu'}
                 </span>
@@ -128,10 +128,20 @@ export function ShopPage() {
   );
 }
 
-/** Xem trước vật phẩm: nhãn dán dùng ảnh trong danh mục, loại khác hiện biểu tượng chờ. */
+/** Xem trước vật phẩm theo loại. */
 function ItemPreview({ item, owned }: { item: ShopItem; owned: boolean }) {
   if (item.kind === 'sticker') {
     return <StickerImage stickerId={item.id} size={72} className={cn(!owned && 'opacity-90')} />;
+  }
+  if (item.kind === 'cardSkin') {
+    const theme = getCardSkinTheme(item.id);
+    return (
+      <div className={cn('flex h-16 w-12 items-center justify-center rounded-lg border-2 bg-gradient-to-br shadow-lg', theme?.previewClass)}>
+        <span className="flex h-[3.25rem] w-9 items-center justify-center rounded-md border border-white/50 bg-white/10 text-2xl">
+          {theme?.mark ?? item.emoji}
+        </span>
+      </div>
+    );
   }
   return (
     <span className="flex h-16 w-16 items-center justify-center rounded-2xl border border-dashed border-white/15 text-slate-600">

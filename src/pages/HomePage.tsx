@@ -16,6 +16,7 @@ import { minCoinsToPlay, type GameCategory, type GameMeta } from '@/types';
 import { GAME_CATEGORY_LABEL } from '@/types/game-registry';
 import { gameService } from '@/services/GameService';
 import { activityService, type ActivityEntry } from '@/services/ActivityService';
+import { onlineEnabled } from '@/services/backend';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRooms } from '@/contexts/RoomsContext';
 import { useToast } from '@/contexts/ToastContext';
@@ -89,6 +90,10 @@ export function HomePage() {
   };
 
   const handleJoinRoom = async (roomId: string) => {
+    if (!user) {
+      toast.info('Bạn cần đăng nhập để vào phòng.', 'Hãy đăng nhập hoặc tạo tài khoản để tiếp tục.');
+      return;
+    }
     const room = rooms.find((r) => r.id === roomId);
     if (room?.gameId === 'tien-len') {
       const required = minCoinsToPlay(room.config);
@@ -188,11 +193,11 @@ export function HomePage() {
         </section>
       </div>
 
-      {/* Phòng chơi Demo */}
+      {/* Phòng chơi */}
       <section>
         <SectionHeader
           title="Phòng chơi"
-          subtitle="Phòng thử nghiệm — dữ liệu cục bộ trên thiết bị"
+          subtitle={onlineEnabled ? 'Tạo phòng, mời bạn bè và tham gia ván trực tuyến.' : 'Tạo phòng và thử sức với AI.'}
           icon={<Users className="h-5 w-5" />}
           action={
             <Link
@@ -207,7 +212,7 @@ export function HomePage() {
           <EmptyState
             icon={<Users className="h-6 w-6" />}
             title="Chưa có phòng công khai"
-            description="Tạo phòng mới để bắt đầu chơi cùng bạn bè."
+            description={onlineEnabled ? 'Tạo phòng mới để bắt đầu chơi cùng bạn bè.' : 'Tạo phòng mới để bắt đầu ván với AI.'}
             action={
               <Button size="sm" onClick={() => navigate('/rooms')}>
                 Tạo phòng
@@ -235,7 +240,7 @@ export function HomePage() {
       <section>
         <SectionHeader
           title="Hoạt động gần đây"
-          subtitle="Nhật ký lưu cục bộ trên thiết bị này"
+          subtitle="Những dấu ấn trong hành trình chơi game của bạn."
           icon={<Activity className="h-5 w-5" />}
         />
         <Surface className="p-2">
@@ -312,7 +317,7 @@ function HeroBanner({
       <div className="relative flex flex-col gap-5 p-5 sm:p-8 lg:flex-row lg:items-center lg:justify-between">
         <div className="max-w-xl">
           <Badge tone="purple" icon={<Sparkles className="h-3 w-3" />}>
-            Phiên bản web · Chơi cục bộ
+            Sảnh game mini · Tiến Lên mỗi ngày
           </Badge>
           <h1 className="mt-3 text-2xl font-extrabold leading-tight text-slate-50 sm:text-4xl">
             {userName ? (
@@ -326,8 +331,8 @@ function HeroBanner({
             )}
           </h1>
           <p className="mt-2.5 max-w-lg text-sm leading-relaxed text-slate-300 sm:text-base">
-            Chơi Tiến Lên Miền Nam cùng AI, tạo phòng cùng bạn bè và theo dõi thành tích của bạn.
-            Toàn bộ dữ liệu hiện được lưu trên chính thiết bị này.
+            Sẵn sàng bước vào bàn Tiến Lên, thử chiến thuật qua từng lượt bài, sưu tầm vật phẩm cá
+            tính và lưu lại những dấu ấn đáng nhớ của bạn.
           </p>
           <div className="mt-5 flex flex-wrap items-center gap-2.5">
             <Button size="lg" icon={<Gamepad2 className="h-4 w-4" />} onClick={onPlay}>

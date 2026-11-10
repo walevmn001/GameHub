@@ -55,8 +55,7 @@ const STATUS_TONE: Record<Room['status'], 'green' | 'amber' | 'neutral'> = {
 
 /**
  * Phòng chờ (Lobby) — hiển thị thành viên trong phòng và cho chủ phòng bắt đầu ván.
- * GIAI ĐOẠN HIỆN TẠI: phòng hoàn toàn cục bộ. Khi bắt đầu, 3 ghế còn lại do AI cục bộ đảm nhiệm;
- * chưa có kết nối nhiều người chơi qua Internet.
+ * Có thể chạy với AI cục bộ hoặc đồng bộ nhiều người qua backend trực tuyến.
  */
 export function RoomLobbyPage() {
   const { roomId = '' } = useParams();
@@ -292,6 +291,10 @@ export function RoomLobbyPage() {
 
   const handleJoin = async () => {
     if (!room) return;
+    if (!user) {
+      toast.info('Bạn cần đăng nhập', 'Đăng nhập hoặc tạo tài khoản để vào phòng.');
+      return;
+    }
     if (room.gameId === 'tien-len') {
       const required = minCoinsToPlay(room.config);
       const balance = user?.coins ?? 0;
@@ -348,7 +351,7 @@ export function RoomLobbyPage() {
       <EmptyState
         icon={<XCircle className="h-6 w-6" />}
         title="Không tìm thấy phòng"
-        description="Phòng có thể đã bị đóng hoặc không còn tồn tại trên thiết bị này."
+        description="Phòng có thể đã bị đóng hoặc không còn tồn tại."
         action={
           <Button icon={<ArrowLeft className="h-4 w-4" />} onClick={() => navigate('/rooms')}>
             Về danh sách phòng
@@ -384,9 +387,8 @@ export function RoomLobbyPage() {
           đầu, cả phòng được đưa vào ván đấu đồng bộ theo thời gian thực.
         </NoticeBanner>
       ) : (
-        <NoticeBanner variant="info" title="Phòng chơi cục bộ (Demo)">
-          Phòng chỉ tồn tại trên thiết bị này. Khi bắt đầu ván, các ghế còn trống sẽ do AI cục bộ đảm
-          nhiệm — chưa có kết nối nhiều người chơi qua Internet.
+        <NoticeBanner variant="info" title="Phòng thử nghiệm">
+          Các ghế còn trống sẽ do AI đảm nhiệm khi bắt đầu ván.
         </NoticeBanner>
       )}
 
@@ -527,7 +529,7 @@ export function RoomLobbyPage() {
                 icon={<KeyRound className="h-4 w-4" />}
                 value={passwordInput}
                 onChange={(e) => setPasswordInput(e.target.value)}
-                hint="Mật khẩu chỉ dùng cho luồng demo cục bộ."
+                hint="Chỉ người có mật khẩu mới vào được phòng riêng."
               />
             )}
             <div className="flex flex-wrap items-center gap-2">

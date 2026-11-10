@@ -21,6 +21,7 @@ export function buildMatchView(state: TienLenState, seat: number, meta: MatchMet
     isBot: player.isBot,
     coins: player.coins ?? 0,
     handCount: player.hand.length,
+    cardSkinId: player.cardSkinId ?? null,
     placement: player.placement,
     isYou: player.seat === seat,
   }));

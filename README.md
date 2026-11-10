@@ -1,7 +1,8 @@
 # Mini Game Hub
 
-Nền tảng chơi game mini trên trình duyệt: **React + Vite + TypeScript + Tailwind CSS** (giao diện)
-và **Node.js + Express + Socket.IO + PostgreSQL (Prisma)** (backend).
+Sảnh game mini trên trình duyệt, bắt đầu với **Tiến Lên Miền Nam**: chơi cùng AI, mở phòng trực tuyến
+với bạn bè, sưu tầm nhãn dán và tùy chỉnh bộ bài. Giao diện dùng **React + Vite + TypeScript +
+Tailwind CSS**; backend dùng **Node.js + Express + Socket.IO + PostgreSQL (Prisma)**.
 
 Ứng dụng có **hai chế độ** dùng chung một giao diện:
 
@@ -152,13 +153,13 @@ Chi tiết kiến trúc xem tại [ARCHITECTURE.md](./ARCHITECTURE.md).
 - Rời phòng/ngắt kết nối: máy chủ xoá ghế; nếu đang chơi thì dừng ván và báo người còn lại.
 - **Xã hội:** trang `/friends` (tìm người chơi, gửi/chấp nhận/từ chối lời mời, huỷ kết bạn), trạng thái online, **kết bạn ngay trong phòng chờ và trong trận**, **chat riêng** qua khung chat nổi (`ChatDock`) — có đếm tin chưa đọc.
 - **Chat trong phòng:** khung trò chuyện chung cho mọi người đang ở cùng phòng/bàn (phòng chờ và trong ván đấu trực tuyến).
-- **Nhãn dán & Cửa hàng:** nhãn dán dùng được ở **cả ba nơi** — chat riêng, chat phòng chờ và trong trận; **hiện tất cả nhãn dán đều miễn phí** (hệ thống vẫn hỗ trợ bán bằng xu khi đặt `price > 0`); kèm **cửa hàng riêng** tại `/shop`; ảnh nhãn dán có thể lưu trong repo **hoặc host trên GitHub/CDN** (chi tiết ở [mục 8](#8-nhãn-dán--cửa-hàng-shop)).
+- **Nhãn dán & Cửa hàng:** nhãn dán dùng trong chat riêng, phòng chờ và trận; shop có tab theo loại vật phẩm, gồm nhãn dán và skin bộ bài (chi tiết ở [mục 8](#8-nhãn-dán--cửa-hàng-shop)).
 - **Hồ sơ:** đổi tên hiển thị + **tải ảnh đại diện lên** (data URI, tối đa 256 KB).
 - **Bảng quản trị** (`/admin`, chỉ tài khoản có `role = admin`): số liệu tổng quan, tìm người dùng, **tặng/trừ xu**, **cấp/thu quyền admin**, **xoá tài khoản**. Quyền admin được bootstrap qua biến môi trường `ADMIN_USERNAMES`.
 
 ## 8. Nhãn dán & Cửa hàng (Shop)
 
-Hệ thống nhãn dán dùng **file ảnh tĩnh** — có thể nằm trong `public/stickers/` (SVG/PNG/GIF) **hoặc host bên ngoài** (GitHub/CDN, xem [8.5](#85-host-ảnh-nhãn-dán-trên-github--cdn)). Không tốn RAM tiến trình Node, CSDL chỉ lưu **quyền sở hữu** chứ không lưu ảnh. Nhãn dán dùng chung cho **cả ba loại chat**: chat riêng (`ChatDock`), chat phòng chờ và chat trong trận (`RoomChat`).
+Hệ thống nhãn dán dùng **file ảnh tĩnh** — có thể nằm trong `public/stickers/` (SVG/PNG/GIF) **hoặc host bên ngoài** (GitHub/CDN, xem [8.6](#86-host-ảnh-nhãn-dán-trên-github--cdn)). Không tốn RAM tiến trình Node, CSDL chỉ lưu **quyền sở hữu** chứ không lưu ảnh. Nhãn dán dùng chung cho **cả ba loại chat**: chat riêng (`ChatDock`), chat phòng chờ và chat trong trận (`RoomChat`).
 
 ### 8.1. Thành phần chính
 
@@ -167,19 +168,29 @@ Hệ thống nhãn dán dùng **file ảnh tĩnh** — có thể nằm trong `pu
 | **Danh mục (nguồn duy nhất)** | `src/data/shopCatalog.ts` | Khai báo gói, loại, vật phẩm, giá và file ảnh. **Dùng chung client + server** nên giá/quyền không bao giờ lệch. |
 | Kiểu dữ liệu | `src/types/shop.ts` | `ShopItem`, `ShopItemKind`, `MessageType`. |
 | Hiển thị/chọn | `src/components/chat/StickerPicker.tsx`, `StickerImage.tsx` | Bảng chọn nhãn dán (nhãn chưa mua hiện ổ khoá → dẫn tới `/shop`) và cách render ảnh (hỗ trợ cả tệp trong repo lẫn **URL ảnh host bên ngoài**). |
-| Trạng thái/nghiệp vụ | `src/contexts/ShopContext.tsx`, `src/services/ShopService.ts` | Quyền sở hữu, mua vật phẩm, đồng bộ số xu. |
-| Trang cửa hàng | `src/pages/ShopPage.tsx` (route `/shop`) | Tab theo loại vật phẩm, nút mua. |
-| Backend | `server/src/shop/{service,routes}.ts`, model `Purchase` | Mua + trừ xu trong **một giao dịch**; socket/social **xác thực quyền sở hữu** trước khi cho gửi nhãn dán. |
+| Skin bộ bài | `src/utils/cardSkins.ts`, `src/components/game/PlayCard.tsx` | Màu, họa tiết và biểu tượng mặt/lưng bài; hạng và chất không đổi. |
+| Trạng thái/nghiệp vụ | `src/contexts/ShopContext.tsx`, `src/services/ShopService.ts` | Quyền sở hữu, mua vật phẩm và loadout đang trang bị. |
+| Trang cửa hàng | `src/pages/ShopPage.tsx` (route `/shop`) | Tab theo loại vật phẩm, xem trước, mua và trang bị skin. |
+| Backend | `server/src/shop/{service,routes}.ts`, models `Purchase`/`UserLoadout` | Mua + trừ xu; xác thực quyền sở hữu khi trang bị; xác thực quyền gửi nhãn dán. |
 
 Hai chế độ hoạt động khác nhau (theo đúng kiến trúc chung):
-- **Local/Demo:** quyền sở hữu lưu ở `LocalStorage` (key `shop-owned:<userId>`), mua thì trừ xu cục bộ qua `AuthService.spendCoins`.
-- **Trực tuyến:** mua qua `POST /api/shop/purchases`, server là nguồn chân lý; vật phẩm **miễn phí không lưu** vào danh sách sở hữu.
+- **Local/Demo:** quyền sở hữu và loadout lưu ở `LocalStorage` (key `shop-owned:<userId>` và `shop-loadout:<userId>`), mua thì trừ xu qua `AuthService.spendCoins`.
+- **Trực tuyến:** mua qua `POST /api/shop/purchases`, loadout qua `/api/shop/loadout`; server là nguồn chân lý.
 
-### 8.2. Thêm một nhãn dán mới
+### 8.2. Thêm skin bộ bài
+
+1. Thêm sản phẩm `kind: 'cardSkin'` vào `SHOP_ITEMS` trong `src/data/shopCatalog.ts`, đặt giá bằng xu.
+2. Dùng id ổn định và thêm cùng id vào `CARD_SKINS` trong `src/utils/cardSkins.ts` (màu mặt/lưng và biểu tượng).
+3. Shop tự tạo tab “Skin bộ bài”. Người chơi mua rồi bấm **Trang bị**; lựa chọn lưu cục bộ hoặc trong `UserLoadout`.
+4. Ván online chốt skin theo từng ghế. `MatchSeatView` chỉ gửi cosmetic id công khai, không gửi bài kín.
+
+Tab mới cần kind trong `ShopItemKind` và `SHOP_KINDS`; thêm loại equip thì bổ sung validator tại `server/src/shop/routes.ts`. Tab chưa có sản phẩm sẽ tự ẩn.
+
+### 8.3. Thêm một nhãn dán mới
 
 1. **Có ảnh** — chọn 1 trong 2 cách:
    - **Lưu trong repo:** thả file vào `public/stickers/` — tên file nên trùng `id` (ví dụ `star.svg`). Nếu là SVG thủ công, **nhúng id gradient riêng** để tránh trùng id khi nhiều ảnh cùng trang.
-   - **Host bên ngoài (không lưu trên server web):** đưa ảnh lên GitHub/CDN rồi dùng **URL tuyệt đối** làm `file` (xem [8.5](#85-host-ảnh-nhãn-dán-trên-github--cdn)).
+   - **Host bên ngoài (không lưu trên server web):** đưa ảnh lên GitHub/CDN rồi dùng **URL tuyệt đối** làm `file` (xem [8.6](#86-host-ảnh-nhãn-dán-trên-github--cdn)).
 2. Thêm một mục vào `SHOP_ITEMS` trong `src/data/shopCatalog.ts`:
 
 ```ts
@@ -196,9 +207,9 @@ Hai chế độ hoạt động khác nhau (theo đúng kiến trúc chung):
 - Đổi/tạo `pack` mới → cửa hàng tự có nhóm mới (không cần sửa component).
 - **Không cần sửa server:** server chỉ xác thực theo `id` nhãn dán, không đọc/lưu ảnh.
 
-> Hiện tại **tất cả** nhãn dán trong danh mục đều đặt `price: 0` (miễn phí). Muốn bán thì chỉ cần sửa `price` của nhãn đó thành số xu mong muốn.
+Nhãn dán có thể miễn phí (`price: 0`) hoặc bán bằng xu (`price > 0`).
 
-### 8.3. Mở rộng sang loại vật phẩm khác (khung chat, skin bài, khung avatar)
+### 8.4. Mở rộng sang loại vật phẩm khác (khung chat, khung avatar)
 
 1. Thêm giá trị mới vào `ShopItemKind` (`src/types/shop.ts`).
 2. Thêm nhãn hiển thị tiếng Việt vào `SHOP_KINDS` (`src/data/shopCatalog.ts`).
@@ -206,9 +217,9 @@ Hai chế độ hoạt động khác nhau (theo đúng kiến trúc chung):
 
 **Cửa hàng tự tạo tab theo loại và tự ẩn loại chưa có vật phẩm — không phải sửa `ShopPage`.**
 
-### 8.4. Lưu ý khi đổi CSDL
+### 8.5. Lưu ý khi đổi CSDL
 
-Schema thêm model `Purchase` và 2 cột `type`/`stickerId` cho `DirectMessage`. Sau khi sửa schema, chạy:
+Schema gồm `Purchase`, `UserLoadout` và 2 cột `type`/`stickerId` cho `DirectMessage`. Sau khi sửa schema, chạy:
 
 ```bash
 npm --prefix server run prisma:generate   # sinh Prisma Client
@@ -217,7 +228,7 @@ npm --prefix server run prisma:push       # đồng bộ schema vào CSDL
 
 > Khi deploy trên Render, Web Service đã tự chạy `prisma:push` lúc khởi động nên không cần làm tay.
 
-### 8.5. Host ảnh nhãn dán trên GitHub / CDN
+### 8.6. Host ảnh nhãn dán trên GitHub / CDN
 
 Ảnh nhãn dán **không bắt buộc** nằm trong `public/stickers/`. Bạn có thể host ở bên ngoài rồi điền **URL tuyệt đối** vào trường `file` của vật phẩm trong `src/data/shopCatalog.ts`.
 

@@ -43,6 +43,7 @@ function viewToState(view: MatchView, startedAt: number): TienLenState {
     seat: seat.seat,
     hand: seat.isYou ? view.you.hand : placeholderHand(seat.handCount),
     placement: seat.placement,
+    cardSkinId: seat.cardSkinId ?? null,
   }));
 
   return {

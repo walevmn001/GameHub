@@ -5,6 +5,7 @@ import { PlayerProfileButton } from '@/components/social/PlayerProfileButton';
 import { ChatBubble } from '@/components/game/ChatBubble';
 import { useRoomChat } from '@/contexts/RoomChatContext';
 import { cn } from '@/utils/cn';
+import { getCardSkinTheme } from '@/utils/cardSkins';
 
 export type SeatPosition = 'top' | 'left' | 'right';
 
@@ -118,7 +119,11 @@ export function SeatPanel({
 
       {/* Úp bài đối thủ */}
       <div className={cn('flex items-center', position === 'top' && 'ml-auto pl-1')}>
-        <MiniStack count={player.hand.length} vertical={position === 'top'} />
+        <MiniStack
+          count={player.hand.length}
+          vertical={position === 'top'}
+          skinId={player.cardSkinId}
+        />
       </div>
 
       {finished && (
@@ -129,15 +134,31 @@ export function SeatPanel({
 }
 
 /** Chồng bài úp thu nhỏ đại diện số lá còn lại. */
-function MiniStack({ count, vertical }: { count: number; vertical: boolean }) {
+function MiniStack({
+  count,
+  vertical,
+  skinId,
+}: {
+  count: number;
+  vertical: boolean;
+  skinId?: string | null;
+}) {
   const shown = Math.min(Math.max(count, 0), 6);
+  const skin = getCardSkinTheme(skinId);
   return (
     <div className={cn('flex', vertical ? '-space-x-3' : 'flex-col -space-y-3')}>
       {Array.from({ length: shown }).map((_, index) => (
         <span
           key={index}
-          className="h-6 w-4 rounded-[3px] border border-white/10 bg-gradient-to-br from-base-600 to-base-800"
-        />
+          className={cn(
+            'relative h-6 w-4 rounded-[3px] border',
+            skin?.backClass ?? 'border-white/10 bg-gradient-to-br from-base-600 to-base-800',
+          )}
+        >
+          {skin && index === shown - 1 && (
+            <span className="absolute inset-0 flex items-center justify-center text-[7px]">{skin.mark}</span>
+          )}
+        </span>
       ))}
     </div>
   );

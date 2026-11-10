@@ -35,7 +35,6 @@ const BASE_NAV_LINKS: NavItem[] = [
   { to: '/', label: 'Trang chủ', icon: <Gamepad2 className="h-4 w-4" /> },
   { to: '/games', label: 'Trò chơi', icon: <Gamepad2 className="h-4 w-4" /> },
   { to: '/rooms', label: 'Phòng chơi', icon: <Users className="h-4 w-4" /> },
-  { to: '/shop', label: 'Cửa hàng', icon: <ShoppingBag className="h-4 w-4" /> },
 ];
 
 export function Navbar() {
@@ -50,6 +49,9 @@ export function Navbar() {
   /** Liên kết điều hướng thay đổi theo trạng thái đăng nhập và quyền tài khoản. */
   const navLinks = useMemo<NavItem[]>(() => {
     const links: NavItem[] = [...BASE_NAV_LINKS];
+    if (user) {
+      links.push({ to: '/shop', label: 'Cửa hàng', icon: <ShoppingBag className="h-4 w-4" /> });
+    }
     if (user && social.enabled) {
       links.push({
         to: '/friends',

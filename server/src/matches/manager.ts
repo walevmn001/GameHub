@@ -14,6 +14,7 @@ import { broadcastRoomUpdate } from '../realtime/broadcast';
 import { setStatus, type RoomRow } from '../rooms/service';
 import { buildMatchView, type MatchMeta } from './view';
 import { recordMatchForUser, trimHistory } from './persist';
+import { getCardSkinsForUsers } from '../shop/service';
 
 /** Thời gian chờ trước khi người máy tự đi (giữ nhịp nhanh, không bắt người thật chờ). */
 const BOT_DELAY_MS = 900;
@@ -166,12 +167,16 @@ async function finishMatch(match: MatchRuntime): Promise<void> {
 export async function startMatchForRoom(room: RoomRow): Promise<void> {
   abortMatch(room.id);
 
+  const cardSkins = await getCardSkinsForUsers(
+    room.members.flatMap((member) => (member.userId ? [member.userId] : [])),
+  );
   const seats: TienLenSeatConfig[] = room.members.map((member) => ({
     id: member.userId ?? member.id,
     name: member.isBot ? (member.botName ?? 'Máy') : (member.user?.displayName ?? 'Người chơi'),
     avatar: member.user?.avatar ?? '',
     isBot: member.isBot,
     coins: member.coins,
+    cardSkinId: member.userId ? cardSkins.get(member.userId) ?? null : null,
   }));
 
   const seatByUserId = new Map<string, number>();

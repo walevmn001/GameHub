@@ -2,10 +2,8 @@ import { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { KeyRound, User as UserIcon, UserPlus } from 'lucide-react';
 import { Button, Input, Surface } from '@/components/ui';
-import { NoticeBanner } from '@/components/common/NoticeBanner';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
-import { LOCAL_ACCOUNT_NOTICE } from '@/utils/constants';
 
 export function RegisterPage() {
   const { user, register } = useAuth();
@@ -40,7 +38,7 @@ export function RegisterPage() {
       setError(result.error);
       return;
     }
-    toast.success('Tạo tài khoản thành công!', 'Tài khoản được lưu trên thiết bị này.');
+    toast.success('Tạo tài khoản thành công!');
     navigate('/profile', { replace: true });
   };
 
@@ -52,11 +50,6 @@ export function RegisterPage() {
           Bắt đầu hành trình của bạn trên Mini Game Hub.
         </p>
       </div>
-
-      <NoticeBanner variant="warning" title="Tài khoản thử nghiệm cục bộ">
-        {LOCAL_ACCOUNT_NOTICE} Tài khoản không đồng bộ giữa các thiết bị và sẽ mất nếu bạn xoá dữ
-        liệu trình duyệt.
-      </NoticeBanner>
 
       <Surface className="p-4 sm:p-5">
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">

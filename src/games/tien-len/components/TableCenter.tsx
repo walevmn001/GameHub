@@ -14,6 +14,7 @@ export function TableCenter({
   timer,
   waitingLabel,
   animate,
+  skinId,
 }: {
   combo: Combo | null;
   playerName: string | null;
@@ -23,6 +24,7 @@ export function TableCenter({
   timer: { progress: number; seconds: number } | null;
   waitingLabel: string | null;
   animate: boolean;
+  skinId?: string | null;
 }) {
   return (
     <div className="flex flex-col items-center gap-2">
@@ -59,6 +61,7 @@ export function TableCenter({
                   <PlayCard
                     card={card}
                     size="sm"
+                    skinId={skinId}
                     animate={animate}
                     style={animate ? { animationDelay: `${index * 50}ms` } : undefined}
                   />

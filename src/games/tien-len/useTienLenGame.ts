@@ -37,6 +37,8 @@ interface UseTienLenGameOptions {
   config?: TienLenConfig;
   /** Danh sách chỗ ngồi (kèm số dư xu); bỏ trống dùng 1 người + 3 AI. */
   seats?: TienLenSeatConfig[];
+  /** Skin áp dụng cho bài người chơi ở ghế đầu tiên trong chế độ cục bộ. */
+  playerCardSkinId?: string | null;
   onMatchEnd: (result: MatchResult) => void;
 }
 
@@ -103,13 +105,20 @@ export function useTienLenGame({
   playerAvatar,
   config,
   seats,
+  playerCardSkinId,
   onMatchEnd,
 }: UseTienLenGameOptions): TienLenGameApi {
   const turnMs = config?.turnMs ?? TIEN_LEN_TURN_MS;
 
   const makeState = useCallback(
-    () => createGame(buildSeatConfig(playerName, playerAvatar, seats), config),
-    [playerName, playerAvatar, seats, config],
+    () => {
+      const seatConfigs = buildSeatConfig(playerName, playerAvatar, seats);
+      if (seatConfigs[0] && !seatConfigs[0].isBot) {
+        seatConfigs[0].cardSkinId = playerCardSkinId ?? null;
+      }
+      return createGame(seatConfigs, config);
+    },
+    [playerName, playerAvatar, seats, playerCardSkinId, config],
   );
 
   const [state, setState] = useState<TienLenState>(() => makeState());

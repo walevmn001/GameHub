@@ -12,11 +12,9 @@ import {
   UserRound,
 } from 'lucide-react';
 import { Avatar, Badge, Button, EmptyState, Input, Modal, SectionHeader, StatTile, Surface } from '@/components/ui';
-import { NoticeBanner } from '@/components/common/NoticeBanner';
 import { FullPageLoader } from '@/components/ui';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
-import { LOCAL_ACCOUNT_NOTICE } from '@/utils/constants';
 import { formatCoins, formatDateTime, formatDuration } from '@/utils/format';
 import { getPresetAvatars, makeAvatarDataUri } from '@/utils/avatar';
 import { cn } from '@/utils/cn';
@@ -98,7 +96,7 @@ export function ProfilePage() {
     <div className="flex flex-col gap-6">
       <SectionHeader
         title="Hồ sơ người chơi"
-        subtitle="Thông tin tài khoản lưu cục bộ trên thiết bị"
+        subtitle="Thông tin hồ sơ và hành trình chơi của bạn"
         icon={<UserRound className="h-5 w-5" />}
         action={
           <Button variant="secondary" size="sm" icon={<Pencil className="h-3.5 w-3.5" />} onClick={() => setEditOpen(true)}>
@@ -106,10 +104,6 @@ export function ProfilePage() {
           </Button>
         }
       />
-
-      <NoticeBanner variant="warning" title="Tài khoản Local">
-        {LOCAL_ACCOUNT_NOTICE}
-      </NoticeBanner>
 
       {/* Thẻ hồ sơ */}
       <Surface className="p-4 sm:p-5">
@@ -152,8 +146,8 @@ export function ProfilePage() {
       {/* Lịch sử */}
       <section>
         <SectionHeader
-          title="Lịch sử chơi thử"
-          subtitle="Tối đa 50 ván gần nhất — lưu trên thiết bị này"
+          title="Lịch sử chơi"
+          subtitle="Tối đa 50 ván gần nhất"
           action={
             user.history.length > 0 ? (
               <Button variant="ghost" size="sm" icon={<RefreshCw className="h-3.5 w-3.5" />} onClick={() => void handleClearHistory()}>

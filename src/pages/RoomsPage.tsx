@@ -17,6 +17,7 @@ import {
   type TienLenRounds,
 } from '@/types';
 import { gameService } from '@/services/GameService';
+import { onlineEnabled } from '@/services/backend';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRooms } from '@/contexts/RoomsContext';
 import { useToast } from '@/contexts/ToastContext';
@@ -31,7 +32,6 @@ import {
   Switch,
 } from '@/components/ui';
 import { RoomCard } from '@/components/game/RoomCard';
-import { NoticeBanner } from '@/components/common/NoticeBanner';
 import type { SegmentOption } from '@/components/ui/SegmentedControl';
 
 type RoomFilter = 'all' | 'public' | 'private' | 'mine';
@@ -65,6 +65,12 @@ export function RoomsPage() {
 
   const patchConfig = (patch: Partial<TienLenConfig>) =>
     setConfig((prev) => ({ ...prev, ...patch }));
+
+  const requireAccount = (action: 'tạo phòng' | 'vào phòng') => {
+    if (user) return true;
+    toast.info('Bạn cần đăng nhập', `Đăng nhập hoặc tạo tài khoản để ${action}.`);
+    return false;
+  };
 
   const selectedGame = useMemo(
     () => games.find((g) => g.id === form.gameId),
@@ -100,6 +106,7 @@ export function RoomsPage() {
   ];
 
   const openCreate = () => {
+    if (!requireAccount('tạo phòng')) return;
     setForm({
       name: `Phòng của ${user?.displayName ?? 'Khách'}`,
       gameId: 'tien-len',
@@ -113,6 +120,7 @@ export function RoomsPage() {
   };
 
   const handleCreate = async () => {
+    if (!requireAccount('tạo phòng')) return;
     if (!form.name.trim()) {
       setFormError('Hãy nhập tên phòng.');
       return;
@@ -153,6 +161,7 @@ export function RoomsPage() {
   };
 
   const handleJoin = (room: Room) => {
+    if (!requireAccount('vào phòng')) return;
     if (room.visibility === 'private') {
       setPasswordInput('');
       setPasswordFor(room);
@@ -162,6 +171,7 @@ export function RoomsPage() {
   };
 
   const doJoin = async (roomId: string, password?: string) => {
+    if (!requireAccount('vào phòng')) return;
     const room = rooms.find((r) => r.id === roomId);
     if (room?.gameId === 'tien-len') {
       const required = minCoinsToPlay(room.config);
@@ -199,7 +209,7 @@ export function RoomsPage() {
     <div className="flex flex-col gap-5">
       <SectionHeader
         title="Phòng chơi"
-        subtitle="Tạo và tham gia phòng thử nghiệm"
+        subtitle={onlineEnabled ? 'Tạo phòng, mời bạn bè và so tài trực tuyến.' : 'Tạo phòng và thử sức với AI.'}
         icon={<Users className="h-5 w-5" />}
         action={
           <Button icon={<Plus className="h-4 w-4" />} onClick={openCreate}>
@@ -207,11 +217,6 @@ export function RoomsPage() {
           </Button>
         }
       />
-
-      <NoticeBanner variant="info" title="Phòng chơi hoạt động cục bộ">
-        Phòng chỉ tồn tại trong dữ liệu thử nghiệm trên thiết bị này. Chưa thể kết nối nhiều người
-        chơi qua Internet cho tới khi có backend realtime.
-      </NoticeBanner>
 
       <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
         <Filter className="h-4 w-4 shrink-0 text-slate-500" />
@@ -249,7 +254,7 @@ export function RoomsPage() {
         open={createOpen}
         onClose={() => setCreateOpen(false)}
         title="Tạo phòng mới"
-        description="Phòng được lưu cục bộ trên thiết bị này."
+        description={onlineEnabled ? 'Cài đặt luật chơi rồi mời bạn bè cùng tham gia.' : 'Cài đặt luật chơi cho ván của bạn.'}
         size="lg"
         footer={
           <>
@@ -330,7 +335,7 @@ export function RoomsPage() {
               icon={<KeyRound className="h-4 w-4" />}
               value={form.password}
               onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
-              hint="Mật khẩu chỉ dùng cho luồng demo cục bộ."
+              hint="Chỉ người có mật khẩu mới vào được phòng riêng."
             />
           )}
 

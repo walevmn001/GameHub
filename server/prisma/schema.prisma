@@ -41,6 +41,7 @@ model User {
   sentMessages     DirectMessage[] @relation("DmSender")
   receivedMessages DirectMessage[] @relation("DmRecipient")
   purchases        Purchase[]
+  loadouts         UserLoadout[]
 }
 
 model Stats {
@@ -165,5 +166,18 @@ model Purchase {
   createdAt DateTime @default(now())
 
   @@unique([userId, itemId])
+  @@index([userId])
+}
+
+/// Vật phẩm đang trang bị theo loại; catalog vẫn là nguồn tên/giá/id chuẩn.
+model UserLoadout {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind      String
+  itemId    String
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, kind])
   @@index([userId])
 }
