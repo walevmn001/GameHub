@@ -482,7 +482,7 @@ function TienLenBoardView({
       {landscape ? (
         <div className="relative h-full w-full">
           {board}
-          <ChatDock />
+          <ChatDock landscape={landscape} />
           <button
             type="button"
             onClick={() => setLandscape(false)}
@@ -494,7 +494,7 @@ function TienLenBoardView({
       ) : (
         <>
           {board}
-          <ChatDock />
+          <ChatDock landscape={landscape} />
         </>
       )}
     </LandscapeFrame>

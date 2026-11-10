@@ -5,12 +5,15 @@ import { StickerImage } from '@/components/chat/StickerImage';
 import { StickerPicker } from '@/components/chat/StickerPicker';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSocial } from '@/contexts/SocialContext';
+import { useIsPortrait } from '@/hooks/useMediaQuery';
 import { formatRelativeTime } from '@/utils/format';
 import { cn } from '@/utils/cn';
 
-export function ChatDock() {
+export function ChatDock({ landscape = false }: { landscape?: boolean }) {
   const { user } = useAuth();
   const social = useSocial();
+  const isPortrait = useIsPortrait();
+  const isLandscape = landscape || !isPortrait;
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -36,12 +39,12 @@ export function ChatDock() {
           )}
         </button>
       )}
-      {open && <ChatPanel onClose={() => setOpen(false)} />}
+      {open && <ChatPanel onClose={() => setOpen(false)} landscape={isLandscape} />}
     </>
   );
 }
 
-function ChatPanel({ onClose }: { onClose: () => void }) {
+function ChatPanel({ onClose, landscape }: { onClose: () => void; landscape: boolean }) {
   const { user } = useAuth();
   const social = useSocial();
   const [query, setQuery] = useState('');
@@ -88,7 +91,15 @@ function ChatPanel({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="fixed bottom-0 right-0 z-40 flex h-[70vh] max-h-[32rem] w-full flex-col overflow-hidden border border-white/10 bg-base-850/95 shadow-soft backdrop-blur-md sm:bottom-4 sm:right-4 sm:w-96 sm:rounded-2xl">
+    <div
+      className={cn(
+        'fixed z-40 flex flex-col overflow-hidden border border-white/10 bg-base-850/95 shadow-soft backdrop-blur-md',
+        landscape
+          ? 'inset-y-4 right-4 max-w-[28rem] rounded-2xl'
+          : 'bottom-0 right-0 h-[70vh] max-h-[32rem] w-full sm:bottom-4 sm:right-4 sm:w-96 sm:rounded-2xl',
+      )}
+      style={landscape ? { width: 'min(28rem, calc(100% - 2rem))' } : undefined}
+    >
       <div className="flex items-center gap-2 border-b border-white/5 bg-base-800/80 px-3 py-2.5">
         {active ? (
           <>
