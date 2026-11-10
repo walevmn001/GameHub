@@ -67,7 +67,7 @@ export function registerSocketHandlers(io: AppServer): void {
     broadcastPresence(onlineUserIds());
     void notifyFriends(socket.data.userId);
 
-    /** Rời phòng hiện tại: dừng ván (nếu đang chơi), xoá ghế và phát cập nhật. */
+    /** Rời phòng rõ ràng: dừng ván (nếu đang chơi), xoá ghế và phát cập nhật. */
     const leaveCurrentRoom = async (): Promise<void> => {
       const roomId = socket.data.roomId;
       if (!roomId) return;
@@ -195,7 +195,8 @@ export function registerSocketHandlers(io: AppServer): void {
     });
 
     socket.on('disconnect', () => {
-      void leaveCurrentRoom();
+      // Disconnect thường xảy ra khi F5/reconnect. Giữ ghế và ván trên server để client
+      // mới có thể join lại rồi nhận trạng thái hiện tại; chỉ event room:leave mới rời hẳn.
       removeConnection(socket.data.userId);
       broadcastPresence(onlineUserIds());
       void notifyFriends(socket.data.userId);
