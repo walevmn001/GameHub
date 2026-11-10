@@ -4,6 +4,7 @@ import {
   type AdminCoinResult,
   type AdminStats,
   type AdminUser,
+  type Room,
   type ServiceResult,
   type UserRole,
 } from '@/types';
@@ -53,6 +54,19 @@ class AdminService {
   async deleteUser(userId: string): Promise<ServiceResult<true>> {
     if (!onlineEnabled) return unavailable();
     const result = await api.request<{ ok: true }>(`/admin/users/${userId}`, { method: 'DELETE' });
+    return result.ok ? ok(true) : fail(result.error);
+  }
+
+  async rooms(): Promise<ServiceResult<Room[]>> {
+    if (!onlineEnabled) return unavailable();
+    return api.request<Room[]>('/admin/rooms');
+  }
+
+  async deleteRoom(roomId: string): Promise<ServiceResult<true>> {
+    if (!onlineEnabled) return unavailable();
+    const result = await api.request<{ ok: true }>(`/admin/rooms/${encodeURIComponent(roomId)}`, {
+      method: 'DELETE',
+    });
     return result.ok ? ok(true) : fail(result.error);
   }
 }
