@@ -25,7 +25,8 @@ export function PlayGamePage() {
   const { user, refresh } = useAuth();
 
   const boardState = (location.state ?? null) as BoardLocationState | null;
-  const online = onlineEnabled && Boolean(boardState?.roomId);
+  const roomId = new URLSearchParams(location.search).get('roomId') || boardState?.roomId;
+  const online = onlineEnabled && Boolean(roomId);
 
   const meta = gameService.getGame(gameId);
   const Board = gameService.getBoardComponent(gameId);
@@ -100,7 +101,7 @@ export function PlayGamePage() {
         config={boardState?.config}
         seats={boardState?.seats}
         online={online}
-        roomId={online ? boardState?.roomId : undefined}
+        roomId={online ? roomId : undefined}
       />
     </Suspense>
   );

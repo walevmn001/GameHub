@@ -47,6 +47,7 @@ class SocketService {
   /** Kết nối (hoặc tái sử dụng kết nối) với JWT. */
   connect(token: string): AppSocket {
     if (this.socket && this.socket.connected) return this.socket;
+    const shouldJoinOnConnect = Boolean(this.roomId);
     this.socket?.disconnect();
     // BACKEND_URL có thể là URL tuyệt đối (Render) hoặc giá trị tương đối khi backend
     // được proxy cùng domain với frontend (ví dụ lúc chạy dev) — khi đó dùng origin hiện tại.
@@ -54,8 +55,19 @@ class SocketService {
     const socket: AppSocket = io(target, {
       auth: { token },
       transports: ['websocket', 'polling'],
-      reconnectionAttempts: 10,
+      reconnectionAttempts: Infinity,
       reconnectionDelay: 1000,
+    });
+    let connectedBefore = false;
+    socket.on('connect', () => {
+      const roomId = this.roomId;
+      if (roomId && (connectedBefore || shouldJoinOnConnect)) {
+        socket.emit(REALTIME_EVENTS.roomJoin, { roomId }, (joined) => {
+          if (!joined.ok || this.socket !== socket || this.roomId !== roomId) return;
+          socket.emit(REALTIME_EVENTS.matchSync, {}, () => undefined);
+        });
+      }
+      connectedBefore = true;
     });
     this.attachHandlers(socket);
     this.socket = socket;

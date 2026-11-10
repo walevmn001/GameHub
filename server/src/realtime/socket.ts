@@ -15,6 +15,81 @@ import { addConnection, onlineUserIds, removeConnection } from './presence';
 import { roomChannel, userChannel, type AppServer } from './io';
 
 const MAX_CHAT_LENGTH = 200;
+const ROOM_RECONNECT_GRACE_MS = 60_000;
+
+interface PendingRoomCleanup {
+  timer: ReturnType<typeof setTimeout> | null;
+  cancelled: boolean;
+  completion?: Promise<void>;
+}
+
+const pendingRoomCleanups = new Map<string, PendingRoomCleanup>();
+
+function cleanupKey(roomId: string, userId: string): string {
+  return `${roomId}:${userId}`;
+}
+
+async function cancelPendingRoomCleanup(roomId: string, userId: string): Promise<void> {
+  const key = cleanupKey(roomId, userId);
+  const pending = pendingRoomCleanups.get(key);
+  if (!pending) return;
+  pending.cancelled = true;
+  if (pending.timer) {
+    clearTimeout(pending.timer);
+    pendingRoomCleanups.delete(key);
+    return;
+  }
+  await pending.completion;
+}
+
+async function cleanupDisconnectedMember(
+  io: AppServer,
+  roomId: string,
+  userId: string,
+  pending: PendingRoomCleanup,
+): Promise<void> {
+  const key = cleanupKey(roomId, userId);
+  try {
+    const activeSockets = await io.in(roomChannel(roomId)).fetchSockets();
+    if (
+      pending.cancelled ||
+      activeSockets.some((roomSocket) => roomSocket.data.userId === userId)
+    ) {
+      return;
+    }
+
+    const room = await getRoomRow(roomId);
+    if (pending.cancelled || !room) return;
+
+    if (hasMatch(roomId)) {
+      abortMatch(roomId);
+      await setStatus(roomId, 'waiting').catch(() => undefined);
+      io.to(roomChannel(roomId)).emit(REALTIME_EVENTS.serverError, {
+        message: 'Người chơi mất kết nối quá lâu. Ván đấu đã kết thúc.',
+      });
+    }
+
+    const result = await removeMember(room, userId);
+    if (result.closed) broadcastRoomClosed(roomId);
+    else if (result.room) await broadcastRoomUpdate(roomId);
+  } catch (error) {
+    console.error('[socket] disconnect cleanup', error);
+  } finally {
+    if (pendingRoomCleanups.get(key) === pending) pendingRoomCleanups.delete(key);
+  }
+}
+
+function scheduleRoomCleanup(io: AppServer, roomId: string, userId: string): void {
+  const key = cleanupKey(roomId, userId);
+  const previous = pendingRoomCleanups.get(key);
+  if (previous?.timer) clearTimeout(previous.timer);
+  const pending: PendingRoomCleanup = { timer: null, cancelled: false };
+  pending.timer = setTimeout(() => {
+    pending.timer = null;
+    pending.completion = cleanupDisconnectedMember(io, roomId, userId, pending);
+  }, ROOM_RECONNECT_GRACE_MS);
+  pendingRoomCleanups.set(key, pending);
+}
 
 async function coinsOf(userId: string): Promise<number> {
   const user = await prisma.user.findUnique({ where: { id: userId }, select: { coins: true } });
@@ -69,13 +144,23 @@ export function registerSocketHandlers(io: AppServer): void {
     void notifyFriends(socket.data.userId);
 
     /** Rời phòng rõ ràng: dừng ván (nếu đang chơi), xoá ghế và phát cập nhật. */
-    const leaveCurrentRoom = async (): Promise<void> => {
-      const roomId = socket.data.roomId;
+    const leaveCurrentRoom = async (requestedRoomId?: string): Promise<void> => {
+      const roomId = requestedRoomId ?? socket.data.roomId;
       if (!roomId) return;
-      socket.data.roomId = null;
+      await cancelPendingRoomCleanup(roomId, socket.data.userId);
+      if (socket.data.roomId === roomId) socket.data.roomId = null;
       try {
         const hadMatch = hasMatch(roomId);
         await socket.leave(roomChannel(roomId));
+        const sameUserSockets = await io.in(roomChannel(roomId)).fetchSockets();
+        await Promise.all(
+          sameUserSockets
+            .filter((roomSocket) => roomSocket.data.userId === socket.data.userId)
+            .map(async (roomSocket) => {
+              roomSocket.data.roomId = null;
+              await roomSocket.leave(roomChannel(roomId));
+            }),
+        );
 
         if (hadMatch) {
           abortMatch(roomId);
@@ -103,9 +188,22 @@ export function registerSocketHandlers(io: AppServer): void {
           ack?.({ ok: false, error: 'Thiếu mã phòng.' });
           return;
         }
+        await cancelPendingRoomCleanup(roomId, socket.data.userId);
+        if (socket.data.roomId && socket.data.roomId !== roomId) {
+          await leaveCurrentRoom();
+        }
         const room = await getRoomRow(roomId);
         if (!room) {
           ack?.({ ok: false, error: 'Không tìm thấy phòng.' });
+          return;
+        }
+        if (room.status === 'playing' && !hasMatch(roomId)) {
+          await setStatus(roomId, 'waiting');
+          await broadcastRoomUpdate(roomId);
+          socket.emit(REALTIME_EVENTS.serverError, {
+            message: 'Ván trước đã mất trạng thái trên máy chủ. Phòng đã được đưa về chờ để bắt đầu ván mới.',
+          });
+          ack?.({ ok: false, error: 'Ván trước không còn trạng thái trên máy chủ.' });
           return;
         }
 
@@ -124,7 +222,7 @@ export function registerSocketHandlers(io: AppServer): void {
 
     socket.on(REALTIME_EVENTS.roomLeave, async (_payload, ack) => {
       try {
-        await leaveCurrentRoom();
+        await leaveCurrentRoom(_payload?.roomId);
         ack?.({ ok: true });
       } catch (error) {
         console.error('[socket] room:leave', error);
@@ -219,6 +317,13 @@ export function registerSocketHandlers(io: AppServer): void {
         return;
       }
       try {
+        if (!hasMatch(roomId)) {
+          socket.emit(REALTIME_EVENTS.serverError, {
+            message: 'Ván này không còn hoạt động. Bạn đã được đưa về phòng chờ.',
+          });
+          ack?.({ ok: false, error: 'Ván đấu không còn hoạt động.' });
+          return;
+        }
         await syncMatch(roomId);
         ack?.({ ok: true });
       } catch (error) {
@@ -229,8 +334,10 @@ export function registerSocketHandlers(io: AppServer): void {
 
     socket.on('disconnect', () => {
       // Disconnect thường xảy ra khi F5/reconnect. Giữ ghế và ván trên server để client
-      // mới có thể join lại rồi nhận trạng thái hiện tại; chỉ event room:leave mới rời hẳn.
+      // mới có thể join lại trong thời gian ân hạn; quá hạn mới dọn ghế và dừng ván.
+      const roomId = socket.data.roomId;
       removeConnection(socket.data.userId);
+      if (roomId) scheduleRoomCleanup(io, roomId, socket.data.userId);
       broadcastPresence(onlineUserIds());
       void notifyFriends(socket.data.userId);
     });

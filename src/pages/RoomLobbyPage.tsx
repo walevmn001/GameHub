@@ -140,7 +140,10 @@ export function RoomLobbyPage() {
       ...current.players.filter((p) => p.id === me),
       ...current.players.filter((p) => p.id !== me),
     ];
-    navigate(`/play/${current.gameId}`, {
+    const boardUrl = onlineEnabled
+      ? `/play/${current.gameId}?roomId=${encodeURIComponent(current.id)}`
+      : `/play/${current.gameId}`;
+    navigate(boardUrl, {
       state: {
         config: current.config,
         seats: ordered.map((p) => ({
@@ -155,6 +158,11 @@ export function RoomLobbyPage() {
       },
     });
   }, [navigate, user?.id]);
+
+  /** Nếu reload khi ván đang diễn ra, vào lại bàn thay vì để ở lobby. */
+  useEffect(() => {
+    if (onlineEnabled && joined && room?.status === 'playing') goToBoard();
+  }, [goToBoard, joined, room?.status]);
 
   /** Trực tuyến: vào kênh phòng qua Socket.IO để nhận cập nhật và lệnh bắt đầu ván. */
   useEffect(() => {
