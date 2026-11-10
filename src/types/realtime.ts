@@ -97,7 +97,7 @@ export interface ClientToServerEvents {
 /** Bản đồ sự kiện server → client. */
 export interface ServerToClientEvents {
   'room:updated': (room: Room) => void;
-  'room:closed': (payload: { roomId: string }) => void;
+  'room:closed': (payload: { roomId: string; reason?: 'admin' }) => void;
   'chat:message': (message: ChatMessage) => void;
   'match:started': (view: MatchView) => void;
   'match:state': (view: MatchView) => void;
