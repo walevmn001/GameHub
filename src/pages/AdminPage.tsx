@@ -189,7 +189,7 @@ export function AdminPage() {
       {!adminService.enabled && (
         <NoticeBanner variant="warning" title="Cần backend trực tuyến">
           Bảng quản trị cần máy chủ trực tuyến. Hãy cấu hình biến môi trường
-          <code className="mx-1 rounded bg-white/10 px-1">VITE_API_URL</code>.
+          <code className="mx-1 rounded bg-ink/10 px-1">VITE_API_URL</code>.
         </NoticeBanner>
       )}
 
@@ -223,7 +223,7 @@ export function AdminPage() {
       <div
         role="tablist"
         aria-label="Danh sách quản trị"
-        className="inline-flex w-full gap-1 rounded-xl border border-white/10 bg-base-900/70 p-1 sm:w-fit"
+        className="inline-flex w-full gap-1 rounded-xl border border-ink/10 bg-base-900/70 p-1 sm:w-fit"
       >
         <button
           type="button"
@@ -234,7 +234,7 @@ export function AdminPage() {
           className={`inline-flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors sm:flex-none ${
             activeTab === 'rooms'
               ? 'bg-neon-purple/20 text-neon-purple ring-1 ring-neon-purple/40'
-              : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'
+              : 'text-slate-400 hover:bg-ink/5 hover:text-slate-200'
           }`}
         >
           <DoorOpen className="h-4 w-4" />
@@ -249,7 +249,7 @@ export function AdminPage() {
           className={`inline-flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors sm:flex-none ${
             activeTab === 'users'
               ? 'bg-neon-purple/20 text-neon-purple ring-1 ring-neon-purple/40'
-              : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'
+              : 'text-slate-400 hover:bg-ink/5 hover:text-slate-200'
           }`}
         >
           <Users className="h-4 w-4" />
@@ -343,7 +343,7 @@ export function AdminPage() {
                   </p>
                 </div>
 
-                <span className="inline-flex items-center gap-1 text-sm font-semibold text-amber-300">
+                <span className="inline-flex items-center gap-1 text-sm font-semibold text-amber-600">
                   <Coins className="h-4 w-4" />
                   {formatCoins(item.coins)}
                 </span>
@@ -377,7 +377,7 @@ export function AdminPage() {
                     type="button"
                     disabled={item.id === user.id}
                     onClick={() => setDeleteTarget(item)}
-                    className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-rose-500/10 hover:text-rose-300 disabled:cursor-not-allowed disabled:opacity-40"
+                    className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-rose-500/10 hover:text-rose-600 disabled:cursor-not-allowed disabled:opacity-40"
                     aria-label="Xoá tài khoản"
                   >
                     <Trash2 className="h-4 w-4" />

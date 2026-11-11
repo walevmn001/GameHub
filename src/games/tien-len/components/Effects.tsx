@@ -23,7 +23,7 @@ export function ShuffleOverlay({ visible }: { visible: boolean }) {
         {cards.map((card) => (
           <span
             key={card.id}
-            className="absolute left-1/2 top-1/2 h-24 w-16 animate-shuffle-card rounded-lg border border-white/15 bg-gradient-to-br from-base-600 to-base-850 shadow-soft"
+            className="absolute left-1/2 top-1/2 h-24 w-16 animate-shuffle-card rounded-lg border border-ink/15 bg-gradient-to-br from-base-600 to-base-850 shadow-soft"
             style={{ animationDelay: `${card.delay}ms` }}
           >
             <span className="absolute inset-1 rounded-md border border-neon-purple/30 bg-[repeating-linear-gradient(45deg,rgba(168,85,247,0.18)_0px,rgba(168,85,247,0.18)_4px,transparent_4px,transparent_8px)]" />
@@ -135,7 +135,7 @@ export function CoinBurst({ show, amount }: { show: boolean; amount: number }) {
           className="absolute bottom-24 animate-coin-pop"
           style={{ left: `${coin.left}%`, animationDelay: `${coin.delay}s` }}
         >
-          <Coins className="h-6 w-6 text-amber-300 drop-shadow" />
+          <Coins className="h-6 w-6 text-amber-600 drop-shadow" />
         </span>
       ))}
       <div className="absolute inset-x-0 bottom-32 flex justify-center">

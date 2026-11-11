@@ -5,7 +5,7 @@ import { Button } from '@/components/ui';
 export function NotFoundPage() {
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
-      <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/5 text-neon-cyan">
+      <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-ink/5 text-neon-cyan">
         <Compass className="h-8 w-8" />
       </span>
       <div>

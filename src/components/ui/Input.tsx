@@ -24,7 +24,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       <div
         className={cn(
           'flex h-11 items-center gap-2 rounded-xl border bg-base-900/70 px-3 transition-colors',
-          error ? 'border-rose-500/60' : 'border-white/10 focus-within:border-neon-purple/70',
+          error ? 'border-rose-500/60' : 'border-ink/10 focus-within:border-neon-purple/70',
         )}
       >
         {icon && <span className="shrink-0 text-slate-500">{icon}</span>}

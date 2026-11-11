@@ -284,7 +284,7 @@ export function RoomsPage() {
                 const game = games.find((g) => g.id === gameId);
                 setForm((f) => ({ ...f, gameId, maxPlayers: game?.maxPlayers ?? f.maxPlayers }));
               }}
-              className="h-11 w-full rounded-xl border border-white/10 bg-base-900/70 px-3 text-sm text-slate-100 outline-none focus:border-neon-purple/70"
+              className="h-11 w-full rounded-xl border border-ink/10 bg-base-900/70 px-3 text-sm text-slate-100 outline-none focus:border-neon-purple/70"
             >
               {games.map((game) => (
                 <option key={game.id} value={game.id}>
@@ -340,7 +340,7 @@ export function RoomsPage() {
           )}
 
           {form.gameId === 'tien-len' && (
-            <div className="flex flex-col gap-4 rounded-2xl border border-white/5 bg-base-900/40 p-3.5">
+            <div className="flex flex-col gap-4 rounded-2xl border border-ink/5 bg-base-900/40 p-3.5">
               <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
                 <Settings2 className="h-4 w-4 text-neon-cyan" />
                 Cấu hình bàn Tiến Lên
@@ -449,7 +449,7 @@ export function RoomsPage() {
               </div>
 
               <p className="flex items-center gap-1.5 text-[11px] text-slate-400">
-                <Coins className="h-3.5 w-3.5 text-amber-300" />
+                <Coins className="h-3.5 w-3.5 text-amber-600" />
                 Số dư của bạn: {(user?.coins ?? 0).toLocaleString('vi-VN')} xu
               </p>
             </div>

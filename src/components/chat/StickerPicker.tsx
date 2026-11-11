@@ -26,7 +26,7 @@ export function StickerPicker({
   return (
     <div
       className={cn(
-        'max-h-56 overflow-y-auto border-t border-white/5 bg-base-900/80 p-2',
+        'max-h-56 overflow-y-auto border-t border-ink/5 bg-base-900/80 p-2',
         className,
       )}
     >
@@ -45,7 +45,7 @@ export function StickerPicker({
                   onClick={() => (owned ? onPick(item.id) : navigate('/shop'))}
                   className={cn(
                     'relative flex aspect-square items-center justify-center rounded-xl p-1 transition-colors',
-                    owned ? 'hover:bg-white/10' : 'opacity-80 hover:bg-white/5',
+                    owned ? 'hover:bg-ink/10' : 'opacity-80 hover:bg-ink/5',
                   )}
                   aria-label={owned ? `Gửi nhãn dán: ${item.name}` : `Mở khoá nhãn dán: ${item.name}`}
                   title={owned ? item.name : `${item.name} — mở khoá trong Cửa hàng`}

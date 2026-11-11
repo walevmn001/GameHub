@@ -38,14 +38,14 @@ export function RoomCard({
   return (
     <div
       className={cn(
-        'rounded-2xl border border-white/5 bg-base-900/60 p-3.5 transition-colors hover:border-white/10',
+        'rounded-2xl border border-ink/5 bg-base-900/60 p-3.5 transition-colors hover:border-ink/10',
         compact && 'p-3',
       )}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="flex items-center gap-1.5 truncate text-sm font-semibold text-slate-100">
-            {room.visibility === 'private' && <Lock className="h-3.5 w-3.5 text-amber-400" />}
+            {room.visibility === 'private' && <Lock className="h-3.5 w-3.5 text-amber-500" />}
             {room.name}
           </p>
           <p className="mt-0.5 truncate text-[11px] text-slate-500">
@@ -76,7 +76,7 @@ export function RoomCard({
             {room.players.length}/{room.maxPlayers}
           </span>
           {isHost && (
-            <span className="inline-flex items-center gap-1 text-[11px] text-amber-300">
+            <span className="inline-flex items-center gap-1 text-[11px] text-amber-600">
               <Crown className="h-3.5 w-3.5" /> Chủ phòng
             </span>
           )}

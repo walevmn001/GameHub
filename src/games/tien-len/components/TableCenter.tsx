@@ -37,7 +37,7 @@ export function TableCenter({
         </div>
       ) : (
         waitingLabel && (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-base-900/70 px-3 py-1.5 text-[11px] font-medium text-slate-400">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-ink/10 bg-base-900/70 px-3 py-1.5 text-[11px] font-medium text-slate-400">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-neon-cyan" />
             {waitingLabel}
           </span>
@@ -72,7 +72,7 @@ export function TableCenter({
         ) : (
           <div
             className={cn(
-              'rounded-2xl border border-dashed border-white/10 px-4 py-3 text-center',
+              'rounded-2xl border border-dashed border-ink/10 px-4 py-3 text-center',
             )}
           >
             <p className="text-xs font-medium text-slate-400">Vòng mới</p>

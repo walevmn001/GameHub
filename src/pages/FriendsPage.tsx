@@ -43,7 +43,7 @@ export function FriendsPage() {
         <SectionHeader title="Bạn bè" icon={<Users className="h-5 w-5" />} />
         <NoticeBanner variant="warning" title="Cần backend trực tuyến">
           Tính năng kết bạn và trò chuyện riêng cần máy chủ trực tuyến. Hãy cấu hình biến môi trường
-          <code className="mx-1 rounded bg-white/10 px-1">VITE_API_URL</code> trỏ tới backend rồi tải
+          <code className="mx-1 rounded bg-ink/10 px-1">VITE_API_URL</code> trỏ tới backend rồi tải
           lại ứng dụng.
         </NoticeBanner>
       </div>
@@ -161,7 +161,7 @@ export function FriendsPage() {
                     </p>
                     <p className="truncate text-[11px] text-slate-500">@{candidate.username}</p>
                   </div>
-                  <span className="hidden items-center gap-1 text-xs font-semibold text-amber-300 sm:inline-flex">
+                  <span className="hidden items-center gap-1 text-xs font-semibold text-amber-600 sm:inline-flex">
                     <Coins className="h-3.5 w-3.5" />
                     {formatCoins(candidate.coins)}
                   </span>
@@ -225,7 +225,7 @@ export function FriendsPage() {
                 <button
                   type="button"
                   onClick={() => setUnfriendTarget(friend)}
-                  className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-rose-500/10 hover:text-rose-300"
+                  className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-rose-500/10 hover:text-rose-600"
                   aria-label="Huỷ kết bạn"
                 >
                   <UserMinus className="h-4 w-4" />

@@ -28,7 +28,7 @@ export function GameCard({ game, onSelect, variant = 'default', className }: Gam
         type="button"
         onClick={() => onSelect(game)}
         className={cn(
-          'group flex w-full items-center gap-3 rounded-2xl border border-white/5 bg-base-900/60 p-2.5 text-left transition-all hover:border-white/10 hover:bg-base-850',
+          'group flex w-full items-center gap-3 rounded-2xl border border-ink/5 bg-base-900/60 p-2.5 text-left transition-all hover:border-ink/10 hover:bg-base-850',
           className,
         )}
       >
@@ -56,7 +56,7 @@ export function GameCard({ game, onSelect, variant = 'default', className }: Gam
       type="button"
       onClick={() => onSelect(game)}
       className={cn(
-        'group relative flex flex-col overflow-hidden rounded-2xl border border-white/5 bg-base-850 text-left shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-white/10 hover:shadow-glow',
+        'group relative flex flex-col overflow-hidden rounded-2xl border border-ink/5 bg-base-850 text-left shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-ink/10 hover:shadow-glow',
         className,
       )}
     >
@@ -92,14 +92,14 @@ export function GameCard({ game, onSelect, variant = 'default', className }: Gam
 
         <span className="mt-2.5 flex items-center gap-3 text-[11px] text-slate-400">
           <span className="inline-flex items-center gap-1">
-            <Star className="h-3.5 w-3.5 text-amber-400" />
+            <Star className="h-3.5 w-3.5 text-amber-500" />
             {game.rating.toFixed(1)}
           </span>
           <span className="inline-flex items-center gap-1">
             <Users className="h-3.5 w-3.5 text-slate-500" />
             {formatNumber(game.playCount)}
           </span>
-          <span className="ml-auto rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-medium text-slate-300">
+          <span className="ml-auto rounded-full bg-ink/5 px-2 py-0.5 text-[10px] font-medium text-slate-300">
             {GAME_CATEGORY_LABEL[primaryCategory]}
           </span>
         </span>
@@ -109,7 +109,7 @@ export function GameCard({ game, onSelect, variant = 'default', className }: Gam
             'mt-3 inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-xl text-xs font-semibold transition-colors',
             playable
               ? 'bg-gradient-to-r from-neon-purple to-neon-violet text-white group-hover:brightness-110'
-              : 'bg-white/5 text-slate-400',
+              : 'bg-ink/5 text-slate-400',
           )}
         >
           {playable ? (

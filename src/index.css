@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    color-scheme: dark;
+    color-scheme: light;
   }
 
   html,
@@ -22,7 +22,7 @@
     overflow-x: hidden;
   }
 
-  /* Nền phát sáng rất nhẹ, không lạm dụng gradient mạnh */
+  /* Nền gradient nhẹ màu xanh lá, không lạm dụng */
   body::before {
     content: '';
     position: fixed;
@@ -30,32 +30,32 @@
     pointer-events: none;
     z-index: 0;
     background:
-      radial-gradient(60rem 40rem at 12% -10%, rgba(168, 85, 247, 0.12), transparent 60%),
-      radial-gradient(50rem 34rem at 100% 0%, rgba(34, 211, 238, 0.1), transparent 60%);
+      radial-gradient(60rem 40rem at 12% -10%, rgba(117, 201, 138, 0.25), transparent 60%),
+      radial-gradient(50rem 34rem at 100% 0%, rgba(168, 221, 181, 0.3), transparent 60%);
   }
 
   *:focus-visible {
-    @apply outline-none ring-2 ring-neon-purple/70 ring-offset-2 ring-offset-base-950;
+    @apply outline-none ring-2 ring-neon-purple/60 ring-offset-2 ring-offset-base-950;
   }
 }
 
 @layer components {
   /* Khung nội dung dùng chung */
   .glass-panel {
-    @apply rounded-2xl border border-white/5 bg-base-850/70 shadow-soft backdrop-blur-sm;
+    @apply rounded-2xl border border-ink/10 bg-base-900/80 shadow-soft backdrop-blur-sm;
   }
 
   .neon-text {
     @apply bg-gradient-to-r from-neon-purple via-neon-violet to-neon-cyan bg-clip-text text-transparent;
   }
 
-  /* Thanh cuộn mảnh, phù hợp dark mode */
+  /* Thanh cuộn mảnh, phù hợp light mode */
   .scrollbar-thin::-webkit-scrollbar {
     height: 8px;
     width: 8px;
   }
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    @apply rounded-full bg-base-600;
+    @apply rounded-full bg-neon-purple/30;
   }
   .scrollbar-thin::-webkit-scrollbar-track {
     background: transparent;

@@ -120,7 +120,7 @@ export function SettingsPage() {
 
       {/* Vùng nguy hiểm */}
       <Surface className="border-rose-500/20 p-4 sm:p-5">
-        <h3 className="mb-2 flex items-center gap-2 text-sm font-bold text-rose-300">
+        <h3 className="mb-2 flex items-center gap-2 text-sm font-bold text-rose-600">
           <ShieldAlert className="h-4 w-4" /> Vùng nguy hiểm
         </h3>
         <p className="text-xs leading-relaxed text-slate-400">

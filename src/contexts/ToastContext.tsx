@@ -39,7 +39,7 @@ const VARIANT_STYLES: Record<ToastVariant, { icon: ReactNode; ring: string }> = 
   error: { icon: <XCircle className="h-5 w-5 text-rose-400" />, ring: 'ring-rose-500/30' },
   info: { icon: <Info className="h-5 w-5 text-neon-cyan" />, ring: 'ring-neon-cyan/30' },
   warning: {
-    icon: <AlertTriangle className="h-5 w-5 text-amber-400" />,
+    icon: <AlertTriangle className="h-5 w-5 text-amber-500" />,
     ring: 'ring-amber-500/30',
   },
 };
@@ -105,7 +105,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             <button
               type="button"
               onClick={() => dismiss(t.id)}
-              className="shrink-0 rounded-lg p-1 text-slate-500 transition-colors hover:bg-white/5 hover:text-slate-300"
+              className="shrink-0 rounded-lg p-1 text-slate-500 transition-colors hover:bg-ink/5 hover:text-slate-300"
               aria-label="Đóng thông báo"
             >
               <X className="h-4 w-4" />

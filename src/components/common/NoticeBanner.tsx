@@ -10,11 +10,11 @@ const VARIANT_STYLES: Record<Variant, { wrap: string; icon: ReactNode }> = {
     icon: <Info className="h-4 w-4" />,
   },
   warning: {
-    wrap: 'border-amber-500/25 bg-amber-500/5 text-amber-300',
+    wrap: 'border-amber-500/25 bg-amber-500/5 text-amber-600',
     icon: <AlertTriangle className="h-4 w-4" />,
   },
   danger: {
-    wrap: 'border-rose-500/25 bg-rose-500/5 text-rose-300',
+    wrap: 'border-rose-500/25 bg-rose-500/5 text-rose-600',
     icon: <ShieldAlert className="h-4 w-4" />,
   },
 };

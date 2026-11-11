@@ -427,7 +427,7 @@ export function RoomLobbyPage() {
           <span
             className={cn(
               'text-[11px] font-semibold',
-              enoughPlayers ? 'text-emerald-300' : 'text-amber-300',
+              enoughPlayers ? 'text-emerald-700' : 'text-amber-600',
             )}
           >
             {enoughPlayers
@@ -443,7 +443,7 @@ export function RoomLobbyPage() {
               key={player.id}
               className={cn(
                 'relative flex flex-col items-center gap-2 rounded-xl border p-3 text-center',
-                player.isHost ? 'border-amber-500/30 bg-amber-500/5' : 'border-white/5 bg-base-900/60',
+                player.isHost ? 'border-amber-500/30 bg-amber-500/5' : 'border-ink/5 bg-base-900/60',
               )}
             >
               {isHost && player.isBot && (
@@ -452,7 +452,7 @@ export function RoomLobbyPage() {
                   title="Xoá người máy"
                   disabled={busyBot}
                   onClick={() => void handleRemoveBot(player.id)}
-                  className="absolute right-1.5 top-1.5 rounded-lg p-1 text-slate-500 transition-colors hover:bg-white/5 hover:text-rose-300 disabled:opacity-40"
+                  className="absolute right-1.5 top-1.5 rounded-lg p-1 text-slate-500 transition-colors hover:bg-ink/5 hover:text-rose-600 disabled:opacity-40"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
@@ -474,7 +474,7 @@ export function RoomLobbyPage() {
                 )}
               </div>
               <p className="flex w-full items-center justify-center gap-1 truncate text-xs font-semibold text-slate-200">
-                {player.isHost && <Crown className="h-3 w-3 shrink-0 text-amber-400" />}
+                {player.isHost && <Crown className="h-3 w-3 shrink-0 text-amber-500" />}
                 <span className="truncate">{player.name}</span>
               </p>
               <span className="inline-flex items-center gap-1 text-[10px] text-slate-500">
@@ -488,7 +488,7 @@ export function RoomLobbyPage() {
                   'Người chơi'
                 )}
               </span>
-              <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-300">
+              <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-600">
                 <Coins className="h-3 w-3" />
                 {player.coins.toLocaleString('vi-VN')} xu
               </span>
@@ -499,9 +499,9 @@ export function RoomLobbyPage() {
           {Array.from({ length: emptySeats }).map((_, index) => (
             <div
               key={`empty-${index}`}
-              className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-white/10 p-3 text-center"
+              className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-ink/10 p-3 text-center"
             >
-              <span className="flex h-11 w-11 items-center justify-center rounded-full border border-dashed border-white/15 text-slate-600">
+              <span className="flex h-11 w-11 items-center justify-center rounded-full border border-dashed border-ink/15 text-slate-600">
                 <Users className="h-5 w-5" />
               </span>
               <span className="text-[10px] text-slate-600">Ghế trống</span>
@@ -580,15 +580,15 @@ export function RoomLobbyPage() {
               </Button>
             </div>
             {!playable ? (
-              <p className="text-[11px] text-amber-300">
+              <p className="text-[11px] text-amber-600">
                 Trò chơi “{gameMeta?.name ?? room.gameId}” chưa thể chơi nên chưa mở được ván.
               </p>
             ) : missingPlayers > 0 ? (
-              <p className="text-[11px] text-amber-300">
+              <p className="text-[11px] text-amber-600">
                 Cần thêm {missingPlayers} người nữa để bắt đầu — mời bạn bè hoặc bấm “Thêm người máy”.
               </p>
             ) : (
-              <p className="text-[11px] text-emerald-300">
+              <p className="text-[11px] text-emerald-700">
                 Đã đủ {room.players.length}/{room.maxPlayers} người — sẵn sàng bắt đầu.
               </p>
             )}
@@ -670,7 +670,7 @@ export function RoomLobbyPage() {
             value={successorId}
             onChange={(event) => setSuccessorId(event.target.value)}
             aria-label="Chọn chủ phòng mới"
-            className="mt-3 h-10 w-full rounded-xl border border-white/10 bg-base-900 px-3 text-sm text-slate-100 outline-none focus:border-neon-cyan/60"
+            className="mt-3 h-10 w-full rounded-xl border border-ink/10 bg-base-900 px-3 text-sm text-slate-100 outline-none focus:border-neon-cyan/60"
           >
             <option value="">Chọn người nhận quyền</option>
             {room.players

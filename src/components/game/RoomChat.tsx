@@ -81,19 +81,19 @@ export function RoomChat({
   return (
     <div
       className={cn(
-        'flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-base-900/80',
+        'flex flex-col overflow-hidden rounded-2xl border border-ink/10 bg-base-900/80',
         className,
       )}
     >
       {/* Tiêu đề */}
-      <div className="flex items-center gap-2 border-b border-white/5 bg-base-800/70 px-3 py-2.5">
+      <div className="flex items-center gap-2 border-b border-ink/5 bg-base-800/70 px-3 py-2.5">
         <MessageSquare className="h-4 w-4 text-neon-cyan" />
         <p className="min-w-0 flex-1 truncate text-sm font-semibold text-slate-100">{title}</p>
         {onClose && (
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1 text-slate-400 hover:bg-white/5 hover:text-white"
+            className="rounded-lg p-1 text-slate-400 hover:bg-ink/5 hover:text-neon-purple"
             aria-label="Đóng trò chuyện"
           >
             <X className="h-4 w-4" />
@@ -129,7 +129,7 @@ export function RoomChat({
                     <div
                       className={cn(
                         'inline-block rounded-2xl px-3 py-1.5 text-sm',
-                        mine ? 'bg-neon-purple/25 text-slate-100' : 'bg-white/5 text-slate-200',
+                        mine ? 'bg-neon-purple/25 text-slate-100' : 'bg-ink/5 text-slate-200',
                       )}
                     >
                       <p className="whitespace-pre-wrap break-words text-left">{message.text}</p>
@@ -149,13 +149,13 @@ export function RoomChat({
       {showStickers && <StickerPicker onPick={(id) => void sendSticker(id)} />}
 
       {/* Ô nhập */}
-      <div className="flex items-center gap-2 border-t border-white/5 p-2">
+      <div className="flex items-center gap-2 border-t border-ink/5 p-2">
         <button
           type="button"
           onClick={() => setShowStickers((value) => !value)}
           className={cn(
-            'inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-300 hover:bg-white/10',
-            showStickers && 'bg-white/10 text-neon-cyan',
+            'inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-300 hover:bg-ink/10',
+            showStickers && 'bg-ink/10 text-neon-cyan',
           )}
           aria-label="Chọn nhãn dán"
           title="Chọn nhãn dán"
@@ -173,7 +173,7 @@ export function RoomChat({
           }}
           placeholder="Nhập tin nhắn…"
           maxLength={MAX_LENGTH}
-          className="h-10 min-w-0 flex-1 rounded-xl border border-white/10 bg-base-900/70 px-3 text-sm text-slate-100 placeholder:text-slate-500 outline-none focus:border-neon-purple/70"
+          className="h-10 min-w-0 flex-1 rounded-xl border border-ink/10 bg-base-900/70 px-3 text-sm text-slate-100 placeholder:text-slate-500 outline-none focus:border-neon-purple/70"
         />
         <button
           type="button"

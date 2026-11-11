@@ -16,8 +16,8 @@ export function Switch({
   return (
     <label
       className={cn(
-        'flex items-center justify-between gap-4 rounded-xl border border-white/5 bg-base-900/50 p-3.5',
-        disabled ? 'opacity-50' : 'cursor-pointer hover:border-white/10',
+        'flex items-center justify-between gap-4 rounded-xl border border-ink/5 bg-base-900/50 p-3.5',
+        disabled ? 'opacity-50' : 'cursor-pointer hover:border-ink/10',
       )}
     >
       <span className="min-w-0">

@@ -92,7 +92,7 @@ export function PlayerProfileButton({
           </div>
 
           {loading && <p className="text-xs text-slate-400">Đang tải hồ sơ…</p>}
-          {profileError && <p role="alert" className="text-xs text-rose-300">{profileError}</p>}
+          {profileError && <p role="alert" className="text-xs text-rose-600">{profileError}</p>}
           {profile && (
             <div className="w-full space-y-3 text-left">
               <div className="grid grid-cols-3 gap-2">
@@ -107,11 +107,11 @@ export function PlayerProfileButton({
               <div>
                 <p className="mb-2 text-xs font-semibold text-slate-300">Trận đấu gần đây</p>
                 {profile.history.length === 0 ? (
-                  <p className="rounded-lg bg-white/[0.03] p-3 text-xs text-slate-500">Chưa có trận đấu nào.</p>
+                  <p className="rounded-lg bg-ink/[0.03] p-3 text-xs text-slate-500">Chưa có trận đấu nào.</p>
                 ) : (
                   <ul className="max-h-40 space-y-1.5 overflow-y-auto">
                     {profile.history.slice(0, 5).map((match) => (
-                      <li key={match.id} className="flex items-center justify-between gap-2 rounded-lg bg-white/[0.03] px-3 py-2 text-xs">
+                      <li key={match.id} className="flex items-center justify-between gap-2 rounded-lg bg-ink/[0.03] px-3 py-2 text-xs">
                         <span className="min-w-0 truncate text-slate-300">
                           {match.gameName} · {match.placement === 1 ? 'Thắng' : `Hạng ${match.placement}`}
                         </span>
@@ -131,7 +131,7 @@ export function PlayerProfileButton({
 
 function ProfileStat({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-white/5 bg-base-900/60 p-2">
+    <div className="rounded-lg border border-ink/5 bg-base-900/60 p-2">
       <div className="flex items-center gap-1 text-[10px] text-slate-500">{icon}{label}</div>
       <p className="mt-1 text-sm font-bold text-slate-100">{value}</p>
     </div>

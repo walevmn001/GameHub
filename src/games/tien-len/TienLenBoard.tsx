@@ -151,7 +151,7 @@ function OnlineTienLenBoard({
 function WaitingRoom({ onExit }: { onExit: () => void }) {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-4 bg-base-950 p-6 text-center">
-      <span className="h-10 w-10 animate-spin rounded-full border-2 border-white/10 border-t-neon-cyan" />
+      <span className="h-10 w-10 animate-spin rounded-full border-2 border-ink/10 border-t-neon-cyan" />
       <div>
         <p className="text-sm font-semibold text-slate-100">Đang kết nối bàn chơi trực tuyến…</p>
         <p className="mt-1 text-xs text-slate-500">Đang chờ trạng thái ván từ máy chủ.</p>
@@ -274,7 +274,7 @@ function TienLenBoardView({
   const board = (
     <div className="flex h-full w-full flex-col bg-base-950">
       {/* Thanh trên cùng */}
-      <header className="flex shrink-0 items-center gap-2 border-b border-white/5 px-2.5 py-2 sm:px-4">
+      <header className="flex shrink-0 items-center gap-2 border-b border-ink/5 px-2.5 py-2 sm:px-4">
         <Button
           variant="ghost"
           size="sm"
@@ -307,7 +307,7 @@ function TienLenBoardView({
               'inline-flex h-9 items-center gap-1.5 rounded-xl border px-2.5 text-[11px] font-semibold transition-colors',
               chatOpen
                 ? 'border-neon-cyan/50 bg-neon-cyan/10 text-neon-cyan'
-                : 'border-white/10 bg-base-900/70 text-slate-400',
+                : 'border-ink/10 bg-base-900/70 text-slate-400',
             )}
             aria-label="Trò chuyện trong phòng"
           >
@@ -323,7 +323,7 @@ function TienLenBoardView({
             'inline-flex h-9 items-center gap-1.5 rounded-xl border px-2.5 text-[11px] font-semibold transition-colors sm:hidden',
             landscape
               ? 'border-neon-cyan/50 bg-neon-cyan/10 text-neon-cyan'
-              : 'border-white/10 bg-base-900/70 text-slate-400',
+              : 'border-ink/10 bg-base-900/70 text-slate-400',
           )}
           aria-label="Chuyển chế độ ngang"
         >
@@ -383,14 +383,14 @@ function TienLenBoardView({
       </div>
 
       {/* Khu vực người chơi */}
-      <div className="shrink-0 border-t border-white/5 bg-base-950/80 px-2 pb-2 pt-2 safe-bottom sm:px-4">
+      <div className="shrink-0 border-t border-ink/5 bg-base-950/80 px-2 pb-2 pt-2 safe-bottom sm:px-4">
         {/* Thông báo / thông tin lựa chọn */}
         <div className="mb-1.5 flex h-6 items-center justify-center gap-2">
           {game.message ? (
             <button
               type="button"
               onClick={game.dismissMessage}
-              className="rounded-full bg-rose-500/15 px-3 py-0.5 text-[11px] font-medium text-rose-300"
+              className="rounded-full bg-rose-500/15 px-3 py-0.5 text-[11px] font-medium text-rose-600"
             >
               {game.message}
             </button>
@@ -411,7 +411,7 @@ function TienLenBoardView({
             </span>
           )}
           {typeof human.coins === 'number' && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-amber-300">
+            <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-amber-600">
               <Coins className="h-3 w-3" />
               {human.coins.toLocaleString('vi-VN')} xu
             </span>
@@ -497,7 +497,7 @@ function TienLenBoardView({
           <button
             type="button"
             onClick={() => setLandscape(false)}
-            className="absolute right-3 top-3 z-50 inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-base-900/90 px-3 py-1.5 text-[11px] font-semibold text-slate-200"
+            className="absolute right-3 top-3 z-50 inline-flex items-center gap-1.5 rounded-xl border border-ink/10 bg-base-900/90 px-3 py-1.5 text-[11px] font-semibold text-slate-200"
           >
             <LogOut className="h-3.5 w-3.5" /> Thoát chế độ ngang
           </button>

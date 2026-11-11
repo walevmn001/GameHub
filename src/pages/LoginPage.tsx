@@ -84,9 +84,9 @@ export function LoginPage() {
           </Button>
 
           <div className="flex items-center gap-3 text-[11px] text-slate-600">
-            <span className="h-px flex-1 bg-white/5" />
+            <span className="h-px flex-1 bg-ink/5" />
             hoặc
-            <span className="h-px flex-1 bg-white/5" />
+            <span className="h-px flex-1 bg-ink/5" />
           </div>
 
           <Button

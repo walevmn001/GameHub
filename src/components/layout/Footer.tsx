@@ -4,7 +4,7 @@ import { APP_NAME, APP_TAGLINE, APP_VERSION } from '@/utils/constants';
 
 export function Footer() {
   return (
-    <footer className="mt-12 border-t border-white/5 bg-base-950/60">
+    <footer className="mt-12 border-t border-ink/5 bg-base-950/60">
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-4">
         <div className="md:col-span-2">
           <div className="flex items-center gap-2.5">
@@ -54,7 +54,7 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-white/5 px-4 py-4 text-center text-[11px] text-slate-600 sm:px-6">
+      <div className="border-t border-ink/5 px-4 py-4 text-center text-[11px] text-slate-600 sm:px-6">
         © {new Date().getFullYear()} {APP_NAME}. Sản phẩm demo — không có giao dịch tiền thật.
       </div>
     </footer>

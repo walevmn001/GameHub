@@ -172,7 +172,7 @@ export function ProfilePage() {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full min-w-[36rem] text-left text-xs">
-                <thead className="bg-white/5 text-[11px] uppercase tracking-wide text-slate-500">
+                <thead className="bg-ink/5 text-[11px] uppercase tracking-wide text-slate-500">
                   <tr>
                     <th className="px-4 py-2.5 font-semibold">Trò chơi</th>
                     <th className="px-4 py-2.5 font-semibold">Kết quả</th>
@@ -181,7 +181,7 @@ export function ProfilePage() {
                     <th className="px-4 py-2.5 font-semibold">Thời gian</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-ink/5">
                   {user.history.map((match) => (
                     <tr key={match.id} className="text-slate-300">
                       <td className="px-4 py-2.5 font-medium text-slate-200">{match.gameName}</td>
@@ -235,7 +235,7 @@ export function ProfilePage() {
 
           <div>
             <p className="mb-2 text-xs font-semibold text-slate-300">Ảnh đại diện</p>
-            <div className="mb-3 flex items-center gap-3 rounded-xl border border-white/10 bg-base-900/50 p-3">
+            <div className="mb-3 flex items-center gap-3 rounded-xl border border-ink/10 bg-base-900/50 p-3">
               <Avatar src={avatar} name={displayName || 'Player'} size="lg" ring />
               <div className="min-w-0 flex-1">
                 <p className="text-xs text-slate-400">
@@ -261,7 +261,7 @@ export function ProfilePage() {
                   onClick={() => setAvatar(preset)}
                   className={cn(
                     'rounded-full p-0.5 transition-all',
-                    avatar === preset ? 'ring-2 ring-neon-cyan' : 'ring-1 ring-white/10',
+                    avatar === preset ? 'ring-2 ring-neon-cyan' : 'ring-1 ring-ink/10',
                   )}
                 >
                   <Avatar src={preset} name={`A${index}`} size="md" />
@@ -270,7 +270,7 @@ export function ProfilePage() {
               <button
                 type="button"
                 onClick={() => setAvatar(makeAvatarDataUri(displayName || 'Player'))}
-                className="flex h-11 items-center rounded-xl border border-white/10 px-3 text-xs font-medium text-slate-300 hover:border-neon-cyan/50"
+                className="flex h-11 items-center rounded-xl border border-ink/10 px-3 text-xs font-medium text-slate-300 hover:border-neon-cyan/50"
               >
                 Tạo từ tên
               </button>

@@ -22,7 +22,7 @@ export function StatTile({
   }[tone];
 
   return (
-    <div className="rounded-2xl border border-white/5 bg-base-900/60 p-3.5">
+    <div className="rounded-2xl border border-ink/5 bg-base-900/60 p-3.5">
       <div className="flex items-center justify-between">
         <p className="text-[11px] font-medium uppercase tracking-wide text-slate-500">{label}</p>
         {icon && <span className="text-slate-500">{icon}</span>}

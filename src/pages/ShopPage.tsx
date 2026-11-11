@@ -66,21 +66,21 @@ export function ShopPage() {
         subtitle="Mở khoá nhãn dán và vật phẩm bằng xu của bạn."
         icon={<ShoppingBag className="h-5 w-5" />}
         action={
-          <span className="inline-flex items-center gap-1.5 rounded-xl border border-white/5 bg-base-900/70 px-3 py-2 text-sm font-semibold text-amber-300">
+          <span className="inline-flex items-center gap-1.5 rounded-xl border border-ink/5 bg-base-900/70 px-3 py-2 text-sm font-semibold text-amber-600">
             <Coins className="h-4 w-4" />
             {formatCoins(user.coins)}
           </span>
         }
       />
 
-      <div className="mb-5 flex max-w-md rounded-2xl border border-white/5 bg-base-900/70 p-1">
+      <div className="mb-5 flex max-w-md rounded-2xl border border-ink/5 bg-base-900/70 p-1">
         <button
           type="button"
           aria-pressed={activeView === 'shop'}
           onClick={() => setActiveView('shop')}
           className={cn(
             'flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold transition',
-            activeView === 'shop' ? 'bg-white/10 text-white shadow-soft' : 'text-slate-400 hover:text-white',
+            activeView === 'shop' ? 'bg-neon-purple/10 text-neon-purple shadow-soft' : 'text-slate-400 hover:text-neon-purple',
           )}
         >
           <ShoppingBag className="h-4 w-4" />
@@ -94,7 +94,7 @@ export function ShopPage() {
             'flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold transition',
             activeView === 'closet'
               ? 'bg-gradient-to-r from-neon-purple to-neon-violet text-white shadow-glow'
-              : 'text-slate-400 hover:text-white',
+              : 'text-slate-400 hover:text-neon-purple',
           )}
         >
           <Layers className="h-4 w-4" />
@@ -117,7 +117,7 @@ export function ShopPage() {
                   'rounded-xl px-3.5 py-2 text-sm font-semibold transition-colors',
                   tab.kind === activeKind
                     ? 'bg-gradient-to-r from-neon-purple to-neon-violet text-white shadow-glow'
-                    : 'bg-white/5 text-slate-300 hover:bg-white/10',
+                    : 'bg-ink/5 text-slate-300 hover:bg-ink/10',
                 )}
               >
                 {tab.label}
@@ -155,7 +155,7 @@ export function ShopPage() {
                       {equipped ? 'Đang trang bị' : 'Trang bị'}
                     </Button>
                   ) : owned ? (
-                    <span className="inline-flex items-center gap-1 rounded-xl bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-300">
+                    <span className="inline-flex items-center gap-1 rounded-xl bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-700">
                       <Sparkles className="h-3.5 w-3.5" /> {free ? 'Miễn phí' : 'Đã sở hữu'}
                     </span>
                   ) : (
@@ -225,11 +225,11 @@ function CardSkinCloset({
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-7">
           <CardStackPreview skinId={activeSkinId} size="md" />
           <div className="min-w-0 text-center sm:text-left">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-300">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-700">
               <Check className="h-3 w-3" />
               Bộ bài đang dùng
             </span>
-            <h2 className="mt-2 text-xl font-bold text-white">
+            <h2 className="mt-2 text-xl font-bold text-slate-900">
               {activeItem?.name ?? 'Bộ tiêu chuẩn'}
             </h2>
             <p className="mt-1 max-w-lg text-sm leading-relaxed text-slate-400">
@@ -243,7 +243,7 @@ function CardSkinCloset({
       <div>
         <div className="mb-3 flex items-end justify-between gap-3">
           <div>
-            <h3 className="text-base font-bold text-white">Chọn bộ bài</h3>
+            <h3 className="text-base font-bold text-slate-900">Chọn bộ bài</h3>
             <p className="mt-0.5 text-xs text-slate-500">
               {ownedItems.length} skin đã mở khóa
             </p>
@@ -251,7 +251,7 @@ function CardSkinCloset({
           <button
             type="button"
             onClick={onBrowse}
-            className="text-xs font-semibold text-neon-cyan transition hover:text-white"
+            className="text-xs font-semibold text-neon-cyan transition hover:text-neon-purple"
           >
             Khám phá skin
           </button>
@@ -269,7 +269,7 @@ function CardSkinCloset({
                   'flex flex-col gap-3 p-3 transition',
                   selected
                     ? 'border-neon-cyan/50 bg-neon-cyan/5 shadow-glow'
-                    : 'border-white/5 hover:border-white/15',
+                    : 'border-ink/5 hover:border-ink/15',
                 )}
               >
                 <div className="flex items-center gap-3">
@@ -355,14 +355,14 @@ function ItemPreview({ item, owned }: { item: ShopItem; owned: boolean }) {
     const theme = getCardSkinTheme(item.id);
     return (
       <div className={cn('flex h-16 w-12 items-center justify-center rounded-lg border-2 bg-gradient-to-br shadow-lg', theme?.previewClass)}>
-        <span className="flex h-[3.25rem] w-9 items-center justify-center rounded-md border border-white/50 bg-white/10 text-2xl">
+        <span className="flex h-[3.25rem] w-9 items-center justify-center rounded-md border border-ink/50 bg-ink/10 text-2xl">
           {theme?.mark ?? item.emoji}
         </span>
       </div>
     );
   }
   return (
-    <span className="flex h-16 w-16 items-center justify-center rounded-2xl border border-dashed border-white/15 text-slate-600">
+    <span className="flex h-16 w-16 items-center justify-center rounded-2xl border border-dashed border-ink/15 text-slate-600">
       <Lock className="h-5 w-5" />
     </span>
   );

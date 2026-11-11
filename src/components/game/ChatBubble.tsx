@@ -43,7 +43,7 @@ export function ChatBubble({
 
   return (
     <div className={wrapper}>
-      <div className="relative max-w-[11rem] rounded-xl bg-slate-100 px-3 py-1.5 shadow-soft">
+      <div className="relative max-w-[11rem] rounded-xl bg-base-800 px-3 py-1.5 shadow-soft">
         <p className="line-clamp-2 break-words text-center text-[13px] font-medium leading-snug text-slate-900">
           {text}
         </p>

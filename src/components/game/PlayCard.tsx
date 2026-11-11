@@ -56,7 +56,7 @@ export function PlayCard({
       <div
         className={cn(
           'relative shrink-0 rounded-lg border shadow-soft',
-          skin?.backClass ?? 'border-white/10 bg-gradient-to-br from-base-700 to-base-850',
+          skin?.backClass ?? 'border-ink/10 bg-gradient-to-br from-base-700 to-base-850',
           SIZE_CLASSES[size],
           className,
         )}

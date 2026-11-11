@@ -94,21 +94,21 @@ function SocialPanel({
   return (
     <div
       className={cn(
-        'fixed z-[60] flex flex-col overflow-hidden border border-white/10 bg-base-850/95 shadow-soft backdrop-blur-md',
+        'fixed z-[60] flex flex-col overflow-hidden border border-ink/10 bg-base-850/95 shadow-soft backdrop-blur-md',
         landscape
           ? 'inset-y-4 right-4 max-w-[28rem] rounded-2xl'
           : 'bottom-0 right-0 h-[72vh] max-h-[34rem] w-full sm:bottom-4 sm:right-4 sm:w-96 sm:rounded-2xl',
       )}
       style={landscape ? { width: 'min(28rem, calc(100% - 2rem))' } : undefined}
     >
-      <div className="flex items-center gap-2 border-b border-white/5 bg-base-800/80 px-3 py-2.5">
+      <div className="flex items-center gap-2 border-b border-ink/5 bg-base-800/80 px-3 py-2.5">
         <p className="flex min-w-0 flex-1 items-center gap-2 text-sm font-semibold text-slate-100">
           <UserRound className="h-4 w-4 text-neon-cyan" /> Trang cá nhân
         </p>
         <button
           type="button"
           onClick={onClose}
-          className="rounded-lg p-1 text-slate-400 hover:bg-white/5 hover:text-white"
+          className="rounded-lg p-1 text-slate-400 hover:bg-ink/5 hover:text-neon-purple"
           aria-label="Đóng"
         >
           <X className="h-4 w-4" />
@@ -119,7 +119,7 @@ function SocialPanel({
         <ChatConversation />
       ) : (
         <>
-          <div className="border-b border-white/5 p-2">
+          <div className="border-b border-ink/5 p-2">
             <SegmentedControl
               size="sm"
               value={activeTab}
@@ -161,8 +161,8 @@ function FriendsTab() {
 
   return (
     <>
-      <div className="border-b border-white/5 p-2.5">
-        <div className="flex h-9 items-center gap-2 rounded-xl border border-white/10 bg-base-900/70 px-3">
+      <div className="border-b border-ink/5 p-2.5">
+        <div className="flex h-9 items-center gap-2 rounded-xl border border-ink/10 bg-base-900/70 px-3">
           <Search className="h-4 w-4 text-slate-500" />
           <input
             value={query}
@@ -194,7 +194,7 @@ function FriendsTab() {
                     avatar: friend.avatar,
                   })
                 }
-                className="flex w-full items-center gap-3 rounded-xl px-2.5 py-2 text-left hover:bg-white/5"
+                className="flex w-full items-center gap-3 rounded-xl px-2.5 py-2 text-left hover:bg-ink/5"
               >
                 <Avatar
                   src={friend.avatar}
@@ -251,7 +251,7 @@ function RequestsTab() {
             {social.incoming.map((request) => (
               <div
                 key={request.id}
-                className="flex items-center gap-2.5 rounded-xl border border-white/5 bg-base-900/40 p-2.5"
+                className="flex items-center gap-2.5 rounded-xl border border-ink/5 bg-base-900/40 p-2.5"
               >
                 <Avatar
                   src={request.user.avatar}
@@ -277,7 +277,7 @@ function RequestsTab() {
                   variant="ghost"
                   onClick={() => void social.rejectRequest(request.id)}
                   aria-label="Từ chối"
-                  className="text-slate-400 hover:text-rose-300"
+                  className="text-slate-400 hover:text-rose-600"
                 >
                   <X className="h-3.5 w-3.5" />
                 </Button>
@@ -296,7 +296,7 @@ function RequestsTab() {
             {social.outgoing.map((request) => (
               <div
                 key={request.id}
-                className="flex items-center gap-2.5 rounded-xl border border-white/5 bg-base-900/40 p-2.5"
+                className="flex items-center gap-2.5 rounded-xl border border-ink/5 bg-base-900/40 p-2.5"
               >
                 <Avatar src={request.user.avatar} name={request.user.displayName} size="sm" />
                 <div className="min-w-0 flex-1">
@@ -357,10 +357,10 @@ function ClosetTab() {
         <div className="flex items-center gap-3">
           <CardStackPreview skinId={activeSkinId} size="xs" />
           <div className="min-w-0">
-            <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-emerald-300">
+            <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-emerald-700">
               <Check className="h-2.5 w-2.5" /> Đang dùng
             </span>
-            <p className="mt-1 truncate text-sm font-bold text-white">
+            <p className="mt-1 truncate text-sm font-bold text-slate-900">
               {ownedSkins.find((s) => s.id === activeSkinId)?.name ?? 'Bộ tiêu chuẩn'}
             </p>
           </div>
@@ -383,7 +383,7 @@ function ClosetTab() {
                 'flex items-center gap-3 rounded-xl border p-2.5 transition',
                 selected
                   ? 'border-neon-cyan/50 bg-neon-cyan/5 shadow-glow'
-                  : 'border-white/5 bg-base-900/40 hover:border-white/15',
+                  : 'border-ink/5 bg-base-900/40 hover:border-ink/15',
               )}
             >
               <div className="flex h-14 w-16 shrink-0 items-center justify-center rounded-lg bg-base-950/70">
@@ -468,11 +468,11 @@ function ChatConversation() {
 
   return (
     <>
-      <div className="flex items-center gap-2 border-b border-white/5 bg-base-800/60 px-2 py-2">
+      <div className="flex items-center gap-2 border-b border-ink/5 bg-base-800/60 px-2 py-2">
         <button
           type="button"
           onClick={() => social.setActiveChat(null)}
-          className="rounded-lg p-1 text-slate-400 hover:bg-white/5 hover:text-white"
+          className="rounded-lg p-1 text-slate-400 hover:bg-ink/5 hover:text-neon-purple"
           aria-label="Quay lại danh sách bạn bè"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -508,7 +508,7 @@ function ChatConversation() {
                       'max-w-[80%] rounded-2xl px-3 py-1.5 text-sm',
                       mine
                         ? 'bg-neon-purple/25 text-slate-100'
-                        : 'bg-white/5 text-slate-200',
+                        : 'bg-ink/5 text-slate-200',
                     )}
                   >
                     <p className="whitespace-pre-wrap break-words">{message.text}</p>
@@ -525,13 +525,13 @@ function ChatConversation() {
 
       {showStickers && <StickerPicker onPick={(id) => void sendSticker(id)} />}
 
-      <div className="flex items-center gap-2 border-t border-white/5 p-2">
+      <div className="flex items-center gap-2 border-t border-ink/5 p-2">
         <button
           type="button"
           onClick={() => setShowStickers((value) => !value)}
           className={cn(
-            'inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-300 hover:bg-white/10',
-            showStickers && 'bg-white/10 text-neon-cyan',
+            'inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-300 hover:bg-ink/10',
+            showStickers && 'bg-ink/10 text-neon-cyan',
           )}
           aria-label="Chọn nhãn dán"
           title="Chọn nhãn dán"
@@ -549,7 +549,7 @@ function ChatConversation() {
           }}
           placeholder="Nhập tin nhắn…"
           maxLength={500}
-          className="h-10 min-w-0 flex-1 rounded-xl border border-white/10 bg-base-900/70 px-3 text-sm text-slate-100 placeholder:text-slate-500 outline-none focus:border-neon-purple/70"
+          className="h-10 min-w-0 flex-1 rounded-xl border border-ink/10 bg-base-900/70 px-3 text-sm text-slate-100 placeholder:text-slate-500 outline-none focus:border-neon-purple/70"
         />
         <button
           type="button"

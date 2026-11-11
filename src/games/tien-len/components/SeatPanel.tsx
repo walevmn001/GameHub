@@ -43,7 +43,7 @@ export function SeatPanel({
     <div
       className={cn(
         'flex items-center gap-3 rounded-2xl border bg-base-900/80 p-2.5 backdrop-blur-sm transition-all duration-300',
-        isTurn ? 'border-neon-cyan/60 shadow-glow-cyan' : 'border-white/5',
+        isTurn ? 'border-neon-cyan/60 shadow-glow-cyan' : 'border-ink/5',
         position === 'left' && 'flex-col',
         position === 'right' && 'flex-col',
       )}
@@ -87,11 +87,11 @@ export function SeatPanel({
 
         {/* Số lá bài còn lại */}
         <div className={cn('mt-1 flex flex-wrap items-center gap-1', !horizontal && 'justify-center')}>
-          <span className="inline-flex items-center gap-1 rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-semibold text-slate-300">
+          <span className="inline-flex items-center gap-1 rounded-full bg-ink/5 px-2 py-0.5 text-[10px] font-semibold text-slate-300">
             {player.hand.length} lá
           </span>
           {typeof player.coins === 'number' && (
-            <span className="inline-flex items-center gap-0.5 rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-300">
+            <span className="inline-flex items-center gap-0.5 rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-600">
               <Coins className="h-2.5 w-2.5" />
               {player.coins.toLocaleString('vi-VN')}
             </span>
@@ -101,7 +101,7 @@ export function SeatPanel({
         {/* Trạng thái lượt */}
         <div className={cn('mt-1 flex gap-1', !horizontal && 'justify-center')}>
           {finished && placeLabel ? (
-            <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold text-emerald-300">
+            <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
               {placeLabel}
             </span>
           ) : isTurn ? (
@@ -109,7 +109,7 @@ export function SeatPanel({
               {isThinking ? 'Đang suy nghĩ…' : 'Lượt này'}
             </span>
           ) : passed ? (
-            <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-medium text-slate-500">
+            <span className="rounded-full bg-ink/5 px-2 py-0.5 text-[10px] font-medium text-slate-500">
               Bỏ lượt
             </span>
           ) : null}
@@ -152,7 +152,7 @@ function MiniStack({
           key={index}
           className={cn(
             'relative h-6 w-4 rounded-[3px] border',
-            skin?.backClass ?? 'border-white/10 bg-gradient-to-br from-base-600 to-base-800',
+            skin?.backClass ?? 'border-ink/10 bg-gradient-to-br from-base-600 to-base-800',
           )}
         >
           {skin && index === shown - 1 && (

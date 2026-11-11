@@ -75,7 +75,7 @@ export function PlayGamePage() {
   if (!meta || !Board) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-4 p-6 text-center">
-        <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-400">
+        <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-500">
           <AlertTriangle className="h-7 w-7" />
         </span>
         <div>

@@ -11,8 +11,8 @@ export function Surface({ children, interactive = false, className, ...rest }: S
   return (
     <div
       className={cn(
-        'rounded-2xl border border-white/5 bg-base-850/70 shadow-soft backdrop-blur-sm',
-        interactive && 'transition-all duration-200 hover:border-white/10 hover:bg-base-800/80',
+        'rounded-2xl border border-ink/5 bg-base-850/70 shadow-soft backdrop-blur-sm',
+        interactive && 'transition-all duration-200 hover:border-ink/10 hover:bg-base-800/80',
         className,
       )}
       {...rest}

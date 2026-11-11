@@ -16,10 +16,10 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const VARIANT_CLASSES: Record<Variant, string> = {
   primary:
     'bg-gradient-to-r from-neon-purple to-neon-violet text-white shadow-glow hover:brightness-110 active:brightness-95',
-  secondary: 'bg-base-700 text-slate-100 hover:bg-base-600 border border-white/5',
-  ghost: 'bg-transparent text-slate-300 hover:bg-white/5 hover:text-white',
+  secondary: 'bg-base-700 text-slate-100 hover:bg-base-600 border border-ink/5',
+  ghost: 'bg-transparent text-slate-300 hover:bg-ink/5 hover:text-neon-purple',
   outline:
-    'bg-transparent text-slate-200 border border-white/15 hover:border-neon-cyan/60 hover:text-white',
+    'bg-transparent text-slate-200 border border-ink/15 hover:border-neon-cyan/60 hover:text-neon-purple',
   danger: 'bg-rose-600/90 text-white hover:bg-rose-500',
   success: 'bg-emerald-600/90 text-white hover:bg-emerald-500',
 };

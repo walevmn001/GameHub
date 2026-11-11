@@ -56,7 +56,7 @@ export function ResultModal({
           <span
             className={cn(
               'flex h-14 w-14 items-center justify-center rounded-2xl',
-              won ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300',
+              won ? 'bg-emerald-500/20 text-emerald-700' : 'bg-rose-500/20 text-rose-600',
             )}
           >
             {won ? <Trophy className="h-7 w-7" /> : <Frown className="h-7 w-7" />}
@@ -71,9 +71,9 @@ export function ResultModal({
           </p>
         </div>
 
-        <div className="w-full overflow-hidden rounded-2xl border border-white/5">
+        <div className="w-full overflow-hidden rounded-2xl border border-ink/5">
           <table className="w-full text-left text-sm">
-            <thead className="bg-white/5 text-[11px] uppercase tracking-wide text-slate-500">
+            <thead className="bg-ink/5 text-[11px] uppercase tracking-wide text-slate-500">
               <tr>
                 <th className="px-4 py-2.5 font-semibold">Hạng</th>
                 <th className="px-4 py-2.5 font-semibold">Người chơi</th>
@@ -81,7 +81,7 @@ export function ResultModal({
                 {settlement && <th className="px-4 py-2.5 text-right font-semibold">Xu</th>}
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-ink/5">
               {ranked.map((player) => {
                 const isHuman = player.seat === humanSeat;
                 return (
@@ -92,7 +92,7 @@ export function ResultModal({
                     <td className="px-4 py-2.5">
                       <span className="inline-flex items-center gap-1 text-xs font-semibold text-slate-300">
                         {(player.placement ?? 0) === 1 && (
-                          <Crown className="h-3.5 w-3.5 text-amber-400" />
+                          <Crown className="h-3.5 w-3.5 text-amber-500" />
                         )}
                         {PLACE_LABEL[player.placement ?? 0] ?? '-'}
                       </span>
@@ -119,8 +119,8 @@ export function ResultModal({
                         className={cn(
                           'px-4 py-2.5 text-right text-xs font-semibold',
                           (netBySeat.get(player.seat) ?? 0) >= 0
-                            ? 'text-emerald-300'
-                            : 'text-rose-300',
+                            ? 'text-emerald-700'
+                            : 'text-rose-600',
                         )}
                       >
                         {(netBySeat.get(player.seat) ?? 0) >= 0 ? '+' : ''}
