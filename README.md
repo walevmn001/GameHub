@@ -290,7 +290,69 @@ Sau đó commit/push `main` như bình thường — **Render tự deploy lại*
 - jsDelivr/GitHub có thể **cache**; khi đổi nội dung ảnh cùng tên, hãy tạo tag mới (`@v2`) hoặc thêm `?v=2`.
 - **Trộn được cả hai kiểu:** nhãn này lưu trong `public/stickers/`, nhãn khác trỏ ra CDN.
 
-## 9. Triển khai lên GitHub & Render
+## 9. Tùy chỉnh giao diện (Auth UI, ChatDock, Card Skins)
+
+Các thay đổi giao diện gần đây được tách thành component riêng để dễ sửa. Mục này ghi rõ chỗ nào sửa cho từng tính năng.
+
+### 9.1. Giao diện Đăng nhập / Đăng ký (Cute Cartoon)
+
+Toàn bộ hệ thống auth UI nằm trong `src/components/auth/` (xem [index.ts](./src/components/auth/index.ts) để biết danh sách component).
+
+| Component | File | Vai trò | Chỉnh sửa gì |
+| --- | --- | --- | --- |
+| `AuthLayout` | `src/components/auth/AuthLayout.tsx` | Bố cục riêng cho `/login` & `/register` (nền gradient trắng→mint, lá góc, nút về trang chủ). | Đổi nền, các lá trang trí góc. |
+| `AuthMascot` | `src/components/auth/AuthMascot.tsx` | Mascot mèo trắng đeo tai nghe gaming xanh lá (vẽ bằng **SVG nội tuyến**, không phải ảnh). | Đổi màu tai nghe, biểu cảm, kích thước. |
+| `AuthDecorations` | `src/components/auth/AuthDecorations.tsx` | Các vật phẩm bay: lá bài, chip, vương miện, sao, clover, sparkle, hộp quà. | Thêm/bớt đồ trang trí, đổi vị trí bay. |
+| `AuthCard` | `src/components/auth/AuthCard.tsx` | Card trắng bo 28px chứa form. | Bo góc, bóng đổ, padding. |
+| `AuthHeader` | `src/components/auth/AuthHeader.tsx` | Tiêu đề trang + subtitle; dùng `AuthTitle` có vương miện. | Đổi text tiêu đề. |
+| `AuthTitle` | `src/components/ui/AuthTitle.tsx` | Tiêu đề chữ lớn gradient xanh lá + bóng 3D. | **Đã bỏ `WebkitTextStroke`** (làm vỡ chữ tiếng Việt); hiện dùng `text-shadow` nhiều lớp + `drop-shadow`. Đổi gradient/bóng ở đây. |
+| `AuthInput` | `src/components/auth/AuthInput.tsx` | Input bo góc, nền `#F7FFF4`, viền `#D5F0CA`, icon trái. | Chiều cao, màu nền, viền focus. |
+| `PasswordInput` | `src/components/auth/PasswordInput.tsx` | Input mật khẩu có nút hiện/ẩn. | Icon mắt, logic ẩn/hiện. |
+| `PasswordStrength` | `src/components/auth/PasswordStrength.tsx` | Thanh độ mạnh mật khẩu + checklist. | Quy tắc tính điểm, màu từng mức. |
+| `PrimaryButton` | `src/components/auth/PrimaryButton.tsx` | Nút pill 56px, gradient xanh lá, bóng 3D, hover nâng/nhấn lún. | Gradient, chiều cao, hiệu ứng. |
+| `AuthCheckbox`, `ErrorMessage`, `SuccessPopup`, `AuthFooter` | `src/components/auth/` | Checkbox ghi nhớ, thông báo lỗi (rung), popup thành công, link chuyển trang. | Text, màu, animation. |
+
+**Trang:** [LoginPage.tsx](./src/pages/LoginPage.tsx), [RegisterPage.tsx](./src/pages/RegisterPage.tsx). Route khai báo tại [App.tsx](./src/App.tsx) (dùng `AuthLayout` riêng, không có navbar/footer).
+
+**Design tokens** (màu + animation) thêm vào [tailwind.config.js](./tailwind.config.js) dưới key `cute`: `green`, `greenDark`, `mint`, `gold`, `inputBg`, `inputBorder`; keyframes `sparkle`, `drift`, `shake`. **Không đổi token cũ** nên không ảnh hưởng màn hình khác.
+
+**Chức năng "Ghi nhớ đăng nhập":**
+- Local: token lưu `LocalStorage` nếu nhớ; không nhớ thì dùng token tạm trong session (xem `AuthService.login` + `backend.ts` `TEMP_TOKENS`).
+- Online: `AuthContext` gửi `remember` về API; token không nhớ chỉ tồn tại trong tab.
+
+> Lưu ý: spec yêu cầu trường Email nhưng **backend hiện chỉ hỗ trợ username**, nên form đăng ký dùng `Tên đăng nhập / Tên hiển thị / Mật khẩu / Nhập lại mật khẩu`. Nút "Quên mật khẩu?" hiện chỉ hiển thị hướng dẫn (chưa có luồng reset ở backend).
+
+### 9.2. Nút menu nổi ChatDock (góc dưới phải)
+
+File: [src/components/social/ChatDock.tsx](./src/components/social/ChatDock.tsx).
+
+- Nút dùng màu `#62D943`, bo tròn, bóng 3D, gờ trắng trên.
+- Icon là **mặt mascot SVG** (mắt long lanh, má hồng, miệng cười) — sửa kích thước ở attribute `className="h-11 w-11"` của thẻ `<svg>`.
+- Hiệu ứng: hover scale 1.1, nhấn scale 0.95.
+- Badge chưa đọc có viền trắng.
+
+### 9.3. Ô thống kê (StatTile)
+
+File: [src/components/ui/StatTile.tsx](./src/components/ui/StatTile.tsx).
+
+- Dòng tiêu đề có `min-h-9` và luôn giữ chỗ icon (kể cả ô không có icon) để các giá trị (Số trận, Thắng, Thua, Tỉ lệ thắng) **thẳng hàng** với nhau. Nếu thêm ô mới không icon, nhớ giữ placeholder `<span className="h-9 w-9 shrink-0" />`.
+
+### 9.4. Thanh điều hướng & menu mobile
+
+File: [src/components/layout/Navbar.tsx](./src/components/layout/Navbar.tsx) (và menu mobile tương ứng).
+
+- **Đã bỏ link "Bạn bè"** khỏi navbar + menu mobile (chỉ còn trong dropdown avatar). Muốn khôi phục thì thêm lại `<NavLink to="/friends">`.
+
+### 9.5. Skin bộ bài
+
+- Danh mục & màu: [src/utils/cardSkins.ts](./src/utils/cardSkins.ts) (`CARD_SKINS`).
+- Tranh SVG mặt bài: [src/components/game/CardSkinArtwork.tsx](./src/components/game/CardSkinArtwork.tsx).
+- Render lá bài (áp dụng skin): [src/components/game/PlayCard.tsx](./src/components/game/PlayCard.tsx).
+- Sản phẩm trong shop: `kind: 'cardSkin'` trong [src/data/shopCatalog.ts](./src/data/shopCatalog.ts).
+
+Hiện có 3 skin: **Hoa anh đào (sakura)**, **Rồng (dragon)**, **Hiệp sĩ (knight)**. Cách thêm skin mới xem [mục 8.2](#82-thêm-skin-bộ-bài).
+
+## 10. Triển khai lên GitHub & Render
 
 Repo hiện tại: `walevmn001/GameHub`, nhánh `main`. **Render tự deploy lại mỗi khi push `main`.**
 
@@ -313,18 +375,23 @@ Dự án kèm [render.yaml](./render.yaml) để deploy bằng **Blueprint**, g�
 > Khác biệt Web Service vs Blueprint: **Blueprint** tạo cả cụm (DB + backend + frontend) từ `render.yaml` trong một lần;
 > **Web Service** chỉ tạo thủ công **một** service. Với dự án này nên dùng Blueprint.
 
-## 10. Tình hình hiện tại & nhật ký gần đây
+## 11. Tình hình hiện tại & nhật ký gần đây
 
 - **Phiên bản:** 0.1.0. Backend đã hoạt động; chơi online realtime đã chạy được.
 - **Kiểm tra chất lượng:** `npm run typecheck` ✅ · `npm run build` ✅ · `npm --prefix server run typecheck` ✅.
 
-**Nhật ký sửa lỗi gần đây:**
+**Nhật ký thay đổi gần đây:**
 
 | Commit | Nội dung |
 | --- | --- |
+| `1f0a778` → `a811214` | **feat(auth):** thiết kế lại **Đăng nhập / Đăng ký** phong cách Cute Cartoon xanh lá — bộ component `src/components/auth/` (AuthLayout, AuthMascot SVG, AuthDecorations, AuthCard, AuthInput, PasswordInput, PasswordStrength, PrimaryButton 3D, AuthCheckbox, ErrorMessage, SuccessPopup, AuthFooter), trang `LoginPage`/`RegisterPage`, route dùng AuthLayout riêng. Thêm token `cute.*` + keyframes `sparkle/drift/shake` vào `tailwind.config.js`. Tích hợp "Ghi nhớ đăng nhập" thật (token tạm khi không nhớ). |
+| `c61b6f3` | **fix(auth):** sửa `AuthTitle` chữ tiếng Việt bị vỡ/trùng màu — bỏ `WebkitTextStroke`, dùng `text-shadow` + `drop-shadow`; bỏ vương miện dư thừa trong tiêu đề. |
+| `4933af4` | **fix(ui):** `StatTile` các ô thống kê (Số trận/Thắng/Thua/Tỉ lệ thắng) bị lệch — thêm `min-h-9` + giữ chỗ icon để giá trị thẳng hàng. |
+| `2cac28f` | **refactor(navbar):** bỏ link **"Bạn bè"** khỏi navbar + menu mobile (chỉ còn trong dropdown avatar). |
+| `776b9a6` → `1f0a778` | **style(chatdock):** nút menu nổi góc dưới phải đổi sang **cartoon 3D xanh `#62D943`**, icon thay bằng mặt mascot SVG (mắt long lanh, má hồng), hiệu ứng hover scale/nhấn lún; phóng to icon lên `h-11 w-11`. |
 | `8647c25` | **feat(shop):** đặt toàn bộ nhãn dán hiện có thành **miễn phí** (`price: 0`). Giữ nguyên cơ chế bán — đặt `price > 0` là nhãn đó mua bằng xu. Sửa: `src/data/shopCatalog.ts`. |
 | `b277859` | **feat:** nhãn dán + cửa hàng — nhãn dán dùng ở **cả 3 loại chat** (riêng / phòng chờ / trong trận), có loại miễn phí và loại **mua bằng xu**, kèm **cửa hàng `/shop`**. Thêm file tĩnh `public/stickers/*.svg`, danh mục chung `data/shopCatalog.ts`, `types/shop.ts`, `components/chat/*`, `ShopContext`, `ShopService`, `ShopPage`; thêm model `Purchase` + cột `type`/`stickerId` cho `DirectMessage`, xác thực quyền gửi nhãn dán ở socket/social. (Xem [mục 8](#8-nhãn-dán--cửa-hàng-shop).) |
-| `ec466c8` | **fix:** lá bài đang chọn không còn che các lá sau; rời phòng (kể cả điều hướng/thoát bàn) xoá đúng người chơi khỏi phòng. Sửa: `PlayerHand.tsx` (z-index theo thứ tự DOM), `SocketService.ts`/`RoomsContext.tsx` (tự rời khi rời trang), `TienLenBoard.tsx` (thoát bàn → lobby khi đối thủ rời ván), `server/src/realtime/socket.ts` (đưa phòng về `waiting`, phát `server:error`). |
+| `ec466c8` | **fix:** lá bài đang chọn không còn che các lá sau; rời phòng (kể cả điều hướng/thoát bàn) xoá đúng người chơi khỏi phòng. Sửa: `PlayerHand.tsx` (z-index theo thứ tự DOM), `SocketService.tsx`/`RoomsContext.tsx` (tự rời khi rời trang), `TienLenBoard.tsx` (thoát bàn → lobby khi đối thủ rời ván), `server/src/realtime/socket.ts` (đưa phòng về `waiting`, phát `server:error`). |
 | `98b6fe9` | chore(render): tên service duy nhất (`-walevmn`) + chạy `prisma db push` lúc runtime. |
 
 **Việc có thể làm tiếp:**
@@ -333,7 +400,7 @@ Dự án kèm [render.yaml](./render.yaml) để deploy bằng **Blueprint**, g�
 - Các game khác: Phỏm, Xì Dách, Mậu Binh, Cờ Caro, Xếp Hình 2048.
 - Đóng gói Android/iOS bằng Capacitor (xem [FUTURE_MOBILE_PLAN.md](./FUTURE_MOBILE_PLAN.md)).
 
-## 11. Tài liệu dự án
+## 12. Tài liệu dự án
 
 | Tài liệu | Nội dung |
 | --- | --- |
@@ -343,6 +410,6 @@ Dự án kèm [render.yaml](./render.yaml) để deploy bằng **Blueprint**, g�
 | [GAME_REGISTRY.md](./GAME_REGISTRY.md) | Hướng dẫn thêm trò chơi mới |
 | [FUTURE_MOBILE_PLAN.md](./FUTURE_MOBILE_PLAN.md) | Kế hoạch đóng gói thành app Android/iOS |
 
-## 12. Giấy phép
+## 13. Giấy phép
 
 Dự án cá nhân phục vụ mục đích học tập và thử nghiệm.
