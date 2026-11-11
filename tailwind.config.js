@@ -5,35 +5,36 @@ export default {
   theme: {
     extend: {
       colors: {
-        // ===== Bảng màu Cute Green & White =====
-        // brand: thang xanh lá chủ đạo (dùng cho thiết kế mới)
+        // ===== Bảng màu Cute Green & White (neon) =====
+        // brand: 50–500 là thang xanh neon (dùng cho nền nút/CTA + nền pastel)
+        //        600–900 là xanh đậm (dùng cho chữ, viền, ink để đảm bảo tương phản trên nền trắng)
         brand: {
-          50: '#F1F9F2',
-          100: '#E8F6E9',
-          200: '#D4E5D6',
-          300: '#A8DDB5',
-          400: '#75C98A',
-          500: '#3FAE68',
-          600: '#238B50',
+          50: '#EFFDEF',
+          100: '#DFFBDF',
+          200: '#C0F8C0',
+          300: '#8CF58C',
+          400: '#5CFF5C',
+          500: '#33FF33', // màu xanh neon chủ đạo
+          600: '#238B50', // xanh đậm — chữ/viền đọc rõ trên nền trắng
           700: '#1A6B3D',
           800: '#15522F',
           900: '#263B2D',
         },
         // base: thang màu nền sáng (xanh pastel + trắng)
         base: {
-          950: '#F7FBF7', // nền trang
+          950: '#F6FDF6', // nền trang
           900: '#FFFFFF', // card / nổi bật
-          850: '#F1F9F2', // panel mềm
-          800: '#E8F6E9', // xanh pastel nhạt
-          700: '#E4EEE5', // nút phụ / viền nhẹ
-          600: '#D4E5D6', // hover
+          850: '#EFFDEF', // panel mềm
+          800: '#DFFBDF', // xanh pastel nhạt
+          700: '#D6F5D6', // nút phụ / viền nhẹ
+          600: '#C0F8C0', // hover
         },
-        // neon -> màu xanh lá chủ đạo (giữ tên token để không phá class cũ)
+        // neon -> xanh đậm đọc rõ trên nền sáng (giữ tên token để không phá class cũ)
         neon: {
-          purple: '#238B50', // primary green
-          violet: '#1A6B3D', // dark green
+          purple: '#1A6B3D', // dark green
+          violet: '#15522F', // darker green
           cyan: '#238B50', // accent xanh đậm, đủ tương phản khi làm chữ/viền trên nền trắng
-          blue: '#A8DDB5', // light green accent
+          blue: '#8CF58C', // light neon accent (dùng cho nền/trang trí)
         },
         // ink: màu xanh đậm dùng cho chữ/overlay thay cho trắng trên nền sáng
         ink: '#263B2D',

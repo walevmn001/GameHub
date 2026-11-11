@@ -53,7 +53,7 @@ export function ChatDock({ landscape = false }: { landscape?: boolean }) {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="fixed bottom-4 right-4 z-[60] inline-flex h-12 w-12 shrink-0 aspect-square items-center justify-center rounded-full bg-gradient-to-br from-brand-400 to-brand-600 text-white shadow-glow"
+          className="fixed bottom-4 right-4 z-[60] inline-flex h-12 w-12 shrink-0 aspect-square items-center justify-center rounded-full bg-gradient-to-br from-brand-400 to-brand-600 text-brand-900 shadow-glow"
           aria-label="Mở menu cá nhân"
         >
           <UserRound className="h-5 w-5" />

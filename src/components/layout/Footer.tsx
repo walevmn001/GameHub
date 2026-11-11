@@ -10,7 +10,7 @@ export function Footer() {
         <div className="md:col-span-2">
           <div className="flex items-center gap-2.5">
             <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 shadow-pop ring-2 ring-white/70">
-              <Gamepad2 className="h-5 w-5 text-white" />
+              <Gamepad2 className="h-5 w-5 text-brand-900" />
             </span>
             <span className="font-display text-base font-extrabold tracking-tight text-slate-100">
               {APP_NAME}

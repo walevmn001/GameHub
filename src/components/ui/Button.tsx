@@ -14,9 +14,9 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const VARIANT_CLASSES: Record<Variant, string> = {
-  // Nút chính: gradient xanh, viền sáng glossy, vệt sáng chạy khi hover + nhấn lún nhẹ
+  // Nút chính: gradient xanh neon, chữ xanh đậm để tương phản cao, vệt sáng chạy khi hover + nhấn lún nhẹ
   primary:
-    'btn-shine bg-gradient-to-b from-brand-400 via-brand-500 to-brand-600 text-white shadow-pop hover:-translate-y-0.5 hover:shadow-btn-hover hover:brightness-[1.05] active:translate-y-0 active:scale-[0.97]',
+    'btn-shine bg-gradient-to-b from-brand-400 via-brand-500 to-brand-600 text-brand-900 shadow-pop hover:-translate-y-0.5 hover:shadow-btn-hover hover:brightness-[1.03] active:translate-y-0 active:scale-[0.97]',
   secondary:
     'border border-brand-200 bg-gradient-to-b from-base-850 to-base-800 text-brand-700 shadow-soft hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-card active:translate-y-0 active:scale-[0.97]',
   ghost: 'text-slate-500 hover:bg-brand-50 hover:text-brand-600 active:scale-[0.97]',

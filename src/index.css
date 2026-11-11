@@ -88,9 +88,9 @@
     transform: translateX(130%);
   }
 
-  /* Nhấn mạnh tiêu đề bằng gradient xanh lá */
+  /* Nhấn mạnh tiêu đề bằng gradient xanh lá (đậm dần -> neon) để vẫn đọc rõ trên nền sáng */
   .neon-text {
-    @apply bg-gradient-to-r from-brand-600 via-brand-500 to-brand-400 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-brand-700 via-brand-600 to-brand-500 bg-clip-text text-transparent;
   }
 
   /* Thanh cuộn mảnh, phù hợp light mode */

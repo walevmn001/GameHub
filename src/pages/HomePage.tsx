@@ -282,7 +282,7 @@ function CategoryChip({
       className={cn(
         'rounded-full border px-4 py-1.5 text-xs font-bold transition-all',
         active
-          ? 'border-transparent bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-pop'
+          ? 'border-transparent bg-gradient-to-b from-brand-500 to-brand-600 text-brand-900 shadow-pop'
           : 'border-base-700 bg-base-900 text-slate-400 hover:-translate-y-0.5 hover:border-brand-300 hover:text-brand-600',
       )}
     >

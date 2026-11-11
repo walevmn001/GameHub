@@ -88,7 +88,7 @@ export function Navbar() {
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-3 sm:px-5">
         <Link to="/" className="flex shrink-0 items-center gap-2.5">
           <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 shadow-pop ring-2 ring-white/70">
-            <Gamepad2 className="h-5 w-5 text-white" />
+            <Gamepad2 className="h-5 w-5 text-brand-900" />
           </span>
           <span className="hidden flex-col leading-none sm:flex">
             <span className="font-display text-base font-extrabold tracking-tight text-slate-100">
