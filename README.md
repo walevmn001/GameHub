@@ -348,11 +348,18 @@ File: [src/components/layout/Navbar.tsx](./src/components/layout/Navbar.tsx) (v�
 - Danh mục & màu: [src/utils/cardSkins.ts](./src/utils/cardSkins.ts) (`CARD_SKINS`).
 - Tranh SVG mặt bài: [src/components/game/CardSkinArtwork.tsx](./src/components/game/CardSkinArtwork.tsx).
 - Render lá bài (áp dụng skin): [src/components/game/PlayCard.tsx](./src/components/game/PlayCard.tsx).
+- Bộ ảnh dựng sẵn (tùy chọn): thư mục `public/card-skins/<theme>/` gồm 52 lá + `card-back.svg` + 2 Joker. Theme khai báo `imageDeck` trong `CARD_SKINS` sẽ dùng ảnh thay cho tranh procedural — ví dụ **Hoa anh đào** → `imageDeck: 'card-skins/sakura'` (55 SVG). Ảnh mặt/mặt lưng/Joker do `cardSkinFaceUrl` / `cardSkinBackUrl` / `cardSkinJokerUrl` resolve.
 - Sản phẩm trong shop: `kind: 'cardSkin'` trong [src/data/shopCatalog.ts](./src/data/shopCatalog.ts).
 
 Hiện có **5 skin**: **Hoa anh đào (sakura)**, **Rồng (dragon)**, **Hiệp sĩ (knight)**, **Thế giới quái vật (monster)** và **Trăng máu (vampire)**. Cách thêm skin mới xem [mục 8.2](#82-thêm-skin-bộ-bài).
 
 Mỗi skin vẽ **art theo hạng**: Át = huy hiệu, J/Q/K = chân dung riêng (J trẻ/khác Q, K), các lá số 2–10 = bố cục pip bài Tây riêng từng hạng; **mặt lưng bài** có họa tiết đối xứng riêng cho từng theme (`CardSkinBack`, không chứa hạng/chất). Mỗi theme còn có **2 lá Joker** (đỏ/đen) sưu tầm, vẽ trong `CardSkinJoker`. Hạng và chất vẫn giữ ở góc để dễ đọc. Bố cục tham khảo đủ Át, J/Q/K, lá số và 2 Joker nằm ở mục **Bộ sưu tập** trong `/shop`.
+
+Riêng bộ **Rồng** được vẽ theo **khung thẻ TCG**: viền dát vàng + nền xanh thẫm, **ô tên** theo hạng (`Kim Long`…`Rồng Thần`, `Thiên Long`), **hàng sao cấp**, **cửa sổ tranh** (huy hiệu đầu rồng cho Át, chân dung cho J/Q/K, pip cách điệu cho lá số), **thanh hệ** và **ô mô tả** kèm chỉ số `ATK`/`DEF`.
+
+**Kích thước & độ đọc hạng/chất** ([PlayCard.tsx](./src/components/game/PlayCard.tsx)):
+- 4 cỡ thẻ khai báo ở `SIZE_CLASSES` (`xs` / `sm` / `md` / `lg`); chữ nội dung dùng đơn vị `em` nên **tự co giãn theo cỡ thẻ**.
+- Lá dùng **ảnh dựng sẵn** có hạng/chất vẽ sẵn quá nhỏ khi thu về cỡ thẻ, nên `PlayCard` **phủ thêm nhãn hạng + chất cỡ lớn** ở hai góc (nền trắng mờ, đổi màu theo chất đỏ/đen) để luôn đọc rõ ở mọi kích thước; lá procedural vẫn giữ hạng/chất ở góc như cũ.
 
 Hiệu ứng đi kèm (mục 8 của spec): nâng nhẹ + viền sáng khi **rê**, nâng + phóng nhẹ khi **chọn**, bay vào giữa bàn khi **đánh** (`animate-play-card`), phát sáng khi **kết thúc ván** (`animate-card-victory`), và **lật 3D** mặt trước/sau ở Tủ đồ trong `/shop`.
 
@@ -388,6 +395,10 @@ Dự án kèm [render.yaml](./render.yaml) để deploy bằng **Blueprint**, g�
 
 | Commit | Nội dung |
 | --- | --- |
+| `2fd592e` | **fix(card-skins):** sửa **cỡ số trên lá bài** khó nhìn — lá dùng ảnh dựng sẵn vẽ hạng/chất quá nhỏ khi thu về cỡ thẻ; `PlayCard` **phủ nhãn hạng + chất cỡ lớn** (theo `em`, đổi màu theo chất đỏ/đen) lên hai góc để đọc rõ ở mọi kích thước `SIZE_CLASSES`. |
+| `e493146` | **feat(card-skins):** bộ **Hoa anh đào** dùng **ảnh SVG dựng sẵn** (cơ chế `imageDeck`) — 52 lá + mặt lưng + 2 Joker (55 file trong `public/card-skins/sakura/`). |
+| `b72a212` | **feat(card-skins):** vẽ lại bộ **Rồng** theo **phong cách thẻ TCG** (khung dát vàng, ô tên, hàng sao cấp, cửa sổ tranh, thanh hệ, ô mô tả + `ATK`/`DEF`; mặt lưng thêm khung vàng). |
+| `1f72bac` | **feat(card-skins):** bổ sung **2 lá Joker** (đỏ/đen) cho mỗi theme (`CardSkinJoker`). |
 | `1f0a778` → `a811214` | **feat(auth):** thiết kế lại **Đăng nhập / Đăng ký** phong cách Cute Cartoon xanh lá — bộ component `src/components/auth/` (AuthLayout, AuthMascot SVG, AuthDecorations, AuthCard, AuthInput, PasswordInput, PasswordStrength, PrimaryButton 3D, AuthCheckbox, ErrorMessage, SuccessPopup, AuthFooter), trang `LoginPage`/`RegisterPage`, route dùng AuthLayout riêng. Thêm token `cute.*` + keyframes `sparkle/drift/shake` vào `tailwind.config.js`. Tích hợp "Ghi nhớ đăng nhập" thật (token tạm khi không nhớ). |
 | `c61b6f3` | **fix(auth):** sửa `AuthTitle` chữ tiếng Việt bị vỡ/trùng màu — bỏ `WebkitTextStroke`, dùng `text-shadow` + `drop-shadow`; bỏ vương miện dư thừa trong tiêu đề. |
 | `4933af4` | **fix(ui):** `StatTile` các ô thống kê (Số trận/Thắng/Thua/Tỉ lệ thắng) bị lệch — thêm `min-h-9` + giữ chỗ icon để giá trị thẳng hàng. |
