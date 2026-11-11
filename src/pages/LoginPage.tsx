@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { KeyRound, LogIn, Sparkles, User as UserIcon } from 'lucide-react';
-import { Button, Input, Surface } from '@/components/ui';
-import { GameCardArt } from '@/components/illustrations/GameCardArt';
+import { AuthTitle, Button, Input, Surface } from '@/components/ui';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 
@@ -49,9 +48,8 @@ export function LoginPage() {
   return (
     <div className="mx-auto flex max-w-md flex-col gap-4 py-6">
       <div className="text-center">
-        <GameCardArt variant="login" className="mx-auto mb-2 animate-pop-in" />
-        <h1 className="text-2xl font-extrabold text-slate-100">Đăng nhập</h1>
-        <p className="mt-1 text-sm text-slate-400">
+        <AuthTitle text="Đăng nhập" className="mb-2 animate-pop-in" />
+        <p className="text-sm text-slate-400">
           Tiếp tục với tài khoản của bạn.
         </p>
       </div>

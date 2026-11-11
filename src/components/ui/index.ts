@@ -15,3 +15,4 @@ export { StatTile } from './StatTile';
 export { SegmentedControl } from './SegmentedControl';
 export type { SegmentOption } from './SegmentedControl';
 export { Switch } from './Switch';
+export { AuthTitle } from './AuthTitle';
