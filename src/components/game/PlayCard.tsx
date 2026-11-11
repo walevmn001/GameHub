@@ -6,7 +6,7 @@ import { CardSkinArtwork, CardSkinBack } from '@/components/game/CardSkinArtwork
 
 export type CardSize = 'xs' | 'sm' | 'md' | 'lg';
 
-const SIZE_CLASSES: Record<CardSize, string> = {
+export const SIZE_CLASSES: Record<CardSize, string> = {
   xs: 'h-14 w-10 text-[11px]',
   sm: 'h-20 w-14 text-xs',
   md: 'h-24 w-16 text-sm',

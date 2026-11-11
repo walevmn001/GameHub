@@ -8,6 +8,7 @@ import { useShop } from '@/contexts/ShopContext';
 import { Button, FullPageLoader, SectionHeader, Surface } from '@/components/ui';
 import { StickerImage } from '@/components/chat/StickerImage';
 import { PlayCard, type CardSize } from '@/components/game/PlayCard';
+import { JokerCard } from '@/components/game/JokerCard';
 import { formatCoins } from '@/utils/format';
 import { cn } from '@/utils/cn';
 import { getCardSkinTheme } from '@/utils/cardSkins';
@@ -243,6 +244,20 @@ function CardSkinCloset({
         </div>
       </Surface>
 
+      {activeSkinId && (
+        <div>
+          <div className="mb-3">
+            <h3 className="text-base font-bold text-slate-900">Bộ sưu tập</h3>
+            <p className="mt-0.5 text-xs text-slate-500">
+              52 lá + 2 Joker — mỗi hạng một thiết kế riêng, kèm mặt lưng đồng bộ.
+            </p>
+          </div>
+          <Surface className="overflow-x-auto p-4">
+            <CollectionPreview skinId={activeSkinId} />
+          </Surface>
+        </div>
+      )}
+
       <div>
         <div className="mb-3 flex items-end justify-between gap-3">
           <div>
@@ -327,6 +342,30 @@ const PREVIEW_CARDS: Card[] = [
   { id: 'preview-heart-7', suit: 'heart', rank: 7 },
   { id: 'preview-club-king', suit: 'club', rank: 13 },
 ];
+
+/** Mẫu trải nghiệm đủ các nhóm thiết kế: át, J/Q/K, lá số 2–10 và 2 Joker. */
+const COLLECTION_SAMPLE: Card[] = [
+  { id: 'col-ace-spade', suit: 'spade', rank: 14 },
+  { id: 'col-king-heart', suit: 'heart', rank: 13 },
+  { id: 'col-queen-diamond', suit: 'diamond', rank: 12 },
+  { id: 'col-jack-club', suit: 'club', rank: 11 },
+  { id: 'col-ten-spade', suit: 'spade', rank: 10 },
+  { id: 'col-seven-heart', suit: 'heart', rank: 7 },
+  { id: 'col-three-club', suit: 'club', rank: 3 },
+  { id: 'col-two-diamond', suit: 'diamond', rank: 15 },
+];
+
+function CollectionPreview({ skinId }: { skinId: string }) {
+  return (
+    <div className="flex min-w-max items-center gap-2">
+      {COLLECTION_SAMPLE.map((card) => (
+        <PlayCard key={card.id} card={card} skinId={skinId} size="sm" />
+      ))}
+      <JokerCard skinId={skinId} variant="red" size="sm" />
+      <JokerCard skinId={skinId} variant="black" size="sm" />
+    </div>
+  );
+}
 
 function CardStackPreview({ skinId, size }: { skinId: string | null; size: CardSize }) {
   const step = size === 'md' ? 28 : size === 'xs' ? 14 : 20;

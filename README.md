@@ -352,7 +352,7 @@ File: [src/components/layout/Navbar.tsx](./src/components/layout/Navbar.tsx) (v�
 
 Hiện có **5 skin**: **Hoa anh đào (sakura)**, **Rồng (dragon)**, **Hiệp sĩ (knight)**, **Thế giới quái vật (monster)** và **Trăng máu (vampire)**. Cách thêm skin mới xem [mục 8.2](#82-thêm-skin-bộ-bài).
 
-Mỗi skin vẽ **art theo hạng**: Át = huy hiệu, J/Q/K = chân dung riêng (J trẻ/khác Q, K), các lá số = họa tiết riêng; **mặt lưng bài** có họa tiết đối xứng riêng cho từng theme (`CardSkinBack`, không chứa hạng/chất). Hạng và chất vẫn giữ ở góc để dễ đọc.
+Mỗi skin vẽ **art theo hạng**: Át = huy hiệu, J/Q/K = chân dung riêng (J trẻ/khác Q, K), các lá số 2–10 = bố cục pip bài Tây riêng từng hạng; **mặt lưng bài** có họa tiết đối xứng riêng cho từng theme (`CardSkinBack`, không chứa hạng/chất). Mỗi theme còn có **2 lá Joker** (đỏ/đen) sưu tầm, vẽ trong `CardSkinJoker`. Hạng và chất vẫn giữ ở góc để dễ đọc. Bố cục tham khảo đủ Át, J/Q/K, lá số và 2 Joker nằm ở mục **Bộ sưu tập** trong `/shop`.
 
 Hiệu ứng đi kèm (mục 8 của spec): nâng nhẹ + viền sáng khi **rê**, nâng + phóng nhẹ khi **chọn**, bay vào giữa bàn khi **đánh** (`animate-play-card`), phát sáng khi **kết thúc ván** (`animate-card-victory`), và **lật 3D** mặt trước/sau ở Tủ đồ trong `/shop`.
 

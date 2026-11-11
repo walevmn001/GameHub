@@ -513,3 +513,104 @@ export function CardSkinBack({ skinId }: { skinId: string }) {
     </svg>
   );
 }
+
+/* ---------------------------------- Joker --------------------------------- */
+/** Biến thể Joker: đỏ rực rỡ hoặc đen huyền bí (mỗi theme đều có đủ 2 lá). */
+export type JokerVariant = 'red' | 'black';
+
+interface JokerPalette {
+  /** Màu nhấn sáng (mũ, cổ áo) — dùng cho lá Joker đỏ. */
+  bright: string;
+  /** Màu tối chủ đạo của theme — dùng cho lá Joker đen. */
+  dark: string;
+  /** Quầng sáng / màu phụ của theme. */
+  halo: string;
+  /** Họa tiết nhỏ đặc trưng theme ở chân tranh. */
+  motif: React.ReactNode;
+}
+
+const JOKER_PALETTES: Record<string, JokerPalette> = {
+  'card-skin-sakura': {
+    bright: '#ec4899',
+    dark: '#831843',
+    halo: '#fbcfe8',
+    motif: <Blossom x={50} y={120} color="#ec4899" scale={0.85} />,
+  },
+  'card-skin-knight': {
+    bright: '#94a3b8',
+    dark: '#334155',
+    halo: '#e2e8f0',
+    motif: <path d="M50 110 59 120 50 132 41 120Z" fill="#d4af37" stroke="#a16207" strokeWidth="1.2" />,
+  },
+  'card-skin-dragon': {
+    bright: '#d6a84f',
+    dark: '#064e3b',
+    halo: '#fde68a',
+    motif: (
+      <g>
+        <circle cx="50" cy="120" r="10" fill="#065f46" stroke="#d6a84f" strokeWidth="1.4" />
+        <ellipse cx="50" cy="120" rx="2.4" ry="6.5" fill="#0b1220" />
+        <circle cx="50" cy="115" r="1.5" fill="#fde68a" />
+      </g>
+    ),
+  },
+  'card-skin-monster': {
+    bright: '#a3e635',
+    dark: '#4a044e',
+    halo: '#22d3ee',
+    motif: (
+      <g>
+        <circle cx="50" cy="120" r="10" fill="#f8fafc" stroke="#a855f7" strokeWidth="1.6" />
+        <circle cx="50" cy="120" r="3.6" fill="#22d3ee" />
+        <circle cx="50" cy="120" r="1.5" fill="#0f172a" />
+      </g>
+    ),
+  },
+  'card-skin-vampire': {
+    bright: '#be123c',
+    dark: '#1e1b4b',
+    halo: '#cbd5e1',
+    motif: <path d="M38 130 45 116 50 124 55 116 62 130Z" fill="#1e1b4b" stroke="#be123c" strokeWidth="1.2" />,
+  },
+};
+
+/** Tranh Joker: chú hề (jester) với màu/nhạc nền theo theme, 2 biến thể đỏ & đen. */
+export function CardSkinJoker({ skinId, variant }: { skinId: string; variant: JokerVariant }) {
+  const theme = JOKER_PALETTES[skinId] ?? JOKER_PALETTES['card-skin-sakura'];
+  const isRed = variant === 'red';
+  const hatA = isRed ? theme.bright : theme.dark;
+  const hatB = isRed ? theme.dark : theme.halo;
+  const face = isRed ? '#fff7ed' : '#e2e8f0';
+  const ink = isRed ? theme.dark : '#0f172a';
+  const bell = isRed ? '#facc15' : theme.halo;
+
+  return (
+    <svg
+      viewBox="0 0 100 140"
+      preserveAspectRatio="xMidYMid meet"
+      className="pointer-events-none absolute inset-0 z-0 h-full w-full"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <g opacity="0.98">
+        <circle cx="50" cy="64" r="40" fill={theme.halo} opacity="0.18" />
+        {/* Mũ hề 3 chóp + chuông */}
+        <path d="M34 56 26 24 42 42Z" fill={hatA} stroke={ink} strokeLinejoin="round" strokeWidth="1.4" />
+        <path d="M50 52 50 18 62 36Z" fill={hatB} stroke={ink} strokeLinejoin="round" strokeWidth="1.4" />
+        <path d="M66 56 74 24 58 42Z" fill={hatA} stroke={ink} strokeLinejoin="round" strokeWidth="1.4" />
+        <circle cx="26" cy="22" r="3" fill={bell} stroke={ink} strokeWidth="0.8" />
+        <circle cx="50" cy="16" r="3" fill={bell} stroke={ink} strokeWidth="0.8" />
+        <circle cx="74" cy="22" r="3" fill={bell} stroke={ink} strokeWidth="0.8" />
+        <path d="M33 54q17 -9 34 0l-3 9q-14 -7 -28 0Z" fill={hatB} stroke={ink} strokeWidth="1.2" />
+        {/* Mặt */}
+        <circle cx="50" cy="66" r="15" fill={face} stroke={ink} strokeWidth="1.6" />
+        <circle cx="44" cy="63" r="2" fill={ink} />
+        <circle cx="56" cy="63" r="2" fill={ink} />
+        <path d="M43 72q7 6 14 0" fill="none" stroke={ink} strokeLinecap="round" strokeWidth="2" />
+        {/* Cổ áo */}
+        <path d="M32 100 50 86 68 100 68 107 32 107Z" fill={hatA} stroke={ink} strokeWidth="1.2" />
+        {theme.motif}
+      </g>
+    </svg>
+  );
+}
