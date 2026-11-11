@@ -224,9 +224,9 @@ function CardSkinCloset({
   return (
     <div className="space-y-6">
       <Surface className="overflow-hidden border border-neon-cyan/15 bg-gradient-to-br from-neon-cyan/10 via-base-900 to-neon-purple/10 p-4 sm:p-6">
-        <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-7">
+        <div className="flex flex-col items-center gap-5 sm:flex-row sm:gap-7">
           <CardStackPreview skinId={activeSkinId} size="md" />
-          <div className="min-w-0 text-center sm:text-left">
+          <div className="min-w-0 flex-1 text-center sm:text-left">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-700">
               <Check className="h-3 w-3" />
               Bộ bài đang dùng
@@ -239,6 +239,7 @@ function CardSkinCloset({
               {' '}Người chơi khác cũng sẽ thấy skin bạn đang dùng khi bạn đánh bài.
             </p>
           </div>
+          <FlipCardPreview skinId={activeSkinId} />
         </div>
       </Surface>
 
@@ -344,6 +345,24 @@ function CardStackPreview({ skinId, size }: { skinId: string | null; size: CardS
           <PlayCard card={card} skinId={skinId} size={size} />
         </div>
       ))}
+    </div>
+  );
+}
+
+/** Xem trước 3D: rê chuột để lật từ mặt bài sang mặt lưng của skin. */
+function FlipCardPreview({ skinId }: { skinId: string | null }) {
+  const card: Card = { id: 'flip-preview', suit: 'spade', rank: 12 };
+  return (
+    <div className="group flex shrink-0 flex-col items-center gap-1.5 [perspective:900px]">
+      <div className="relative h-24 w-16 transition-transform duration-500 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+        <div className="absolute inset-0 [backface-visibility:hidden]">
+          <PlayCard card={card} skinId={skinId} size="md" />
+        </div>
+        <div className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)]">
+          <PlayCard card={card} skinId={skinId} size="md" faceDown />
+        </div>
+      </div>
+      <span className="text-[10px] font-medium text-slate-500">Rê để xem mặt lưng</span>
     </div>
   );
 }

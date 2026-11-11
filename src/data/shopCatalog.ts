@@ -47,6 +47,8 @@ export const SHOP_ITEMS: readonly ShopItem[] = [
   { id: 'card-skin-sakura', kind: 'cardSkin', pack: 'card-styles', name: 'Hoa anh đào', description: 'Sắc hồng dịu dàng cùng họa tiết hoa anh đào.', price: 1800, emoji: '🌸' },
   { id: 'card-skin-dragon', kind: 'cardSkin', pack: 'card-styles', name: 'Rồng', description: 'Sắc ngọc lục bảo và ánh vàng uy nghi.', price: 2400, emoji: '🐉' },
   { id: 'card-skin-knight', kind: 'cardSkin', pack: 'card-styles', name: 'Hiệp sĩ', description: 'Giáp bạc xanh lạnh dành cho chiến binh.', price: 2400, emoji: '⚔️' },
+  { id: 'card-skin-monster', kind: 'cardSkin', pack: 'card-styles', name: 'Thế giới quái vật', description: 'Quái vật dễ thương, sắc lime – tím – cyan rực rỡ.', price: 2600, emoji: '👾' },
+  { id: 'card-skin-vampire', kind: 'cardSkin', pack: 'card-styles', name: 'Trăng máu', description: 'Gothic huyền bí: đỏ ruby, tím đêm và bạc.', price: 3000, emoji: '🧛' },
 
   // ----- Bộ "Biểu cảm cơ bản" — miễn phí -----
   { id: 'smile', kind: 'sticker', pack: 'basic', name: 'Vui vẻ', description: 'Nụ cười thân thiện', price: 0, file: 'stickers/smile.svg' },

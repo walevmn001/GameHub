@@ -373,6 +373,7 @@ function TienLenBoardView({
             timer={timer}
             waitingLabel={waitingLabel}
             animate={interactive && game.cardAnimKey > 0}
+            victory={state.phase === 'finished'}
           />
         </div>
 

@@ -15,6 +15,7 @@ export function TableCenter({
   waitingLabel,
   animate,
   skinId,
+  victory = false,
 }: {
   combo: Combo | null;
   playerName: string | null;
@@ -25,6 +26,8 @@ export function TableCenter({
   waitingLabel: string | null;
   animate: boolean;
   skinId?: string | null;
+  /** Ván đã kết thúc — lá bài trên bàn phát sáng ăn mừng. */
+  victory?: boolean;
 }) {
   return (
     <div className="flex flex-col items-center gap-2">
@@ -63,6 +66,7 @@ export function TableCenter({
                     size="sm"
                     skinId={skinId}
                     animate={animate}
+                    victory={victory && !animate}
                     style={animate ? { animationDelay: `${index * 50}ms` } : undefined}
                   />
                 </div>

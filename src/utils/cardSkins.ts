@@ -45,6 +45,28 @@ export const CARD_SKINS: Record<string, CardSkinTheme> = {
     redTextClass: 'text-rose-600',
     blackTextClass: 'text-slate-900',
   },
+  'card-skin-monster': {
+    id: 'card-skin-monster',
+    name: 'Thế giới quái vật',
+    mark: '👾',
+    faceClass: 'border-lime-400 bg-gradient-to-br from-lime-100 via-cyan-50 to-purple-100',
+    backClass: 'border-purple-300 bg-purple-950 bg-[repeating-linear-gradient(45deg,rgba(163,230,53,0.55)_0px,rgba(163,230,53,0.55)_2px,transparent_2px,transparent_7px)]',
+    innerClass: 'border-lime-200/70',
+    previewClass: 'from-lime-400 via-purple-600 to-cyan-500',
+    redTextClass: 'text-fuchsia-700',
+    blackTextClass: 'text-purple-950',
+  },
+  'card-skin-vampire': {
+    id: 'card-skin-vampire',
+    name: 'Trăng máu',
+    mark: '🧛',
+    faceClass: 'border-purple-400 bg-gradient-to-br from-rose-100 via-slate-100 to-purple-100',
+    backClass: 'border-rose-400 bg-[#140a1f] bg-[repeating-linear-gradient(135deg,rgba(190,18,60,0.62)_0px,rgba(190,18,60,0.62)_2px,transparent_2px,transparent_7px)]',
+    innerClass: 'border-rose-300/60',
+    previewClass: 'from-rose-600 via-purple-800 to-black',
+    redTextClass: 'text-rose-700',
+    blackTextClass: 'text-purple-950',
+  },
 };
 
 export function getCardSkinTheme(id?: string | null): CardSkinTheme | undefined {

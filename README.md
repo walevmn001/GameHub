@@ -181,7 +181,7 @@ Hai chế độ hoạt động khác nhau (theo đúng kiến trúc chung):
 
 1. Thêm sản phẩm `kind: 'cardSkin'` vào `SHOP_ITEMS` trong `src/data/shopCatalog.ts`, đặt giá bằng xu.
 2. Dùng id ổn định và thêm cùng id vào `CARD_SKINS` trong `src/utils/cardSkins.ts` (màu mặt/lưng và biểu tượng).
-3. Thêm tranh SVG theo id trong `src/components/game/CardSkinArtwork.tsx`; component này vẽ art trên từng lá cả ở tay người chơi và bàn giữa.
+3. Thêm tranh SVG theo id trong `src/components/game/CardSkinArtwork.tsx`; art được vẽ **theo hạng** (`artKind`: `ace` / `face` J-Q-K / `number`) cho cả tay người chơi và bàn giữa. Mặt lưng riêng của theme khai báo cùng file trong `CardSkinBack`.
 4. Giữ hạng/chất ở góc lá trong `PlayCard.tsx`; không thay dữ liệu luật chơi khi thêm art.
 5. Shop tự tạo tab “Skin bộ bài”. Người chơi mua rồi bấm **Trang bị**; ván online chốt skin theo từng ghế và chỉ phát cosmetic id công khai, không gửi bài kín.
 
@@ -350,7 +350,11 @@ File: [src/components/layout/Navbar.tsx](./src/components/layout/Navbar.tsx) (v�
 - Render lá bài (áp dụng skin): [src/components/game/PlayCard.tsx](./src/components/game/PlayCard.tsx).
 - Sản phẩm trong shop: `kind: 'cardSkin'` trong [src/data/shopCatalog.ts](./src/data/shopCatalog.ts).
 
-Hiện có 3 skin: **Hoa anh đào (sakura)**, **Rồng (dragon)**, **Hiệp sĩ (knight)**. Cách thêm skin mới xem [mục 8.2](#82-thêm-skin-bộ-bài).
+Hiện có **5 skin**: **Hoa anh đào (sakura)**, **Rồng (dragon)**, **Hiệp sĩ (knight)**, **Thế giới quái vật (monster)** và **Trăng máu (vampire)**. Cách thêm skin mới xem [mục 8.2](#82-thêm-skin-bộ-bài).
+
+Mỗi skin vẽ **art theo hạng**: Át = huy hiệu, J/Q/K = chân dung riêng (J trẻ/khác Q, K), các lá số = họa tiết riêng; **mặt lưng bài** có họa tiết đối xứng riêng cho từng theme (`CardSkinBack`, không chứa hạng/chất). Hạng và chất vẫn giữ ở góc để dễ đọc.
+
+Hiệu ứng đi kèm (mục 8 của spec): nâng nhẹ + viền sáng khi **rê**, nâng + phóng nhẹ khi **chọn**, bay vào giữa bàn khi **đánh** (`animate-play-card`), phát sáng khi **kết thúc ván** (`animate-card-victory`), và **lật 3D** mặt trước/sau ở Tủ đồ trong `/shop`.
 
 ## 10. Triển khai lên GitHub & Render
 

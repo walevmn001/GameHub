@@ -178,6 +178,11 @@ export default {
           '60%': { transform: 'translateX(-4px)' },
           '80%': { transform: 'translateX(4px)' },
         },
+        // Lá bài ăn mừng khi ván kết thúc: nâng nhẹ, phóng to và phát sáng.
+        'card-victory': {
+          '0%, 100%': { transform: 'translateY(0) scale(1)', filter: 'brightness(1)' },
+          '50%': { transform: 'translateY(-5px) scale(1.06)', filter: 'brightness(1.12)' },
+        },
       },
       animation: {
         'fade-in': 'fade-in 0.35s ease-out both',
@@ -198,6 +203,7 @@ export default {
         sparkle: 'sparkle 2.2s ease-in-out infinite',
         drift: 'drift 6s ease-in-out infinite',
         shake: 'shake 0.4s ease-in-out',
+        'card-victory': 'card-victory 1.4s ease-in-out infinite',
       },
     },
   },

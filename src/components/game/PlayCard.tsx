@@ -2,7 +2,7 @@ import { SUIT_SYMBOL, type Card } from '@/types';
 import { RANK_LABEL } from '@/types/game';
 import { cn } from '@/utils/cn';
 import { getCardSkinTheme } from '@/utils/cardSkins';
-import { CardSkinArtwork } from '@/components/game/CardSkinArtwork';
+import { CardSkinArtwork, CardSkinBack } from '@/components/game/CardSkinArtwork';
 
 export type CardSize = 'xs' | 'sm' | 'md' | 'lg';
 
@@ -31,6 +31,8 @@ export interface PlayCardProps {
   style?: React.CSSProperties;
   animate?: boolean;
   skinId?: string | null;
+  /** Ván đã kết thúc — lá bài phát sáng ăn mừng. */
+  victory?: boolean;
 }
 
 /** Lá bài. Hỗ trợ cả mặt úp (bài đối thủ) và mặt ngửa. */
@@ -45,6 +47,7 @@ export function PlayCard({
   style,
   animate = false,
   skinId,
+  victory = false,
 }: PlayCardProps) {
   const isRed = card.suit === 'heart' || card.suit === 'diamond';
   const symbol = SUIT_SYMBOL[card.suit];
@@ -63,6 +66,7 @@ export function PlayCard({
         style={style}
         aria-hidden
       >
+        {skin && <CardSkinBack skinId={skin.id} />}
         <div className={cn(
           'absolute inset-1 rounded-md border',
           skin?.innerClass ?? 'border-white/25 bg-[repeating-linear-gradient(45deg,rgba(255,255,255,0.22)_0px,rgba(255,255,255,0.22)_4px,transparent_4px,transparent_8px)]',
@@ -83,10 +87,11 @@ export function PlayCard({
         skin?.faceClass ?? 'bg-slate-50',
         skin ? (isRed ? skin.redTextClass : skin.blackTextClass) : (isRed ? 'text-rose-600' : 'text-slate-900'),
         selected
-          ? '-translate-y-4 border-neon-cyan ring-2 ring-neon-cyan/70'
-          : 'border-black/10 hover:-translate-y-1.5',
+          ? 'scale-105 -translate-y-4 border-neon-cyan ring-2 ring-neon-cyan/70 shadow-glow-cyan'
+          : 'border-black/10 hover:-translate-y-1.5 hover:shadow-glow-cyan',
         onClick && !disabled ? 'cursor-pointer' : 'cursor-default',
         animate && 'animate-play-card',
+        victory && 'animate-card-victory',
         SIZE_CLASSES[size],
         className,
       )}
