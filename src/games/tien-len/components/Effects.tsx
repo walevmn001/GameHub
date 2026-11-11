@@ -2,7 +2,8 @@ import { useMemo } from 'react';
 import { Coins, Sparkles, Swords } from 'lucide-react';
 import { cn } from '@/utils/cn';
 
-const CONFETTI_COLORS = ['#22d3ee', '#a855f7', '#f59e0b', '#34d399', '#f43f5e', '#38bdf8'];
+// Bảng màu confetti theo nhận diện xanh trắng (kèm chút vàng cho khoảnh khắc chiến thắng).
+const CONFETTI_COLORS = ['#238B50', '#75C98A', '#3FAE68', '#F5C542', '#A8DDB5', '#FFFFFF'];
 
 /** Hoạt ảnh xào bài: các lá bài úp di chuyển/trộn ngẫu nhiên. */
 export function ShuffleOverlay({ visible }: { visible: boolean }) {
@@ -23,10 +24,10 @@ export function ShuffleOverlay({ visible }: { visible: boolean }) {
         {cards.map((card) => (
           <span
             key={card.id}
-            className="absolute left-1/2 top-1/2 h-24 w-16 animate-shuffle-card rounded-lg border border-ink/15 bg-gradient-to-br from-base-600 to-base-850 shadow-soft"
+            className="absolute left-1/2 top-1/2 h-24 w-16 animate-shuffle-card rounded-lg border border-brand-500/50 bg-gradient-to-br from-brand-400 to-brand-600 shadow-soft"
             style={{ animationDelay: `${card.delay}ms` }}
           >
-            <span className="absolute inset-1 rounded-md border border-neon-purple/30 bg-[repeating-linear-gradient(45deg,rgba(168,85,247,0.18)_0px,rgba(168,85,247,0.18)_4px,transparent_4px,transparent_8px)]" />
+            <span className="absolute inset-1 rounded-md border border-white/25 bg-[repeating-linear-gradient(45deg,rgba(255,255,255,0.22)_0px,rgba(255,255,255,0.22)_4px,transparent_4px,transparent_8px)]" />
           </span>
         ))}
       </div>
@@ -45,10 +46,10 @@ export function CutBanner({ label, seq }: { label: string | null; seq: number })
     <div className="pointer-events-none absolute inset-x-0 top-1/4 z-40 flex justify-center">
       <div
         key={seq}
-        className="flex animate-cut-flash items-center gap-2 rounded-2xl border border-rose-400/50 bg-rose-500/25 px-5 py-2.5 shadow-glow backdrop-blur-sm"
+        className="flex animate-cut-flash items-center gap-2 rounded-2xl border border-rose-200 bg-white/95 px-5 py-2.5 shadow-card backdrop-blur-sm"
       >
-        <Swords className="h-5 w-5 shrink-0 text-rose-200" />
-        <span className="text-sm font-extrabold uppercase tracking-wide text-rose-50 sm:text-base">
+        <Swords className="h-5 w-5 shrink-0 text-rose-500" />
+        <span className="text-sm font-extrabold uppercase tracking-wide text-rose-600 sm:text-base">
           {label}
         </span>
       </div>
@@ -61,11 +62,11 @@ export function WhiteWinPopup({ label }: { label: string | null }) {
   if (!label) return null;
   return (
     <div className="pointer-events-none absolute inset-0 z-50 flex items-center justify-center">
-      <div className="animate-white-win-pop rounded-3xl border border-amber-400/50 bg-gradient-to-br from-amber-500/30 to-rose-500/25 px-8 py-6 text-center shadow-glow backdrop-blur-sm">
-        <p className="text-3xl font-black tracking-tight text-amber-100 drop-shadow sm:text-4xl">
+      <div className="animate-white-win-pop rounded-3xl border border-amber-300 bg-gradient-to-br from-amber-100 to-amber-200 px-8 py-6 text-center shadow-glow backdrop-blur-sm">
+        <p className="text-3xl font-black tracking-tight text-amber-700 sm:text-4xl">
           ĂN TRẮNG
         </p>
-        <p className="mt-1 text-sm font-bold uppercase tracking-widest text-amber-200">{label}</p>
+        <p className="mt-1 text-sm font-bold uppercase tracking-widest text-amber-600">{label}</p>
       </div>
     </div>
   );
@@ -142,7 +143,7 @@ export function CoinBurst({ show, amount }: { show: boolean; amount: number }) {
         <span
           className={cn(
             'animate-float-up rounded-full px-4 py-1.5 text-sm font-extrabold shadow-soft',
-            positive ? 'bg-emerald-500/20 text-emerald-200' : 'bg-rose-500/20 text-rose-200',
+            positive ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700',
           )}
         >
           {positive ? '+' : ''}

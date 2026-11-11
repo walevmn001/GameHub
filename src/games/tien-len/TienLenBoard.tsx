@@ -272,9 +272,9 @@ function TienLenBoardView({
   const slots = opponentSlots(players.length, game.humanSeat);
 
   const board = (
-    <div className="flex h-full w-full flex-col bg-base-950">
+    <div className="relative flex h-full w-full flex-col overflow-hidden bg-gradient-to-b from-white via-base-950 to-brand-100">
       {/* Thanh trên cùng */}
-      <header className="flex shrink-0 items-center gap-2 border-b border-ink/5 px-2.5 py-2 sm:px-4">
+      <header className="relative z-10 flex shrink-0 items-center gap-2 border-b border-base-700 px-2.5 py-2 sm:px-4">
         <Button
           variant="ghost"
           size="sm"
@@ -345,6 +345,10 @@ function TienLenBoardView({
 
       {/* Sân bàn chơi */}
       <div className="relative min-h-0 flex-1">
+        {/* Mặt bàn mềm mại */}
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <div className="h-[78%] w-[86%] max-w-2xl rounded-[2.5rem] border border-brand-200/70 bg-brand-50/50 shadow-inner-soft" />
+        </div>
         {slots.map(({ seat, position }) => (
           <div key={seat} className={POSITION_CLASS[position]}>
             <SeatPanel
@@ -383,7 +387,7 @@ function TienLenBoardView({
       </div>
 
       {/* Khu vực người chơi */}
-      <div className="shrink-0 border-t border-ink/5 bg-base-950/80 px-2 pb-2 pt-2 safe-bottom sm:px-4">
+      <div className="relative z-10 shrink-0 border-t border-base-700 bg-white/75 px-2 pb-2 pt-2 safe-bottom backdrop-blur-sm sm:px-4">
         {/* Thông báo / thông tin lựa chọn */}
         <div className="mb-1.5 flex h-6 items-center justify-center gap-2">
           {game.message ? (

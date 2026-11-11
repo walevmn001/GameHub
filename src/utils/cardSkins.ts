@@ -21,7 +21,7 @@ export const CARD_SKINS: Record<string, CardSkinTheme> = {
     innerClass: 'border-rose-100/80',
     previewClass: 'from-rose-500 via-pink-600 to-rose-950',
     redTextClass: 'text-rose-700',
-    blackTextClass: 'text-slate-800',
+    blackTextClass: 'text-slate-900',
   },
   'card-skin-dragon': {
     id: 'card-skin-dragon',

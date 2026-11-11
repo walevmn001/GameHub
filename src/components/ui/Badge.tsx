@@ -4,12 +4,12 @@ import { cn } from '@/utils/cn';
 type Tone = 'neutral' | 'purple' | 'cyan' | 'green' | 'amber' | 'rose';
 
 const TONE_CLASSES: Record<Tone, string> = {
-  neutral: 'bg-ink/5 text-slate-300 ring-ink/10',
-  purple: 'bg-neon-purple/15 text-neon-purple ring-neon-purple/30',
-  cyan: 'bg-neon-cyan/15 text-neon-cyan ring-neon-cyan/30',
-  green: 'bg-emerald-500/15 text-emerald-700 ring-emerald-500/30',
-  amber: 'bg-amber-500/15 text-amber-600 ring-amber-500/30',
-  rose: 'bg-rose-500/15 text-rose-600 ring-rose-500/30',
+  neutral: 'bg-base-800 text-slate-400 ring-base-600',
+  purple: 'bg-brand-50 text-brand-700 ring-brand-200',
+  cyan: 'bg-brand-100/70 text-brand-600 ring-brand-200',
+  green: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
+  amber: 'bg-amber-50 text-amber-700 ring-amber-200',
+  rose: 'bg-rose-50 text-rose-600 ring-rose-200',
 };
 
 export interface BadgeProps {
@@ -23,7 +23,7 @@ export function Badge({ children, tone = 'neutral', className, icon }: BadgeProp
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ring-1',
+        'inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold ring-1',
         TONE_CLASSES[tone],
         className,
       )}

@@ -16,12 +16,12 @@ export function Switch({
   return (
     <label
       className={cn(
-        'flex items-center justify-between gap-4 rounded-xl border border-ink/5 bg-base-900/50 p-3.5',
-        disabled ? 'opacity-50' : 'cursor-pointer hover:border-ink/10',
+        'flex items-center justify-between gap-4 rounded-xl2 border border-base-700 bg-base-900 p-4 transition-colors',
+        disabled ? 'opacity-50' : 'cursor-pointer hover:border-brand-300',
       )}
     >
       <span className="min-w-0">
-        <span className="block text-sm font-medium text-slate-200">{label}</span>
+        <span className="block text-sm font-bold text-slate-200">{label}</span>
         {description && <span className="mt-0.5 block text-xs text-slate-500">{description}</span>}
       </span>
       <button
@@ -33,7 +33,7 @@ export function Switch({
         onClick={() => !disabled && onChange(!checked)}
         className={cn(
           'relative h-6 w-11 shrink-0 overflow-hidden rounded-full transition-colors',
-          checked ? 'bg-gradient-to-r from-neon-purple to-neon-violet' : 'bg-base-600',
+          checked ? 'bg-gradient-to-r from-brand-500 to-brand-600' : 'bg-base-600',
         )}
       >
         <span

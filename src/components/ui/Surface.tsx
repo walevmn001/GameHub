@@ -6,13 +6,13 @@ export interface SurfaceProps extends HTMLAttributes<HTMLDivElement> {
   interactive?: boolean;
 }
 
-/** Khung nội dung nền tối dùng thống nhất toàn ứng dụng. */
+/** Khung nội dung nền trắng bo tròn dùng thống nhất toàn ứng dụng. */
 export function Surface({ children, interactive = false, className, ...rest }: SurfaceProps) {
   return (
     <div
       className={cn(
-        'rounded-2xl border border-ink/5 bg-base-850/70 shadow-soft backdrop-blur-sm',
-        interactive && 'transition-all duration-200 hover:border-ink/10 hover:bg-base-800/80',
+        'rounded-xl3 border border-base-700 bg-base-900 shadow-card',
+        interactive && 'transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-card-hover',
         className,
       )}
       {...rest}
@@ -35,12 +35,18 @@ export function SectionHeader({
 }) {
   return (
     <div className="mb-4 flex items-end justify-between gap-4">
-      <div className="min-w-0">
-        <h2 className="flex items-center gap-2 text-lg font-bold text-slate-100 sm:text-xl">
-          {icon && <span className="text-neon-cyan">{icon}</span>}
-          <span className="truncate">{title}</span>
-        </h2>
-        {subtitle && <p className="mt-0.5 text-xs text-slate-400 sm:text-sm">{subtitle}</p>}
+      <div className="flex min-w-0 items-center gap-3">
+        {icon && (
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 ring-1 ring-brand-100">
+            {icon}
+          </span>
+        )}
+        <div className="min-w-0">
+          <h2 className="truncate text-lg font-extrabold tracking-tight text-slate-100 sm:text-xl">
+            {title}
+          </h2>
+          {subtitle && <p className="mt-0.5 truncate text-xs text-slate-500 sm:text-sm">{subtitle}</p>}
+        </div>
       </div>
       {action}
     </div>

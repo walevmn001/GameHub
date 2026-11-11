@@ -23,6 +23,7 @@ import { useToast } from '@/contexts/ToastContext';
 import { Avatar, Badge, Button, EmptyState, SectionHeader, Surface } from '@/components/ui';
 import { GameGrid, GameRow } from '@/components/game/GameGrid';
 import { RoomCard } from '@/components/game/RoomCard';
+import { GameHubMascot } from '@/components/illustrations/GameHubMascot';
 import { formatCoins, formatRelativeTime, formatNumber } from '@/utils/format';
 import { cn } from '@/utils/cn';
 
@@ -150,7 +151,7 @@ export function HomePage() {
           action={
             <Link
               to="/games"
-              className="inline-flex items-center gap-1 text-xs font-semibold text-neon-cyan hover:underline"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-brand-600 transition-colors hover:text-brand-700 hover:underline"
             >
               Xem tất cả <ArrowRight className="h-3.5 w-3.5" />
             </Link>
@@ -196,7 +197,7 @@ export function HomePage() {
           action={
             <Link
               to="/rooms"
-              className="inline-flex items-center gap-1 text-xs font-semibold text-neon-cyan hover:underline"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-brand-600 transition-colors hover:text-brand-700 hover:underline"
             >
               Tất cả phòng <ArrowRight className="h-3.5 w-3.5" />
             </Link>
@@ -243,10 +244,10 @@ export function HomePage() {
               Chưa có hoạt động nào. Hãy đăng nhập và chơi một ván để bắt đầu.
             </div>
           ) : (
-            <ul className="divide-y divide-ink/5">
+            <ul className="divide-y divide-base-700">
               {activities.slice(0, 6).map((item) => (
                 <li key={item.id} className="flex items-center gap-3 px-3 py-2.5">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-ink/5 text-neon-cyan">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600 ring-1 ring-brand-100">
                     {ACTIVITY_ICON[item.type]}
                   </span>
                   <span className="min-w-0 flex-1 truncate text-xs text-slate-300">
@@ -279,10 +280,10 @@ function CategoryChip({
       type="button"
       onClick={onClick}
       className={cn(
-        'rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-all',
+        'rounded-full border px-4 py-1.5 text-xs font-bold transition-all',
         active
-          ? 'border-transparent bg-gradient-to-r from-neon-purple to-neon-violet text-white shadow-glow'
-          : 'border-ink/10 bg-base-900/60 text-slate-400 hover:border-ink/20 hover:text-slate-200',
+          ? 'border-transparent bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-pop'
+          : 'border-base-700 bg-base-900 text-slate-400 hover:-translate-y-0.5 hover:border-brand-300 hover:text-brand-600',
       )}
     >
       {label}
@@ -300,12 +301,12 @@ function HeroBanner({
   onPlay: () => void;
 }) {
   return (
-    <section className="relative overflow-hidden rounded-xl2 border border-neon-cyan/20 bg-gradient-to-br from-base-800 via-base-900 to-base-850 shadow-soft">
+    <section className="relative overflow-hidden rounded-xl3 border border-base-700 bg-gradient-to-br from-brand-50 via-white to-brand-100 shadow-card">
       {/* Họa tiết trang trí */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -left-10 -top-10 h-48 w-48 rounded-full bg-neon-cyan/20 blur-3xl" />
-        <div className="absolute -right-8 top-10 h-40 w-40 rounded-full bg-neon-purple/15 blur-3xl" />
-        <div className="absolute bottom-0 left-1/3 h-32 w-32 rounded-full bg-neon-blue/30 blur-2xl" />
+        <div className="absolute -left-10 -top-10 h-48 w-48 rounded-full bg-brand-300/40 blur-3xl" />
+        <div className="absolute -right-8 top-10 h-40 w-40 rounded-full bg-brand-200/50 blur-3xl" />
+        <div className="absolute bottom-0 left-1/3 h-32 w-32 rounded-full bg-brand-400/20 blur-2xl" />
       </div>
 
       <div className="relative flex flex-col gap-5 p-5 sm:p-8 lg:flex-row lg:items-center lg:justify-between">
@@ -346,7 +347,7 @@ function HeroBanner({
         </div>
 
         {userName && (
-          <div className="flex items-center gap-3 rounded-2xl border border-ink/10 bg-base-900/80 p-3.5 shadow-soft backdrop-blur-sm lg:hidden">
+          <div className="flex items-center gap-3 rounded-2xl border border-base-700 bg-base-900/85 p-3.5 shadow-card backdrop-blur-sm lg:hidden">
             <Avatar name={userName} size="lg" ring />
             <div>
               <p className="text-xs text-slate-500">Số dư thử nghiệm</p>
@@ -366,7 +367,7 @@ function HeroBanner({
       {userName && (
         <div className="relative hidden px-8 pb-6 lg:block">
           <div className="flex items-center justify-end">
-            <div className="flex items-center gap-3 rounded-2xl border border-ink/10 bg-base-900/80 p-3.5 shadow-soft backdrop-blur-sm">
+            <div className="flex items-center gap-3 rounded-2xl border border-base-700 bg-base-900/85 p-3.5 shadow-card backdrop-blur-sm">
               <Avatar name={userName} size="md" ring />
               <div>
                 <p className="text-xs text-slate-500">Số dư thử nghiệm</p>
@@ -386,7 +387,10 @@ function HeroBanner({
 /** Mascot xanh lá dễ thương (slime) + vật thể game bay lượn. */
 function HeroMascot() {
   return (
-    <div className="relative h-56 w-56">
+    <div className="relative h-60 w-60">
+      {/* Vầng sáng nền */}
+      <div className="absolute inset-4 rounded-full bg-brand-200/50 blur-2xl" />
+
       {/* Vật thể bay lượn */}
       <div className="absolute left-0 top-2 animate-float-y" style={{ animationDelay: '0.2s' }}>
         <MiniCard />
@@ -399,53 +403,14 @@ function HeroMascot() {
       </div>
 
       {/* Slime mascot */}
-      <svg
-        viewBox="0 0 200 200"
-        className="absolute inset-0 m-auto h-44 w-44 drop-shadow-xl"
-        aria-hidden="true"
-      >
-        <defs>
-          <radialGradient id="slimeBody" cx="40%" cy="35%" r="70%">
-            <stop offset="0%" stopColor="#A8DDB5" />
-            <stop offset="55%" stopColor="#75C98A" />
-            <stop offset="100%" stopColor="#238B50" />
-          </radialGradient>
-          <radialGradient id="slimeCheek" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#FFB3C1" stopOpacity="0.7" />
-            <stop offset="100%" stopColor="#FFB3C1" stopOpacity="0" />
-          </radialGradient>
-        </defs>
-        {/* Thân slime */}
-        <path
-          d="M100 28 C58 28 32 62 32 104 C32 146 60 172 100 172 C140 172 168 146 168 104 C168 62 142 28 100 28 Z"
-          fill="url(#slimeBody)"
-        />
-        {/* Đốm sáng */}
-        <ellipse cx="78" cy="62" rx="18" ry="12" fill="#FFFFFF" opacity="0.45" />
-        {/* Mắt */}
-        <ellipse cx="80" cy="100" rx="9" ry="11" fill="#1A2B20" />
-        <ellipse cx="120" cy="100" rx="9" ry="11" fill="#1A2B20" />
-        <circle cx="83" cy="96" r="3" fill="#FFFFFF" />
-        <circle cx="123" cy="96" r="3" fill="#FFFFFF" />
-        {/* Má */}
-        <ellipse cx="66" cy="118" rx="10" ry="7" fill="url(#slimeCheek)" />
-        <ellipse cx="134" cy="118" rx="10" ry="7" fill="url(#slimeCheek)" />
-        {/* Miệ cười */}
-        <path
-          d="M86 128 Q100 142 114 128"
-          fill="none"
-          stroke="#1A2B20"
-          strokeWidth="3.5"
-          strokeLinecap="round"
-        />
-      </svg>
+      <GameHubMascot uid="hero" className="absolute inset-0 m-auto h-48 w-48 animate-bob" />
     </div>
   );
 }
 
 function MiniCard() {
   return (
-    <div className="flex h-12 w-9 rotate-[-12deg] items-center justify-center rounded-md border border-ink/10 bg-base-900 shadow-soft">
+    <div className="flex h-12 w-9 rotate-[-12deg] items-center justify-center rounded-lg border border-base-700 bg-white shadow-card">
       <span className="text-base font-bold text-rose-500">♥</span>
     </div>
   );
@@ -453,15 +418,15 @@ function MiniCard() {
 
 function MiniDie() {
   return (
-    <div className="flex h-11 w-11 rotate-[10deg] items-center justify-center rounded-lg border border-ink/10 bg-base-900 shadow-soft">
-      <span className="text-base">🎲</span>
+    <div className="flex h-11 w-11 rotate-[10deg] items-center justify-center rounded-2xl border border-base-700 bg-white text-lg shadow-card">
+      🎲
     </div>
   );
 }
 
 function MiniCoin() {
   return (
-    <div className="flex h-9 w-9 items-center justify-center rounded-full border border-amber-300/50 bg-gradient-to-br from-amber-300 to-amber-500 shadow-soft">
+    <div className="flex h-9 w-9 items-center justify-center rounded-full border border-amber-300/60 bg-gradient-to-br from-amber-300 to-amber-500 shadow-card">
       <Coins className="h-4 w-4 text-amber-900" />
     </div>
   );

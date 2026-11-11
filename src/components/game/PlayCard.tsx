@@ -56,7 +56,7 @@ export function PlayCard({
       <div
         className={cn(
           'relative shrink-0 rounded-lg border shadow-soft',
-          skin?.backClass ?? 'border-ink/10 bg-gradient-to-br from-base-700 to-base-850',
+          skin?.backClass ?? 'border-brand-500/60 bg-gradient-to-br from-brand-400 to-brand-600',
           SIZE_CLASSES[size],
           className,
         )}
@@ -65,7 +65,7 @@ export function PlayCard({
       >
         <div className={cn(
           'absolute inset-1 rounded-md border',
-          skin?.innerClass ?? 'border-neon-purple/25 bg-[repeating-linear-gradient(45deg,rgba(168,85,247,0.18)_0px,rgba(168,85,247,0.18)_4px,transparent_4px,transparent_8px)]',
+          skin?.innerClass ?? 'border-white/25 bg-[repeating-linear-gradient(45deg,rgba(255,255,255,0.22)_0px,rgba(255,255,255,0.22)_4px,transparent_4px,transparent_8px)]',
         )} />
         {skin && <span className="absolute inset-0 flex items-center justify-center text-lg">{skin.mark}</span>}
       </div>

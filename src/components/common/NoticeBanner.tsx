@@ -6,15 +6,15 @@ type Variant = 'info' | 'warning' | 'danger';
 
 const VARIANT_STYLES: Record<Variant, { wrap: string; icon: ReactNode }> = {
   info: {
-    wrap: 'border-neon-cyan/25 bg-neon-cyan/5 text-neon-cyan',
+    wrap: 'border-brand-200 bg-brand-50 text-brand-700',
     icon: <Info className="h-4 w-4" />,
   },
   warning: {
-    wrap: 'border-amber-500/25 bg-amber-500/5 text-amber-600',
+    wrap: 'border-amber-200 bg-amber-50 text-amber-700',
     icon: <AlertTriangle className="h-4 w-4" />,
   },
   danger: {
-    wrap: 'border-rose-500/25 bg-rose-500/5 text-rose-600',
+    wrap: 'border-rose-200 bg-rose-50 text-rose-600',
     icon: <ShieldAlert className="h-4 w-4" />,
   },
 };
@@ -36,7 +36,7 @@ export function NoticeBanner({
     <div className={cn('flex items-start gap-2.5 rounded-2xl border p-3.5', style.wrap, className)}>
       <span className="mt-0.5 shrink-0">{style.icon}</span>
       <div className="min-w-0 text-xs leading-relaxed">
-        {title && <p className="mb-0.5 font-semibold">{title}</p>}
+        {title && <p className="mb-0.5 font-bold">{title}</p>}
         <div className="text-current/90">{children}</div>
       </div>
     </div>

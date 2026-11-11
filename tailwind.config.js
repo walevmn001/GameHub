@@ -5,7 +5,20 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Bảng màu Cute Green & White
+        // ===== Bảng màu Cute Green & White =====
+        // brand: thang xanh lá chủ đạo (dùng cho thiết kế mới)
+        brand: {
+          50: '#F1F9F2',
+          100: '#E8F6E9',
+          200: '#D4E5D6',
+          300: '#A8DDB5',
+          400: '#75C98A',
+          500: '#3FAE68',
+          600: '#238B50',
+          700: '#1A6B3D',
+          800: '#15522F',
+          900: '#263B2D',
+        },
         // base: thang màu nền sáng (xanh pastel + trắng)
         base: {
           950: '#F7FBF7', // nền trang
@@ -15,16 +28,16 @@ export default {
           700: '#E4EEE5', // nút phụ / viền nhẹ
           600: '#D4E5D6', // hover
         },
-        // neon -> màu xanh lá chủ đạo (giữ tên token để không phá class)
+        // neon -> màu xanh lá chủ đạo (giữ tên token để không phá class cũ)
         neon: {
           purple: '#238B50', // primary green
           violet: '#1A6B3D', // dark green
-          cyan: '#75C98A', // secondary green
+          cyan: '#238B50', // accent xanh đậm, đủ tương phản khi làm chữ/viền trên nền trắng
           blue: '#A8DDB5', // light green accent
         },
-        // ink: màu xanh đậm dùng cho overlay thay cho trắng trên nền sáng
+        // ink: màu xanh đậm dùng cho chữ/overlay thay cho trắng trên nền sáng
         ink: '#263B2D',
-        // slate: thang xám xanh lá cho chữ (sáng=đậm để đọc trên nền sáng)
+        // slate: thang xám xanh lá cho chữ (giá trị nhỏ = đậm để đọc trên nền sáng)
         slate: {
           50: '#FFFFFF',
           100: '#1F2E24',
@@ -44,11 +57,17 @@ export default {
       },
       boxShadow: {
         soft: '0 8px 24px -12px rgba(38, 59, 45, 0.18)',
-        glow: '0 0 0 1px rgba(35, 139, 80, 0.25), 0 10px 28px -12px rgba(35, 139, 80, 0.45)',
-        'glow-cyan': '0 0 0 1px rgba(117, 201, 138, 0.35), 0 10px 28px -12px rgba(117, 201, 138, 0.5)',
+        card: '0 10px 30px -18px rgba(35, 139, 80, 0.30)',
+        'card-hover': '0 18px 40px -20px rgba(35, 139, 80, 0.45)',
+        glow: '0 0 0 1px rgba(35, 139, 80, 0.25), 0 12px 30px -14px rgba(35, 139, 80, 0.5)',
+        'glow-cyan': '0 0 0 1px rgba(117, 201, 138, 0.35), 0 12px 30px -14px rgba(117, 201, 138, 0.55)',
+        pop: '0 6px 0 -2px rgba(26, 107, 61, 0.35)',
+        'inner-soft': 'inset 0 1px 0 0 rgba(255, 255, 255, 0.7)',
       },
       borderRadius: {
         xl2: '1.25rem',
+        xl3: '1.5rem',
+        '4xl': '2rem',
       },
       keyframes: {
         'fade-in': {
@@ -109,6 +128,20 @@ export default {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-10px)' },
         },
+        // Hiệu ứng "dễ thương" cho mascot và nhấn mạnh
+        wiggle: {
+          '0%, 100%': { transform: 'rotate(-3deg)' },
+          '50%': { transform: 'rotate(3deg)' },
+        },
+        'pop-in': {
+          '0%': { transform: 'scale(0.85)', opacity: '0' },
+          '70%': { transform: 'scale(1.03)', opacity: '1' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+        bob: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-6px)' },
+        },
       },
       animation: {
         'fade-in': 'fade-in 0.35s ease-out both',
@@ -123,6 +156,9 @@ export default {
         'cut-flash': 'cut-flash 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards',
         'white-win-pop': 'white-win-pop 0.6s cubic-bezier(0.22, 1, 0.36, 1) both',
         'float-y': 'float-y 4s ease-in-out infinite',
+        wiggle: 'wiggle 1.6s ease-in-out infinite',
+        'pop-in': 'pop-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both',
+        bob: 'bob 3s ease-in-out infinite',
       },
     },
   },

@@ -14,19 +14,21 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const VARIANT_CLASSES: Record<Variant, string> = {
+  // Nút chính: xanh lá đậm, bo tròn, nâng nhẹ khi hover (phong cách game casual)
   primary:
-    'bg-gradient-to-r from-neon-purple to-neon-violet text-white shadow-glow hover:brightness-110 active:brightness-95',
-  secondary: 'bg-base-700 text-slate-100 hover:bg-base-600 border border-ink/5',
-  ghost: 'bg-transparent text-slate-300 hover:bg-ink/5 hover:text-neon-purple',
+    'bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-pop hover:from-brand-400 hover:to-brand-500 hover:-translate-y-0.5 active:translate-y-0 active:shadow-none',
+  secondary:
+    'bg-base-800 text-brand-700 border border-brand-200 hover:bg-base-700 hover:border-brand-300',
+  ghost: 'bg-transparent text-slate-400 hover:bg-brand-50 hover:text-brand-600',
   outline:
-    'bg-transparent text-slate-200 border border-ink/15 hover:border-neon-cyan/60 hover:text-neon-purple',
-  danger: 'bg-rose-600/90 text-white hover:bg-rose-500',
-  success: 'bg-emerald-600/90 text-white hover:bg-emerald-500',
+    'bg-base-900 text-brand-700 border border-brand-300 hover:bg-brand-50 hover:border-brand-500',
+  danger: 'bg-rose-500 text-white shadow-pop hover:bg-rose-400 hover:-translate-y-0.5 active:translate-y-0',
+  success: 'bg-emerald-500 text-white shadow-pop hover:bg-emerald-400 hover:-translate-y-0.5 active:translate-y-0',
 };
 
 const SIZE_CLASSES: Record<Size, string> = {
-  sm: 'h-9 px-3 text-xs gap-1.5 rounded-xl',
-  md: 'h-11 px-4 text-sm gap-2 rounded-xl',
+  sm: 'h-9 px-3.5 text-xs gap-1.5 rounded-xl',
+  md: 'h-11 px-5 text-sm gap-2 rounded-xl2',
   lg: 'h-12 px-6 text-base gap-2 rounded-xl2',
 };
 
@@ -51,8 +53,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       type={type}
       disabled={disabled || loading}
       className={cn(
-        'inline-flex items-center justify-center font-semibold transition-all duration-200 select-none',
-        'disabled:cursor-not-allowed disabled:opacity-50',
+        'inline-flex items-center justify-center font-bold tracking-tight transition-all duration-200 select-none',
+        'disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none disabled:hover:translate-y-0',
         VARIANT_CLASSES[variant],
         SIZE_CLASSES[size],
         fullWidth && 'w-full',

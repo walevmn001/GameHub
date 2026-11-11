@@ -86,7 +86,7 @@ export function PlayerProfileButton({
             {!disableSocial && (
               <FriendButton
                 contact={contact}
-                className="mt-2 h-8 rounded-lg px-3 text-[11px] shadow-md shadow-purple-500/20 hover:shadow-purple-500/30"
+                className="mt-2 h-8 rounded-lg px-3 text-[11px] shadow-md shadow-brand-500/20 hover:shadow-brand-500/30"
               />
             )}
           </div>

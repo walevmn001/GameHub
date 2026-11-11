@@ -19,8 +19,8 @@ const SIZE_CLASSES = {
 };
 
 const STATUS_CLASSES: Record<'online' | 'offline', string> = {
-  online: 'bg-emerald-400',
-  offline: 'bg-slate-500',
+  online: 'bg-emerald-500',
+  offline: 'bg-slate-600',
 };
 
 export function Avatar({
@@ -41,13 +41,13 @@ export function Avatar({
         className={cn(
           'rounded-full object-cover',
           SIZE_CLASSES[size],
-          ring && 'ring-2 ring-neon-purple/50 ring-offset-2 ring-offset-base-900',
+          ring && 'ring-2 ring-brand-400 ring-offset-2 ring-offset-base-900',
         )}
       />
       {status !== 'none' && (
         <span
           className={cn(
-            'absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-base-850',
+            'absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-base-900',
             STATUS_CLASSES[status],
           )}
         />

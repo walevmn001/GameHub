@@ -14,7 +14,7 @@
   }
 
   body {
-    @apply bg-base-950 text-slate-200 antialiased;
+    @apply bg-base-950 font-sans text-slate-200 antialiased;
     /* Hỗ trợ safe-area cho thiết bị có tai thỏ khi đóng gói bằng Capacitor */
     padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
       env(safe-area-inset-left);
@@ -22,7 +22,7 @@
     overflow-x: hidden;
   }
 
-  /* Nền gradient nhẹ màu xanh lá, không lạm dụng */
+  /* Nền xanh pastel nhẹ nhàng, thoáng và tươi mát (không lạm dụng gradient) */
   body::before {
     content: '';
     position: fixed;
@@ -30,23 +30,40 @@
     pointer-events: none;
     z-index: 0;
     background:
-      radial-gradient(60rem 40rem at 12% -10%, rgba(117, 201, 138, 0.25), transparent 60%),
-      radial-gradient(50rem 34rem at 100% 0%, rgba(168, 221, 181, 0.3), transparent 60%);
+      radial-gradient(60rem 40rem at 8% -12%, rgba(117, 201, 138, 0.22), transparent 62%),
+      radial-gradient(52rem 36rem at 102% -6%, rgba(168, 221, 181, 0.28), transparent 60%),
+      radial-gradient(46rem 30rem at 50% 118%, rgba(232, 246, 233, 0.9), transparent 60%);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display;
   }
 
   *:focus-visible {
-    @apply outline-none ring-2 ring-neon-purple/60 ring-offset-2 ring-offset-base-950;
+    @apply outline-none ring-2 ring-brand-600/50 ring-offset-2 ring-offset-base-950;
   }
 }
 
 @layer components {
-  /* Khung nội dung dùng chung */
+  /* Khung nội dung dùng chung — nền trắng, bo tròn mềm, viền xanh nhạt */
   .glass-panel {
-    @apply rounded-2xl border border-ink/10 bg-base-900/80 shadow-soft backdrop-blur-sm;
+    @apply rounded-2xl border border-base-700 bg-base-900/85 shadow-card backdrop-blur-sm;
   }
 
+  /* Card cute: bo tròn lớn, viền nhẹ, nâng nhẹ khi hover */
+  .cute-card {
+    @apply rounded-xl3 border border-base-700 bg-base-900 shadow-card transition-all duration-300;
+  }
+  .cute-card-interactive {
+    @apply hover:-translate-y-1 hover:border-brand-300 hover:shadow-card-hover;
+  }
+
+  /* Nhấn mạnh tiêu đề bằng gradient xanh lá */
   .neon-text {
-    @apply bg-gradient-to-r from-neon-purple via-neon-violet to-neon-cyan bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-brand-600 via-brand-500 to-brand-400 bg-clip-text text-transparent;
   }
 
   /* Thanh cuộn mảnh, phù hợp light mode */
@@ -55,7 +72,7 @@
     width: 8px;
   }
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    @apply rounded-full bg-neon-purple/30;
+    @apply rounded-full bg-brand-300/70;
   }
   .scrollbar-thin::-webkit-scrollbar-track {
     background: transparent;

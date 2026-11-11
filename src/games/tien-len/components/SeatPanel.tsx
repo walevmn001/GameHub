@@ -152,7 +152,7 @@ function MiniStack({
           key={index}
           className={cn(
             'relative h-6 w-4 rounded-[3px] border',
-            skin?.backClass ?? 'border-ink/10 bg-gradient-to-br from-base-600 to-base-800',
+            skin?.backClass ?? 'border-brand-500/50 bg-gradient-to-br from-brand-400 to-brand-600',
           )}
         >
           {skin && index === shown - 1 && (

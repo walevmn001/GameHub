@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { KeyRound, LogIn, Sparkles, User as UserIcon } from 'lucide-react';
 import { Button, Input, Surface } from '@/components/ui';
+import { GameHubMascot } from '@/components/illustrations/GameHubMascot';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 
@@ -48,6 +49,7 @@ export function LoginPage() {
   return (
     <div className="mx-auto flex max-w-md flex-col gap-4 py-6">
       <div className="text-center">
+        <GameHubMascot uid="login" className="mx-auto mb-1 h-24 w-24 animate-bob" wink />
         <h1 className="text-2xl font-extrabold text-slate-100">Đăng nhập</h1>
         <p className="mt-1 text-sm text-slate-400">
           Tiếp tục với tài khoản của bạn.
