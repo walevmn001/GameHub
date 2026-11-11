@@ -53,11 +53,27 @@ export function ChatDock({ landscape = false }: { landscape?: boolean }) {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="btn-shine fixed bottom-4 right-4 z-[60] inline-flex h-14 w-14 shrink-0 aspect-square items-center justify-center rounded-full border border-brand-700/25 text-white shadow-[inset_0_2px_0_rgba(255,255,255,0.6),0_6px_0_-1px_rgba(33,140,43,0.55),0_16px_28px_-12px_rgba(33,140,43,0.55)] transition-all duration-200 hover:-translate-y-1 hover:brightness-105 active:translate-y-1 active:shadow-[inset_0_2px_0_rgba(255,255,255,0.4),0_2px_0_-1px_rgba(33,140,43,0.5)]"
+          className="btn-shine group fixed bottom-4 right-4 z-[60] inline-flex h-14 w-14 shrink-0 aspect-square items-center justify-center rounded-full border border-brand-700/25 text-white shadow-[inset_0_2px_0_rgba(255,255,255,0.6),0_6px_0_-1px_rgba(33,140,43,0.55),0_16px_28px_-12px_rgba(33,140,43,0.55)] transition-all duration-200 hover:-translate-y-1 hover:brightness-105 active:translate-y-1 active:shadow-[inset_0_2px_0_rgba(255,255,255,0.4),0_2px_0_-1px_rgba(33,140,43,0.5)]"
           style={{ backgroundColor: '#62D943' }}
           aria-label="Mở menu cá nhân"
         >
-          <UserRound className="h-6 w-6" />
+          {/* Mặt mascot dễ thương: mắt long lanh, má hồng, miệng cười */}
+          <svg viewBox="0 0 40 40" className="h-8 w-8 transition-transform duration-300 group-hover:scale-110 group-active:scale-95" aria-hidden="true">
+            {/* Má hồng */}
+            <ellipse cx="11" cy="24" rx="3.4" ry="2.4" fill="#FFC2D6" />
+            <ellipse cx="29" cy="24" rx="3.4" ry="2.4" fill="#FFC2D6" />
+            {/* Mắt */}
+            <ellipse cx="15" cy="18" rx="2.6" ry="3" fill="#164820" />
+            <ellipse cx="25" cy="18" rx="2.6" ry="3" fill="#164820" />
+            {/* Đốm sáng mắt */}
+            <circle cx="14" cy="16.5" r="1" fill="#FFFFFF" />
+            <circle cx="24" cy="16.5" r="1" fill="#FFFFFF" />
+            {/* Mũi */}
+            <path d="M18.5 21.5 L21.5 21.5 L20 23.2 Z" fill="#FFFFFF" />
+            {/* Miệng cười */}
+            <path d="M20 24 Q16 28 13.5 24.5" fill="none" stroke="#164820" strokeWidth="1.8" strokeLinecap="round" />
+            <path d="M20 24 Q24 28 26.5 24.5" fill="none" stroke="#164820" strokeWidth="1.8" strokeLinecap="round" />
+          </svg>
           {(social.unreadTotal > 0 || social.incoming.length > 0) && (
             <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white ring-2 ring-white">
               {social.incoming.length > 0 ? social.incoming.length : social.unreadTotal > 9 ? '9+' : social.unreadTotal}
