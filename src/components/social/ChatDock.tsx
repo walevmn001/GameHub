@@ -58,7 +58,7 @@ export function ChatDock({ landscape = false }: { landscape?: boolean }) {
           aria-label="Mở menu cá nhân"
         >
           {/* Mặt mascot dễ thương: mắt long lanh, má hồng, miệng cười */}
-          <svg viewBox="0 0 40 40" className="h-8 w-8 transition-transform duration-300 group-hover:scale-110 group-active:scale-95" aria-hidden="true">
+          <svg viewBox="0 0 40 40" className="h-11 w-11 transition-transform duration-300 group-hover:scale-110 group-active:scale-95" aria-hidden="true">
             {/* Má hồng */}
             <ellipse cx="11" cy="24" rx="3.4" ry="2.4" fill="#FFC2D6" />
             <ellipse cx="29" cy="24" rx="3.4" ry="2.4" fill="#FFC2D6" />
