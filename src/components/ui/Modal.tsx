@@ -39,7 +39,7 @@ export function Modal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[90] flex items-end justify-center bg-slate-900/40 p-0 backdrop-blur-sm sm:items-center sm:p-4">
+    <div className="fixed inset-0 z-[90] flex items-end justify-center bg-emerald-950/25 p-0 backdrop-blur-sm sm:items-center sm:p-4">
       <button
         type="button"
         aria-label="Đóng"
@@ -50,12 +50,12 @@ export function Modal({
         role="dialog"
         aria-modal="true"
         className={cn(
-          'relative z-10 w-full animate-pop-in rounded-t-4xl border border-base-700 bg-base-900 shadow-card-hover sm:rounded-4xl',
+          'relative z-10 w-full animate-pop-in rounded-t-4xl border border-brand-100 bg-white shadow-card-hover sm:rounded-4xl',
           SIZE_CLASSES[size],
         )}
       >
         {(title || description) && (
-          <div className="flex items-start justify-between gap-4 border-b border-base-700 p-4 sm:p-5">
+          <div className="flex items-start justify-between gap-4 border-b border-brand-100 bg-brand-50/60 p-4 sm:p-5">
             <div className="min-w-0">
               {title && (
                 <h3 className="text-base font-extrabold tracking-tight text-slate-100">{title}</h3>
@@ -67,7 +67,7 @@ export function Modal({
             <button
               type="button"
               onClick={onClose}
-              className="shrink-0 rounded-full p-1.5 text-slate-500 transition-colors hover:bg-brand-50 hover:text-brand-600"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-brand-100 bg-white text-slate-500 shadow-soft transition-colors hover:bg-brand-50 hover:text-brand-600"
               aria-label="Đóng hộp thoại"
             >
               <X className="h-4 w-4" />
@@ -76,7 +76,7 @@ export function Modal({
         )}
         <div className="max-h-[70vh] overflow-y-auto p-4 scrollbar-thin sm:p-5">{children}</div>
         {footer && (
-          <div className="flex items-center justify-end gap-2 border-t border-base-700 bg-base-850/60 p-4 sm:p-5">
+          <div className="flex items-center justify-end gap-2 border-t border-brand-100 bg-brand-50/50 p-4 sm:p-5">
             {footer}
           </div>
         )}

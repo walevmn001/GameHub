@@ -53,7 +53,7 @@ export function ChatDock({ landscape = false }: { landscape?: boolean }) {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="fixed bottom-4 right-4 z-[60] inline-flex h-12 w-12 shrink-0 aspect-square items-center justify-center rounded-full bg-gradient-to-br from-brand-400 to-brand-600 text-brand-900 shadow-glow"
+          className="fixed bottom-4 right-4 z-[60] inline-flex h-12 w-12 shrink-0 aspect-square items-center justify-center rounded-full border border-brand-200 bg-gradient-to-b from-white to-brand-50 text-brand-600 shadow-card-hover transition-all hover:-translate-y-0.5 hover:text-brand-700"
           aria-label="Mở menu cá nhân"
         >
           <UserRound className="h-5 w-5" />
@@ -555,7 +555,7 @@ function ChatConversation() {
           type="button"
           onClick={() => void sendText()}
           disabled={sending || draft.trim().length === 0}
-          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-neon-purple to-neon-violet text-white disabled:opacity-40"
+          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-brand-700/20 bg-gradient-to-b from-brand-400 via-brand-500 to-brand-600 text-white shadow-pop transition-all hover:-translate-y-0.5 hover:shadow-btn-hover disabled:translate-y-0 disabled:opacity-40"
           aria-label="Gửi"
         >
           <Send className="h-4 w-4" />

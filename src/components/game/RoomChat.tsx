@@ -179,7 +179,7 @@ export function RoomChat({
           type="button"
           onClick={() => void sendText()}
           disabled={sending || draft.trim().length === 0}
-          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-neon-purple to-neon-violet text-white transition-opacity disabled:opacity-40"
+          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-brand-700/20 bg-gradient-to-b from-brand-400 via-brand-500 to-brand-600 text-white shadow-pop transition-all hover:-translate-y-0.5 hover:shadow-btn-hover disabled:translate-y-0 disabled:opacity-40"
           aria-label="Gửi"
         >
           <Send className="h-4 w-4" />

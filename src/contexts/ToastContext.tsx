@@ -33,11 +33,11 @@ const ToastContext = createContext<ToastContextValue | null>(null);
 
 const VARIANT_STYLES: Record<ToastVariant, { icon: ReactNode; ring: string }> = {
   success: {
-    icon: <CheckCircle2 className="h-5 w-5 text-emerald-400" />,
-    ring: 'ring-emerald-500/30',
+    icon: <CheckCircle2 className="h-5 w-5 text-brand-600" />,
+    ring: 'ring-brand-300',
   },
   error: { icon: <XCircle className="h-5 w-5 text-rose-400" />, ring: 'ring-rose-500/30' },
-  info: { icon: <Info className="h-5 w-5 text-neon-cyan" />, ring: 'ring-neon-cyan/30' },
+  info: { icon: <Info className="h-5 w-5 text-sky-600" />, ring: 'ring-sky-300' },
   warning: {
     icon: <AlertTriangle className="h-5 w-5 text-amber-500" />,
     ring: 'ring-amber-500/30',
@@ -90,7 +90,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           <div
             key={t.id}
             className={cn(
-              'pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-2xl bg-base-800/95 p-3.5 shadow-soft ring-1 backdrop-blur animate-fade-in',
+              'pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-3xl border border-brand-100 bg-white/95 p-3.5 shadow-card ring-1 backdrop-blur animate-fade-in',
               VARIANT_STYLES[t.variant].ring,
             )}
             role="status"

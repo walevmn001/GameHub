@@ -46,7 +46,7 @@ export function RegisterPage() {
   return (
     <div className="mx-auto flex max-w-md flex-col gap-4 py-6">
       <div className="text-center">
-        <GameHubMascot uid="register" className="mx-auto mb-1 h-24 w-24 animate-bob" />
+        <GameHubMascot uid="register" pose="wave" className="mx-auto mb-1 h-24 w-24 animate-bob" />
         <h1 className="text-2xl font-extrabold text-slate-100">Tạo tài khoản</h1>
         <p className="mt-1 text-sm text-slate-400">
           Bắt đầu hành trình của bạn trên Mini Game Hub.

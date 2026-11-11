@@ -18,16 +18,15 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center gap-3 rounded-xl3 border border-dashed border-brand-200 bg-base-900/70 px-6 py-10 text-center',
+        'flex flex-col items-center justify-center gap-3 rounded-3xl border border-dashed border-brand-200 bg-white/90 px-6 py-10 text-center shadow-soft',
         className,
       )}
     >
-      {icon ? (
-        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 ring-1 ring-brand-100">
+      <GameHubMascot uid="empty" pose="wave" className={icon ? 'h-16 w-16' : 'h-20 w-20 animate-bob'} />
+      {icon && (
+        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-pastel-yellow text-amber-700 shadow-soft">
           {icon}
         </span>
-      ) : (
-        <GameHubMascot uid="empty" className="h-20 w-20 animate-bob" wink />
       )}
       <div>
         <p className="text-sm font-bold text-slate-200">{title}</p>

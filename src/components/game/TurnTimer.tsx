@@ -30,7 +30,7 @@ export function TurnTimer({
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke="rgba(38,59,45,0.12)"
+          stroke="rgba(38,155,53,0.14)"
           strokeWidth={stroke}
         />
         <circle
@@ -38,7 +38,7 @@ export function TurnTimer({
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke={urgent ? '#f43f5e' : active ? '#238B50' : '#94a3a0'}
+          stroke={urgent ? '#F06B72' : active ? '#269B35' : '#A3B1A4'}
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={circumference}

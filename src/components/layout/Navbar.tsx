@@ -19,6 +19,7 @@ import { APP_NAME } from '@/utils/constants';
 import { formatCoins } from '@/utils/format';
 import { cn } from '@/utils/cn';
 import { Avatar, Button } from '@/components/ui';
+import { GameHubMascot } from '@/components/illustrations/GameHubMascot';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSocial } from '@/contexts/SocialContext';
 import { useToast } from '@/contexts/ToastContext';
@@ -87,8 +88,8 @@ export function Navbar() {
     <header className="sticky top-0 z-50 border-b border-base-700/80 bg-base-900/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-3 sm:px-5">
         <Link to="/" className="flex shrink-0 items-center gap-2.5">
-          <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 shadow-pop ring-2 ring-white/70">
-            <Gamepad2 className="h-5 w-5 text-brand-900" />
+          <span className="flex h-10 w-10 items-center justify-center rounded-2xl border border-brand-200 bg-gradient-to-br from-brand-50 to-white shadow-soft">
+            <GameHubMascot uid="navbar-logo" className="h-9 w-9" />
           </span>
           <span className="hidden flex-col leading-none sm:flex">
             <span className="font-display text-base font-extrabold tracking-tight text-slate-100">
@@ -240,14 +241,16 @@ export function Navbar() {
             </>
           )}
 
-          <button
+          <Button
             type="button"
+            variant="icon"
+            size="sm"
             onClick={() => setMobileOpen((v) => !v)}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-base-700 bg-base-900 text-slate-400 shadow-soft transition-all duration-200 ease-out hover:border-brand-300 hover:text-brand-600 active:scale-95 md:hidden"
             aria-label="Mở menu"
+            className="md:hidden"
           >
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
+          </Button>
         </div>
       </div>
 

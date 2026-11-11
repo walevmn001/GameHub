@@ -16,24 +16,24 @@ export function StatTile({
 }) {
   const toneClass = {
     default: 'text-slate-100',
-    green: 'text-emerald-600',
+    green: 'text-brand-600',
     rose: 'text-rose-500',
     cyan: 'text-brand-600',
   }[tone];
 
   const iconClass = {
-    default: 'bg-base-800 text-brand-600',
-    green: 'bg-emerald-50 text-emerald-600',
-    rose: 'bg-rose-50 text-rose-500',
-    cyan: 'bg-brand-50 text-brand-600',
+    default: 'bg-pastel-blue text-sky-700',
+    green: 'bg-brand-50 text-brand-600',
+    rose: 'bg-pastel-pink text-rose-600',
+    cyan: 'bg-pastel-yellow text-amber-700',
   }[tone];
 
   return (
-    <div className="rounded-xl3 border border-base-700 bg-base-900 p-4 shadow-card transition-all hover:-translate-y-0.5 hover:shadow-card-hover">
+    <div className="rounded-3xl border border-brand-100 bg-gradient-to-br from-white to-brand-50/70 p-4 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-card-hover">
       <div className="flex items-center justify-between gap-2">
         <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">{label}</p>
         {icon && (
-          <span className={cn('flex h-8 w-8 items-center justify-center rounded-xl', iconClass)}>
+          <span className={cn('flex h-9 w-9 items-center justify-center rounded-full', iconClass)}>
             {icon}
           </span>
         )}

@@ -23,7 +23,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       )}
       <div
         className={cn(
-          'flex h-11 items-center gap-2 rounded-xl2 border bg-base-900 px-3.5 transition-all',
+          'flex h-11 items-center gap-2 rounded-full border bg-white px-4 shadow-soft transition-all',
           error
             ? 'border-rose-400'
             : 'border-base-700 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/20',

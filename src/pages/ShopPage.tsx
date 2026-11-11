@@ -66,21 +66,23 @@ export function ShopPage() {
         subtitle="Mở khoá nhãn dán và vật phẩm bằng xu của bạn."
         icon={<ShoppingBag className="h-5 w-5" />}
         action={
-          <span className="inline-flex items-center gap-1.5 rounded-xl border border-ink/5 bg-base-900/70 px-3 py-2 text-sm font-semibold text-amber-600">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-pastel-yellow px-3.5 py-2 text-sm font-bold text-amber-800 shadow-soft">
             <Coins className="h-4 w-4" />
             {formatCoins(user.coins)}
           </span>
         }
       />
 
-      <div className="mb-5 flex max-w-md rounded-2xl border border-ink/5 bg-base-900/70 p-1">
+      <div className="mb-5 flex max-w-md rounded-full border border-brand-100 bg-white p-1 shadow-soft">
         <button
           type="button"
           aria-pressed={activeView === 'shop'}
           onClick={() => setActiveView('shop')}
           className={cn(
-            'flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold transition',
-            activeView === 'shop' ? 'bg-neon-purple/10 text-neon-purple shadow-soft' : 'text-slate-400 hover:text-neon-purple',
+            'flex flex-1 items-center justify-center gap-2 rounded-full px-3 py-2.5 text-sm font-bold transition',
+            activeView === 'shop'
+              ? 'bg-brand-50 text-brand-700 shadow-soft'
+              : 'text-slate-400 hover:bg-brand-50 hover:text-brand-600',
           )}
         >
           <ShoppingBag className="h-4 w-4" />
@@ -91,10 +93,10 @@ export function ShopPage() {
           aria-pressed={activeView === 'closet'}
           onClick={() => setActiveView('closet')}
           className={cn(
-            'flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold transition',
+            'flex flex-1 items-center justify-center gap-2 rounded-full px-3 py-2.5 text-sm font-bold transition',
             activeView === 'closet'
-              ? 'bg-gradient-to-r from-neon-purple to-neon-violet text-white shadow-glow'
-              : 'text-slate-400 hover:text-neon-purple',
+              ? 'bg-gradient-to-b from-brand-400 via-brand-500 to-brand-600 text-white shadow-pop'
+              : 'text-slate-400 hover:bg-brand-50 hover:text-brand-600',
           )}
         >
           <Layers className="h-4 w-4" />
@@ -114,10 +116,10 @@ export function ShopPage() {
                 type="button"
                 onClick={() => setActiveKind(tab.kind)}
                 className={cn(
-                  'rounded-xl px-3.5 py-2 text-sm font-semibold transition-colors',
+                  'rounded-full px-3.5 py-2 text-sm font-bold transition-colors',
                   tab.kind === activeKind
-                    ? 'bg-gradient-to-r from-neon-purple to-neon-violet text-white shadow-glow'
-                    : 'bg-ink/5 text-slate-300 hover:bg-ink/10',
+                    ? 'bg-gradient-to-b from-brand-400 via-brand-500 to-brand-600 text-white shadow-pop'
+                    : 'border border-brand-100 bg-white text-slate-400 shadow-soft hover:bg-brand-50 hover:text-brand-600',
                 )}
               >
                 {tab.label}

@@ -30,9 +30,9 @@
     pointer-events: none;
     z-index: 0;
     background:
-      radial-gradient(60rem 40rem at 8% -12%, rgba(117, 201, 138, 0.22), transparent 62%),
-      radial-gradient(52rem 36rem at 102% -6%, rgba(168, 221, 181, 0.28), transparent 60%),
-      radial-gradient(46rem 30rem at 50% 118%, rgba(232, 246, 233, 0.9), transparent 60%);
+      radial-gradient(60rem 40rem at 8% -12%, rgba(141, 235, 104, 0.2), transparent 62%),
+      radial-gradient(52rem 36rem at 102% -6%, rgba(207, 243, 189, 0.4), transparent 60%),
+      radial-gradient(46rem 30rem at 50% 118%, rgba(244, 255, 240, 0.96), transparent 60%);
   }
 
   h1,
@@ -48,20 +48,20 @@
 }
 
 @layer components {
-  /* Khung nội dung dùng chung — nền trắng, bo tròn mềm, viền xanh nhạt */
+  /* Khung nội dung dùng chung — nền trắng, bo tròn mềm, viền mint */
   .glass-panel {
     @apply rounded-2xl border border-base-700 bg-base-900/85 shadow-card backdrop-blur-sm;
   }
 
-  /* Card cute: bo tròn lớn, viền nhẹ, nâng nhẹ khi hover */
+  /* Card cute: bo tròn lớn, viền nhẹ và bóng 3D dịu khi hover */
   .cute-card {
     @apply rounded-xl3 border border-base-700 bg-base-900 shadow-card transition-all duration-300;
   }
   .cute-card-interactive {
-    @apply hover:-translate-y-1 hover:border-brand-300 hover:shadow-card-hover;
+    @apply hover:-translate-y-1 hover:border-brand-400 hover:shadow-card-hover;
   }
 
-  /* Vệt sáng chạy qua nút khi hover (pseudo nằm dưới lớp chữ nhờ z-index âm) */
+  /* Highlight lướt qua CTA như bề mặt nút đồ chơi bóng. */
   .btn-shine {
     position: relative;
     isolation: isolate;
@@ -76,8 +76,8 @@
     background: linear-gradient(
       115deg,
       transparent 28%,
-      rgba(255, 255, 255, 0.42) 48%,
-      rgba(255, 255, 255, 0.14) 56%,
+      rgba(255, 255, 255, 0.56) 48%,
+      rgba(255, 255, 255, 0.18) 56%,
       transparent 74%
     );
     transform: translateX(-130%);
@@ -88,7 +88,7 @@
     transform: translateX(130%);
   }
 
-  /* Nhấn mạnh tiêu đề bằng gradient xanh lá (đậm dần -> neon) để vẫn đọc rõ trên nền sáng */
+  /* Nhấn mạnh tiêu đề bằng gradient xanh lá thương hiệu. */
   .neon-text {
     @apply bg-gradient-to-r from-brand-700 via-brand-600 to-brand-500 bg-clip-text text-transparent;
   }

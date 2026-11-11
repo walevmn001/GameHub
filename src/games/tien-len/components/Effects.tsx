@@ -3,7 +3,7 @@ import { Coins, Sparkles, Swords } from 'lucide-react';
 import { cn } from '@/utils/cn';
 
 // Bảng màu confetti theo nhận diện xanh trắng (kèm chút vàng cho khoảnh khắc chiến thắng).
-const CONFETTI_COLORS = ['#238B50', '#75C98A', '#3FAE68', '#F5C542', '#A8DDB5', '#FFFFFF'];
+const CONFETTI_COLORS = ['#269B35', '#62D943', '#8DEB68', '#FFD66B', '#D9F1FF', '#FFFFFF'];
 
 /** Hoạt ảnh xào bài: các lá bài úp di chuyển/trộn ngẫu nhiên. */
 export function ShuffleOverlay({ visible }: { visible: boolean }) {
@@ -24,7 +24,7 @@ export function ShuffleOverlay({ visible }: { visible: boolean }) {
         {cards.map((card) => (
           <span
             key={card.id}
-            className="absolute left-1/2 top-1/2 h-24 w-16 animate-shuffle-card rounded-lg border border-brand-500/50 bg-gradient-to-br from-brand-400 to-brand-600 shadow-soft"
+            className="absolute left-1/2 top-1/2 h-24 w-16 animate-shuffle-card rounded-xl border border-brand-700/25 bg-gradient-to-br from-brand-400 via-brand-500 to-brand-600 shadow-card"
             style={{ animationDelay: `${card.delay}ms` }}
           >
             <span className="absolute inset-1 rounded-md border border-white/25 bg-[repeating-linear-gradient(45deg,rgba(255,255,255,0.22)_0px,rgba(255,255,255,0.22)_4px,transparent_4px,transparent_8px)]" />

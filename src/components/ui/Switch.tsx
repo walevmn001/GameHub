@@ -16,7 +16,7 @@ export function Switch({
   return (
     <label
       className={cn(
-        'flex items-center justify-between gap-4 rounded-xl2 border border-base-700 bg-base-900 p-4 transition-colors',
+        'flex items-center justify-between gap-4 rounded-3xl border border-brand-100 bg-white p-4 shadow-soft transition-colors',
         disabled ? 'opacity-50' : 'cursor-pointer hover:border-brand-300',
       )}
     >
@@ -33,7 +33,7 @@ export function Switch({
         onClick={() => !disabled && onChange(!checked)}
         className={cn(
           'relative h-6 w-11 shrink-0 overflow-hidden rounded-full transition-colors',
-          checked ? 'bg-gradient-to-r from-brand-500 to-brand-600' : 'bg-base-600',
+          checked ? 'bg-gradient-to-r from-brand-400 via-brand-500 to-brand-600 shadow-pop' : 'bg-base-700',
         )}
       >
         <span

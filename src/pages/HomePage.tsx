@@ -24,6 +24,7 @@ import { Avatar, Badge, Button, EmptyState, SectionHeader, Surface } from '@/com
 import { GameGrid, GameRow } from '@/components/game/GameGrid';
 import { RoomCard } from '@/components/game/RoomCard';
 import { GameHubMascot } from '@/components/illustrations/GameHubMascot';
+import { CloverArt, SparkleArt } from '@/components/illustrations/GameIllustrationAssets';
 import { formatCoins, formatRelativeTime, formatNumber } from '@/utils/format';
 import { cn } from '@/utils/cn';
 
@@ -282,7 +283,7 @@ function CategoryChip({
       className={cn(
         'rounded-full border px-4 py-1.5 text-xs font-bold shadow-soft transition-all hover:-translate-y-0.5',
         active
-          ? 'border-brand-600/25 bg-gradient-to-b from-brand-400 via-brand-500 to-[#24D934] text-brand-900 shadow-pop'
+          ? 'border-brand-700/20 bg-gradient-to-b from-brand-400 via-brand-500 to-brand-600 text-white shadow-pop'
           : 'border-brand-200 bg-white text-slate-400 hover:border-brand-400 hover:text-brand-600',
       )}
     >
@@ -342,7 +343,7 @@ function HeroBanner({
         </div>
 
         {/* Mascot & vật thể trang trí */}
-        <div className="relative hidden shrink-0 items-center justify-center lg:flex">
+        <div className="relative flex h-44 w-full shrink-0 items-center justify-center sm:h-52 lg:h-60 lg:w-60">
           <HeroMascot />
         </div>
 
@@ -387,9 +388,16 @@ function HeroBanner({
 /** Mascot xanh lá dễ thương (slime) + vật thể game bay lượn. */
 function HeroMascot() {
   return (
-    <div className="relative h-60 w-60">
+    <div className="relative h-44 w-44 sm:h-52 sm:w-52 lg:h-60 lg:w-60">
       {/* Vầng sáng nền */}
       <div className="absolute inset-4 rounded-full bg-brand-200/50 blur-2xl" />
+
+      <div className="absolute -right-1 top-1 h-10 w-10 animate-float-y">
+        <SparkleArt />
+      </div>
+      <div className="absolute -bottom-1 right-1 h-11 w-11 rotate-12">
+        <CloverArt />
+      </div>
 
       {/* Vật thể bay lượn */}
       <div className="absolute left-0 top-2 animate-float-y" style={{ animationDelay: '0.2s' }}>
@@ -403,7 +411,7 @@ function HeroMascot() {
       </div>
 
       {/* Slime mascot */}
-      <GameHubMascot uid="hero" className="absolute inset-0 m-auto h-48 w-48 animate-bob" />
+      <GameHubMascot uid="hero" pose="cards" className="absolute inset-0 m-auto h-36 w-36 animate-bob sm:h-40 sm:w-40 lg:h-48 lg:w-48" />
     </div>
   );
 }
@@ -418,9 +426,14 @@ function MiniCard() {
 
 function MiniDie() {
   return (
-    <div className="flex h-11 w-11 rotate-[10deg] items-center justify-center rounded-2xl border border-base-700 bg-white text-lg shadow-card">
-      🎲
-    </div>
+    <svg viewBox="0 0 48 48" className="h-11 w-11 rotate-[10deg] drop-shadow-md" aria-hidden="true">
+      <rect x="4" y="4" width="40" height="40" rx="12" fill="#FFF" stroke="#CFE8C5" strokeWidth="2" />
+      <circle cx="15" cy="15" r="3.5" fill="#269B35" />
+      <circle cx="33" cy="15" r="3.5" fill="#62D943" />
+      <circle cx="24" cy="24" r="3.5" fill="#269B35" />
+      <circle cx="15" cy="33" r="3.5" fill="#62D943" />
+      <circle cx="33" cy="33" r="3.5" fill="#269B35" />
+    </svg>
   );
 }
 

@@ -9,7 +9,9 @@ export function Spinner({ className }: { className?: string }) {
 export function FullPageLoader({ label = 'Đang tải…' }: { label?: string }) {
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3 text-slate-500">
-      <GameHubMascot uid="loader" className="h-24 w-24 animate-bob" />
+      <span className="flex h-32 w-32 items-center justify-center rounded-full bg-gradient-to-br from-brand-50 via-white to-pastel-blue">
+        <GameHubMascot uid="loader" pose="wave" className="h-28 w-28 animate-bob" />
+      </span>
       <div className="flex items-center gap-2">
         <Spinner className="h-4 w-4" />
         <p className="text-sm font-medium">{label}</p>

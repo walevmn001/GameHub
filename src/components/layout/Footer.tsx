@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Gamepad2, Github } from 'lucide-react';
+import { Github } from 'lucide-react';
 import { APP_NAME, APP_TAGLINE, APP_VERSION } from '@/utils/constants';
 import { GameHubMascot } from '@/components/illustrations/GameHubMascot';
 
@@ -9,8 +9,8 @@ export function Footer() {
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-4">
         <div className="md:col-span-2">
           <div className="flex items-center gap-2.5">
-            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 shadow-pop ring-2 ring-white/70">
-              <Gamepad2 className="h-5 w-5 text-brand-900" />
+            <span className="flex h-10 w-10 items-center justify-center rounded-2xl border border-brand-200 bg-gradient-to-br from-brand-50 to-white shadow-soft">
+              <GameHubMascot uid="footer-logo" className="h-9 w-9" />
             </span>
             <span className="font-display text-base font-extrabold tracking-tight text-slate-100">
               {APP_NAME}
@@ -20,7 +20,7 @@ export function Footer() {
             {APP_TAGLINE}. Khám phá Tiến Lên Miền Nam, thử chiến thuật qua từng lượt bài và sưu
             tầm vật phẩm theo phong cách của bạn.
           </p>
-          <GameHubMascot uid="footer" className="mt-4 h-16 w-16 animate-bob" />
+          <GameHubMascot uid="footer" pose="wave" className="mt-4 h-16 w-16 animate-bob" />
         </div>
 
         <div>

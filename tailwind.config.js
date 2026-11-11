@@ -5,51 +5,54 @@ export default {
   theme: {
     extend: {
       colors: {
-        // ===== Bảng màu Cute Green & White (neon) =====
-        // brand: 50–500 là thang xanh neon (dùng cho nền nút/CTA + nền pastel)
-        //        600–900 là xanh đậm (dùng cho chữ, viền, ink để đảm bảo tương phản trên nền trắng)
+        // Bảng màu Cute Cartoon Gaming: lime tươi, nền trắng/mint và accent pastel.
         brand: {
-          50: '#EFFDEF',
-          100: '#DFFBDF',
-          200: '#C0F8C0',
-          300: '#8CF58C',
-          400: '#5CFF5C',
-          500: '#33FF33', // màu xanh neon chủ đạo
-          600: '#238B50', // xanh đậm — chữ/viền đọc rõ trên nền trắng
-          700: '#1A6B3D',
-          800: '#15522F',
-          900: '#263B2D',
+          50: '#F4FFF0',
+          100: '#E8FADF',
+          200: '#CFF3BD',
+          300: '#A9EE89',
+          400: '#8DEB68',
+          500: '#62D943',
+          600: '#269B35',
+          700: '#207C2D',
+          800: '#195F27',
+          900: '#164820',
         },
-        // base: thang màu nền sáng (xanh pastel + trắng)
+        // Nền sáng cho app, surface và các vùng tương tác.
         base: {
-          950: '#F6FDF6', // nền trang
-          900: '#FFFFFF', // card / nổi bật
-          850: '#EFFDEF', // panel mềm
-          800: '#DFFBDF', // xanh pastel nhạt
-          700: '#D6F5D6', // nút phụ / viền nhẹ
-          600: '#C0F8C0', // hover
+          950: '#F4FFF0',
+          900: '#FFFFFF',
+          850: '#F4FFF0',
+          800: '#E8FADF',
+          700: '#D7EED0',
+          600: '#C5E9B8',
         },
-        // neon -> xanh đậm đọc rõ trên nền sáng (giữ tên token để không phá class cũ)
+        pastel: {
+          yellow: '#FFF3B8',
+          orange: '#FFD8B5',
+          blue: '#D9F1FF',
+          pink: '#FFE1E7',
+        },
+        // Giữ alias cũ để các màn hình hiện hữu tiếp tục dùng token mà không cần đổi logic.
         neon: {
-          purple: '#1A6B3D', // dark green
-          violet: '#15522F', // darker green
-          cyan: '#238B50', // accent xanh đậm, đủ tương phản khi làm chữ/viền trên nền trắng
-          blue: '#8CF58C', // light neon accent (dùng cho nền/trang trí)
+          purple: '#269B35',
+          violet: '#207C2D',
+          cyan: '#269B35',
+          blue: '#8DEB68',
         },
-        // ink: màu xanh đậm dùng cho chữ/overlay thay cho trắng trên nền sáng
-        ink: '#263B2D',
-        // slate: thang xám xanh lá cho chữ (giá trị nhỏ = đậm để đọc trên nền sáng)
+        ink: '#164820',
+        // Giữ thứ tự đảo hiện dùng trong giao diện sáng: text-slate-100 là chữ đậm.
         slate: {
           50: '#FFFFFF',
-          100: '#1F2E24',
-          200: '#263B2D',
-          300: '#2E3B33',
-          400: '#4A5C52',
-          500: '#6B7D72',
-          600: '#829187',
-          700: '#97A59B',
-          800: '#A8B5AB',
-          900: '#1A2B20',
+          100: '#203425',
+          200: '#29442D',
+          300: '#38523B',
+          400: '#536957',
+          500: '#708474',
+          600: '#8A9B8C',
+          700: '#A3B1A4',
+          800: '#BDc8BE',
+          900: '#19321F',
         },
       },
       fontFamily: {
@@ -57,15 +60,17 @@ export default {
         display: ['Nunito', '"Be Vietnam Pro"', 'Inter', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
-        soft: '0 8px 24px -12px rgba(38, 59, 45, 0.18)',
-        card: '0 10px 30px -18px rgba(35, 139, 80, 0.30)',
-        'card-hover': '0 16px 0 -10px rgba(35, 139, 80, 0.22), 0 20px 36px -22px rgba(26, 107, 61, 0.5)',
-        glow: '0 0 0 1px rgba(35, 139, 80, 0.25), 0 12px 30px -14px rgba(35, 139, 80, 0.5)',
-        'glow-cyan': '0 0 0 1px rgba(117, 201, 138, 0.35), 0 12px 30px -14px rgba(117, 201, 138, 0.55)',
-        // Nút bấm: bóng mềm + viền sáng bên trong tạo cảm giác "glossy" hiện đại
-        pop: 'inset 0 2px 0 0 rgba(255, 255, 255, 0.72), 0 4px 0 -1px rgba(26, 107, 61, 0.48), 0 10px 18px -10px rgba(26, 107, 61, 0.52)',
+        soft: '0 8px 24px -12px rgba(32, 124, 45, 0.16)',
+        card: '0 10px 28px -18px rgba(38, 155, 53, 0.26)',
+        'card-hover': '0 16px 0 -10px rgba(38, 155, 53, 0.18), 0 20px 36px -22px rgba(32, 124, 45, 0.36)',
+        glow: '0 0 0 1px rgba(98, 217, 67, 0.28), 0 12px 30px -14px rgba(38, 155, 53, 0.4)',
+        'glow-cyan': '0 0 0 1px rgba(141, 235, 104, 0.34), 0 12px 30px -14px rgba(98, 217, 67, 0.4)',
+        'soft-3d': '0 5px 0 -1px rgba(32, 124, 45, 0.16), 0 12px 24px -12px rgba(32, 124, 45, 0.22)',
+        reward: 'inset 0 2px 0 rgba(255,255,255,0.72), 0 4px 0 -1px rgba(195,125,25,0.38), 0 12px 22px -12px rgba(195,125,25,0.34)',
+        // Bóng nổi có highlight dịu và gờ xanh như nút trong game mobile.
+        pop: 'inset 0 2px 0 0 rgba(255, 255, 255, 0.72), 0 4px 0 -1px rgba(32, 124, 45, 0.38), 0 10px 18px -10px rgba(32, 124, 45, 0.4)',
         'btn-hover':
-          'inset 0 2px 0 0 rgba(255, 255, 255, 0.78), 0 4px 0 -1px rgba(26, 107, 61, 0.42), 0 18px 28px -12px rgba(35, 139, 80, 0.58)',
+          'inset 0 2px 0 0 rgba(255, 255, 255, 0.8), 0 4px 0 -1px rgba(32, 124, 45, 0.34), 0 18px 28px -12px rgba(38, 155, 53, 0.42)',
         'inner-soft': 'inset 0 1px 0 0 rgba(255, 255, 255, 0.7)',
       },
       borderRadius: {

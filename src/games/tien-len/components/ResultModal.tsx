@@ -1,6 +1,8 @@
-import { Crown, Frown, Home, RotateCcw, Trophy } from 'lucide-react';
+import { Crown, Frown, Home, RotateCcw } from 'lucide-react';
 import type { MatchSettlement, TienLenPlayer } from '@/game-engine/tienlen';
 import { Avatar, Button, Modal } from '@/components/ui';
+import { GameHubMascot } from '@/components/illustrations/GameHubMascot';
+import { RewardArt } from '@/components/illustrations/GameIllustrationAssets';
 import { cn } from '@/utils/cn';
 
 const PLACE_LABEL = ['', 'Nhất', 'Nhì', 'Ba', 'Bốn'];
@@ -47,20 +49,22 @@ export function ResultModal({
       <div className="flex flex-col items-center gap-4">
         <div
           className={cn(
-            'flex w-full flex-col items-center gap-2 rounded-2xl border p-5 text-center',
+            'flex w-full flex-col items-center gap-2 rounded-3xl border p-5 text-center shadow-soft',
             won
-              ? 'border-emerald-500/30 bg-emerald-500/10'
-              : 'border-rose-500/30 bg-rose-500/10',
+              ? 'border-amber-200 bg-gradient-to-br from-pastel-yellow via-white to-brand-50'
+              : 'border-pastel-pink bg-gradient-to-br from-pastel-pink via-white to-pastel-blue',
           )}
         >
-          <span
-            className={cn(
-              'flex h-14 w-14 items-center justify-center rounded-2xl',
-              won ? 'bg-emerald-500/20 text-emerald-700' : 'bg-rose-500/20 text-rose-600',
-            )}
-          >
-            {won ? <Trophy className="h-7 w-7" /> : <Frown className="h-7 w-7" />}
-          </span>
+          {won ? (
+            <div className="flex h-24 items-end justify-center gap-1">
+              <RewardArt type="trophy" className="h-20 w-20" />
+              <GameHubMascot uid="match-win" pose="victory" className="h-24 w-24" />
+            </div>
+          ) : (
+            <span className="flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-soft">
+              <Frown className="h-9 w-9 text-slate-500" />
+            </span>
+          )}
           <h2 className="text-xl font-extrabold text-slate-100">
             {won ? 'Bạn đã thắng ván!' : 'Chúc bạn may mắn lần sau'}
           </h2>
@@ -87,7 +91,7 @@ export function ResultModal({
                 return (
                   <tr
                     key={player.seat}
-                    className={cn(isHuman && 'bg-neon-purple/5')}
+                    className={cn(isHuman && 'bg-brand-50')}
                   >
                     <td className="px-4 py-2.5">
                       <span className="inline-flex items-center gap-1 text-xs font-semibold text-slate-300">
