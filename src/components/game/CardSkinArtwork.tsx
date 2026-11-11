@@ -74,6 +74,62 @@ function Blossom({ x, y, color, scale }: { x: number; y: number; color: string; 
   );
 }
 
+/** Bố cục pip truyền thống cho lá số (2–10): mỗi hạng một cách xếp riêng. */
+const PIP_LAYOUT: Record<number, ReadonlyArray<readonly [number, number]>> = {
+  2: [[50, 40], [50, 100]],
+  3: [[50, 40], [50, 70], [50, 100]],
+  4: [[31, 40], [69, 40], [31, 100], [69, 100]],
+  5: [[31, 40], [69, 40], [50, 70], [31, 100], [69, 100]],
+  6: [[31, 40], [69, 40], [31, 70], [69, 70], [31, 100], [69, 100]],
+  7: [[31, 40], [69, 40], [50, 55], [31, 70], [69, 70], [31, 100], [69, 100]],
+  8: [[31, 40], [69, 40], [50, 52], [31, 70], [69, 70], [50, 88], [31, 100], [69, 100]],
+  9: [[31, 40], [69, 40], [31, 58], [69, 58], [50, 70], [31, 82], [69, 82], [31, 100], [69, 100]],
+  10: [[31, 40], [69, 40], [50, 50], [31, 58], [69, 58], [31, 82], [69, 82], [50, 90], [31, 100], [69, 100]],
+};
+
+/**
+ * Lá số (2–10): rải pip theo bố cục bài Tây nên mỗi hạng trông rõ ràng khác nhau,
+ * `decor` là lớp nền trang trí riêng của từng theme (vẽ phía sau pip).
+ */
+function PipField({
+  rank,
+  suit,
+  color,
+  accent,
+  decor,
+}: {
+  rank: number;
+  suit: string;
+  color: string;
+  accent: string;
+  decor?: React.ReactNode;
+}) {
+  const pips = PIP_LAYOUT[rank] ?? PIP_LAYOUT[2];
+  const fontSize = rank <= 3 ? 21 : rank <= 6 ? 16 : 14;
+  return (
+    <g>
+      {decor}
+      {pips.map(([x, y], i) => (
+        <text
+          key={i}
+          x={x}
+          y={y}
+          textAnchor="middle"
+          dominantBaseline="central"
+          fontSize={fontSize}
+          fontWeight="700"
+          fill={color}
+          stroke={accent}
+          strokeWidth="1.1"
+          paintOrder="stroke"
+        >
+          {suit}
+        </text>
+      ))}
+    </g>
+  );
+}
+
 /** Khung huy chương tròn dùng cho chân dung J/Q/K của mọi theme. */
 function Medallion({ ring, glow }: { ring: string; glow: string }) {
   return (
@@ -101,26 +157,30 @@ function SakuraArt({ kind, rank, suit, suitColor }: ArtProps) {
   }
   if (kind === 'face') return <SakuraPortrait rank={rank} suit={suit} suitColor={suitColor} />;
 
-  const petals = 3 + (rank % 3);
-  const spots: [number, number][] = [
-    [16, 68], [38, 36], [86, 44], [70, 92], [52, 66], [24, 100], [62, 40], [84, 86], [30, 52],
+  const blossomSpots: [number, number][] = [
+    [20, 36], [80, 42], [76, 104], [24, 100], [16, 72], [84, 68],
   ];
   return (
-    <g opacity="0.9">
-      <path
-        d="M12 124C32 105 40 87 53 68S75 39 89 19M42 84 25 75M60 59 43 47M73 41 83 50M30 103 17 99"
-        fill="none"
-        stroke="#805b43"
-        strokeLinecap="round"
-        strokeWidth="3"
-      />
-      <path d="M20 77 13 69M44 48 39 37M82 49 92 48M18 100 9 104" fill="none" stroke="#805b43" strokeLinecap="round" strokeWidth="2" />
-      {spots.slice(0, petals + 2).map(([x, y], i) => (
-        <Blossom key={i} x={x} y={y} color={i % 2 === 0 ? '#f472b6' : '#fda4af'} scale={0.7} />
-      ))}
-      <circle cx="74" cy="98" r="16" fill="#fb7185" opacity="0.1" />
-      <SuitSeal x={74} y={104} suit={suit} color={suitColor} size={18} />
-    </g>
+    <PipField
+      rank={rank}
+      suit={suit}
+      color={suitColor}
+      accent="#fdf2f8"
+      decor={
+        <g opacity="0.28">
+          <path
+            d="M14 126C32 108 40 90 54 70S76 42 90 22M44 86 26 76M62 60 45 48M76 42 86 52"
+            fill="none"
+            stroke="#805b43"
+            strokeLinecap="round"
+            strokeWidth="3"
+          />
+          {blossomSpots.map(([x, y], i) => (
+            <Blossom key={i} x={x} y={y} color={i % 2 === 0 ? '#f472b6' : '#fda4af'} scale={0.62} />
+          ))}
+        </g>
+      }
+    />
   );
 }
 
@@ -165,13 +225,19 @@ function KnightArt({ kind, rank, suit, suitColor }: ArtProps) {
   }
   if (kind === 'face') return <KnightPortrait rank={rank} suit={suit} />;
   return (
-    <g opacity="0.9">
-      <circle cx="50" cy="70" r="30" fill="#f1f5f9" opacity="0.8" />
-      <path d="M50 34 76 44 72 92 50 108 28 92 24 44Z" fill="#cbd5e1" stroke="#475569" strokeLinejoin="round" strokeWidth="3" />
-      <path d="M22 40 78 100M78 40 22 100" stroke="#94a3b8" strokeLinecap="round" strokeWidth="5" />
-      <path d="M22 40 78 100M78 40 22 100" stroke="#e2e8f0" strokeLinecap="round" strokeWidth="1.4" />
-      <SuitSeal x={50} y={80} suit={suit} color={suitColor} size={20} />
-    </g>
+    <PipField
+      rank={rank}
+      suit={suit}
+      color={suitColor}
+      accent="#f8fafc"
+      decor={
+        <g opacity="0.3">
+          <circle cx="50" cy="70" r="32" fill="#e2e8f0" opacity="0.7" />
+          <path d="M50 32 76 43 72 94 50 110 28 94 24 43Z" fill="none" stroke="#94a3b8" strokeWidth="3" />
+          <path d="M24 38 76 104M76 38 24 104" stroke="#cbd5e1" strokeLinecap="round" strokeWidth="4" />
+        </g>
+      }
+    />
   );
 }
 
@@ -211,25 +277,22 @@ function DragonArt({ kind, rank, suit, suitColor }: ArtProps) {
     );
   }
   if (kind === 'face') return <DragonPortrait rank={rank} suit={suit} />;
-  const scales = 3 + (rank % 3);
   return (
-    <g opacity="0.9">
-      <circle cx="50" cy="70" r="30" fill="#064e3b" opacity="0.12" />
-      {Array.from({ length: scales + 2 }).map((_, i) => (
-        <path
-          key={i}
-          d={`M${26 + i * 8} ${40 + (i % 2) * 6} l6 4 -6 4 -6 -4Z`}
-          fill="#047857"
-          stroke="#d6a84f"
-          strokeWidth="1"
-          opacity="0.9"
-        />
-      ))}
-      <path d="M16 112C29 97 57 111 68 94 79 77 52 72 38 65 20 56 34 37 51 39 65 40 73 50 70 61" fill="none" stroke="#064e3b" strokeLinecap="round" strokeWidth="11" />
-      <path d="M16 112C29 97 57 111 68 94 79 77 52 72 38 65 20 56 34 37 51 39 65 40 73 50 70 61" fill="none" stroke="#d6a84f" strokeLinecap="round" strokeWidth="1.4" strokeDasharray="2 5" />
-      <circle cx="50" cy="82" r="15" fill="#065f46" opacity="0.85" />
-      <SuitSeal x={50} y={88} suit={suit} color={isRedSuit(suit) ? '#fecaca' : '#fde68a'} size={17} />
-    </g>
+    <PipField
+      rank={rank}
+      suit={suit}
+      color={suitColor}
+      accent="#fde68a"
+      decor={
+        <g opacity="0.34">
+          <circle cx="50" cy="70" r="34" fill="#064e3b" opacity="0.16" />
+          <circle cx="50" cy="70" r="34" fill="none" stroke="#d6a84f" strokeWidth="2" />
+          {[42, 58, 74, 90].map((y) => (
+            <path key={y} d={`M30 ${y} l5 3 5 -3 5 3 5 -3 5 3 5 -3`} fill="none" stroke="#047857" strokeWidth="2" />
+          ))}
+        </g>
+      }
+    />
   );
 }
 
@@ -281,19 +344,23 @@ function MonsterArt({ kind, rank, suit, suitColor }: ArtProps) {
   }
   if (kind === 'face') return <MonsterPortrait rank={rank} suit={suit} />;
   return (
-    <g opacity="0.92">
-      <path d="M22 96C22 78 34 68 50 68s28 10 28 28Z" fill="#a3e635" stroke="#65a30d" strokeWidth="2" />
-      <path d="M26 96C26 82 36 74 50 74s24 8 24 22Z" fill="#bef264" opacity="0.7" />
-      <circle cx="40" cy="82" r="4" fill="#fff" />
-      <circle cx="60" cy="82" r="4" fill="#fff" />
-      <circle cx="40" cy="83" r="1.8" fill="#0f172a" />
-      <circle cx="60" cy="83" r="1.8" fill="#0f172a" />
-      <path d="M44 90q6 5 12 0" fill="none" stroke="#4d7c0f" strokeLinecap="round" strokeWidth="2" />
-      {Array.from({ length: 2 + (rank % 3) }).map((_, i) => (
-        <circle key={i} cx={66 + i * 7} cy={52 - i * 8} r={3 - i * 0.6} fill="#22d3ee" opacity="0.8" />
-      ))}
-      <SuitSeal x={50} y={112} suit={suit} color={isRedSuit(suit) ? '#a21caf' : '#4a044e'} size={16} />
-    </g>
+    <PipField
+      rank={rank}
+      suit={suit}
+      color={suitColor}
+      accent="#ecfccb"
+      decor={
+        <g opacity="0.4">
+          <path d="M20 100C20 78 34 66 50 66s30 12 30 34Z" fill="#a3e635" stroke="#65a30d" strokeWidth="2" />
+          {[28, 72].map((x) => (
+            <circle key={x} cx={x} cy={34} r="3.4" fill="#a855f7" opacity="0.85" />
+          ))}
+          {[36, 64].map((x) => (
+            <circle key={x} cx={x} cy={110} r="2.6" fill="#22d3ee" opacity="0.85" />
+          ))}
+        </g>
+      }
+    />
   );
 }
 
@@ -334,24 +401,20 @@ function VampireArt({ kind, rank, suit, suitColor }: ArtProps) {
     );
   }
   if (kind === 'face') return <VampirePortrait rank={rank} suit={suit} />;
-  const bats = 2 + (rank % 3);
   return (
-    <g opacity="0.92">
-      <circle cx="50" cy="58" r="26" fill="#be123c" opacity="0.8" />
-      <circle cx="50" cy="58" r="26" fill="none" stroke="#cbd5e1" strokeWidth="1.5" opacity="0.7" />
-      {Array.from({ length: bats }).map((_, i) => (
-        <path
-          key={i}
-          d={`M${24 + i * 14} ${100 - i * 10} q5 -6 10 0 q5 -6 10 0`}
-          fill="none"
-          stroke="#cbd5e1"
-          strokeLinecap="round"
-          strokeWidth="2.2"
-        />
-      ))}
-      <circle cx="50" cy="112" r="14" fill="#4c1d95" opacity="0.85" />
-      <SuitSeal x={50} y={117} suit={suit} color={isRedSuit(suit) ? '#fecdd3' : '#e9d5ff'} size={16} />
-    </g>
+    <PipField
+      rank={rank}
+      suit={suit}
+      color={suitColor}
+      accent="#f8fafc"
+      decor={
+        <g opacity="0.36">
+          <circle cx="50" cy="70" r="31" fill="#be123c" opacity="0.22" />
+          <circle cx="50" cy="70" r="31" fill="none" stroke="#cbd5e1" strokeWidth="1.6" />
+          <path d="M22 110 q6 -8 12 0 q6 -8 12 0 q6 -8 12 0 q6 -8 12 0" fill="none" stroke="#cbd5e1" strokeLinecap="round" strokeWidth="2.2" />
+        </g>
+      }
+    />
   );
 }
 
