@@ -170,7 +170,7 @@ Hệ thống nhãn dán dùng **file ảnh tĩnh** — có thể nằm trong `pu
 | Hiển thị/chọn | `src/components/chat/StickerPicker.tsx`, `StickerImage.tsx` | Bảng chọn nhãn dán (nhãn chưa mua hiện ổ khoá → dẫn tới `/shop`) và cách render ảnh (hỗ trợ cả tệp trong repo lẫn **URL ảnh host bên ngoài**). |
 | Skin bộ bài | `src/utils/cardSkins.ts`, `src/components/game/CardSkinArtwork.tsx`, `src/components/game/PlayCard.tsx` | Họa tiết lưng và tranh vector mặt bài; hạng/chất ở góc không đổi. |
 | Trạng thái/nghiệp vụ | `src/contexts/ShopContext.tsx`, `src/services/ShopService.ts` | Quyền sở hữu, mua vật phẩm và loadout đang trang bị. |
-| Trang cửa hàng | `src/pages/ShopPage.tsx` (route `/shop`) | Tab theo loại vật phẩm, xem trước, mua và trang bị skin. |
+| Cửa hàng & Tủ đồ | `src/pages/ShopPage.tsx` (route `/shop`) | Mua theo loại; Tủ đồ xem loadout hiện tại, chọn skin sở hữu hoặc trở về bộ tiêu chuẩn. Mua skin mới sẽ mở Tủ đồ. |
 | Backend | `server/src/shop/{service,routes}.ts`, models `Purchase`/`UserLoadout` | Mua + trừ xu; xác thực quyền sở hữu khi trang bị; xác thực quyền gửi nhãn dán. |
 
 Hai chế độ hoạt động khác nhau (theo đúng kiến trúc chung):
