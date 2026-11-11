@@ -67,7 +67,8 @@ export const SHOP_ITEMS: readonly ShopItem[] = [
   { id: 'pass', kind: 'sticker', pack: 'tienlen', name: 'Bỏ lượt', description: 'Bàn tay xin bỏ lượt', price: 0, file: 'stickers/pass.svg' },
 
   // ----- Bộ "Dễ thương" — hiện MIỄN PHÍ (đặt price > 0 để bán bằng xu) -----
-  { id: 'cat', kind: 'sticker', pack: 'cute', name: 'Mèo con', description: 'Chú mèo đáng yêu', price: 0, file: 'stickers/cat.svg' },
+  // Giữ ID cũ để lịch sử chat/vật phẩm đã sở hữu không bị mất khi thay hình nhãn dán.
+  { id: 'cat', kind: 'sticker', pack: 'cute', name: 'Tay cầm xanh', description: 'Nhãn dán tay cầm chơi game', price: 0, file: 'stickers/controller.svg' },
   { id: 'dog', kind: 'sticker', pack: 'cute', name: 'Cún con', description: 'Chú cún lông xù', price: 0, file: 'stickers/dog.svg' },
   { id: 'bear', kind: 'sticker', pack: 'cute', name: 'Gấu con', description: 'Chú gấu nâu', price: 0, file: 'stickers/bear.svg' },
   { id: 'rabbit', kind: 'sticker', pack: 'cute', name: 'Thỏ con', description: 'Chú thỏ tai dài', price: 0, file: 'stickers/rabbit.svg' },

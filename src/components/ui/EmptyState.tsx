@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
+import { Gamepad2 } from 'lucide-react';
 import { cn } from '@/utils/cn';
-import { GameHubMascot } from '@/components/illustrations/GameHubMascot';
 
 export function EmptyState({
   icon,
@@ -22,12 +22,9 @@ export function EmptyState({
         className,
       )}
     >
-      <GameHubMascot uid="empty" pose="wave" className={icon ? 'h-16 w-16' : 'h-20 w-20 animate-bob'} />
-      {icon && (
-        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-pastel-yellow text-amber-700 shadow-soft">
-          {icon}
-        </span>
-      )}
+      <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 shadow-soft ring-1 ring-brand-200">
+        {icon ?? <Gamepad2 className="h-6 w-6" />}
+      </span>
       <div>
         <p className="text-sm font-bold text-slate-200">{title}</p>
         {description && <p className="mt-1 text-xs text-slate-500">{description}</p>}

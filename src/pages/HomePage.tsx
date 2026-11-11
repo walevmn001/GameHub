@@ -23,8 +23,11 @@ import { useToast } from '@/contexts/ToastContext';
 import { Avatar, Badge, Button, EmptyState, SectionHeader, Surface } from '@/components/ui';
 import { GameGrid, GameRow } from '@/components/game/GameGrid';
 import { RoomCard } from '@/components/game/RoomCard';
-import { GameHubMascot } from '@/components/illustrations/GameHubMascot';
-import { CloverArt, SparkleArt } from '@/components/illustrations/GameIllustrationAssets';
+import {
+  CloverArt,
+  PlayingCardsArt,
+  SparkleArt,
+} from '@/components/illustrations/GameIllustrationAssets';
 import { formatCoins, formatRelativeTime, formatNumber } from '@/utils/format';
 import { cn } from '@/utils/cn';
 
@@ -342,9 +345,9 @@ function HeroBanner({
           </div>
         </div>
 
-        {/* Mascot & vật thể trang trí */}
+        {/* Minh họa trò chơi và vật thể trang trí */}
         <div className="relative flex h-44 w-full shrink-0 items-center justify-center sm:h-52 lg:h-60 lg:w-60">
-          <HeroMascot />
+          <HeroIllustration />
         </div>
 
         {userName && (
@@ -385,8 +388,8 @@ function HeroBanner({
   );
 }
 
-/** Mascot xanh lá dễ thương (slime) + vật thể game bay lượn. */
-function HeroMascot() {
+/** Minh họa bài lá và vật thể game bay lượn. */
+function HeroIllustration() {
   return (
     <div className="relative h-44 w-44 sm:h-52 sm:w-52 lg:h-60 lg:w-60">
       {/* Vầng sáng nền */}
@@ -410,8 +413,9 @@ function HeroMascot() {
         <MiniCoin />
       </div>
 
-      {/* Slime mascot */}
-      <GameHubMascot uid="hero" pose="cards" className="absolute inset-0 m-auto h-36 w-36 animate-bob sm:h-40 sm:w-40 lg:h-48 lg:w-48" />
+      <div className="absolute inset-5 m-auto h-40 w-40 rotate-[-4deg] drop-shadow-lg sm:h-44 sm:w-44 lg:h-48 lg:w-48">
+        <PlayingCardsArt className="h-full w-full animate-bob" />
+      </div>
     </div>
   );
 }

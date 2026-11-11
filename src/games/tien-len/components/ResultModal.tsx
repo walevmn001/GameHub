@@ -1,7 +1,6 @@
 import { Crown, Frown, Home, RotateCcw } from 'lucide-react';
 import type { MatchSettlement, TienLenPlayer } from '@/game-engine/tienlen';
 import { Avatar, Button, Modal } from '@/components/ui';
-import { GameHubMascot } from '@/components/illustrations/GameHubMascot';
 import { RewardArt } from '@/components/illustrations/GameIllustrationAssets';
 import { cn } from '@/utils/cn';
 
@@ -56,9 +55,8 @@ export function ResultModal({
           )}
         >
           {won ? (
-            <div className="flex h-24 items-end justify-center gap-1">
+            <div className="flex h-24 items-center justify-center">
               <RewardArt type="trophy" className="h-20 w-20" />
-              <GameHubMascot uid="match-win" pose="victory" className="h-24 w-24" />
             </div>
           ) : (
             <span className="flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-soft">

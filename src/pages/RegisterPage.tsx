@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { KeyRound, User as UserIcon, UserPlus } from 'lucide-react';
+import { Gamepad2, KeyRound, User as UserIcon, UserPlus } from 'lucide-react';
 import { Button, Input, Surface } from '@/components/ui';
-import { GameHubMascot } from '@/components/illustrations/GameHubMascot';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 
@@ -46,7 +45,9 @@ export function RegisterPage() {
   return (
     <div className="mx-auto flex max-w-md flex-col gap-4 py-6">
       <div className="text-center">
-        <GameHubMascot uid="register" pose="wave" className="mx-auto mb-1 h-24 w-24 animate-bob" />
+        <span className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl border border-brand-200 bg-gradient-to-br from-brand-50 to-white text-brand-600 shadow-soft">
+          <Gamepad2 className="h-6 w-6" />
+        </span>
         <h1 className="text-2xl font-extrabold text-slate-100">Tạo tài khoản</h1>
         <p className="mt-1 text-sm text-slate-400">
           Bắt đầu hành trình của bạn trên Mini Game Hub.

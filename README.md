@@ -268,9 +268,9 @@ https://cdn.jsdelivr.net/gh/<user>/sticker-pack@main/cat.png
 Mở `src/data/shopCatalog.ts` và thêm mục (hoặc đổi `file` của mục cũ):
 
 ```ts
-{ id: 'cat', kind: 'sticker', pack: 'cute', name: 'Mèo con',
-  description: 'Chú mèo đáng yêu', price: 0,
-  file: 'https://cdn.jsdelivr.net/gh/user/sticker-pack@main/cat.png' }
+{ id: 'controller', kind: 'sticker', pack: 'cute', name: 'Tay cầm xanh',
+  description: 'Nhãn dán tay cầm chơi game', price: 0,
+  file: 'https://cdn.jsdelivr.net/gh/user/sticker-pack@main/controller.png' }
 ```
 
 - `id` phải **duy nhất** và **ngắn gọn** (đây là giá trị lưu trong tin nhắn, CSDL và LocalStorage).
