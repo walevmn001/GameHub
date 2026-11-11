@@ -204,13 +204,14 @@ export interface WhiteWinResult {
 }
 
 function hasConsecutiveRanks(ranks: number[], need: number): boolean {
+  if (need <= 1) return ranks.length >= need;
   const unique = [...new Set(ranks)].sort((a, b) => a - b);
-  let streak = 1;
-  for (let i = 1; i < unique.length; i += 1) {
-    streak = unique[i] === unique[i - 1] + 1 ? streak + 1 : 1;
+  let streak = 0;
+  for (let i = 0; i < unique.length; i += 1) {
+    streak = i > 0 && unique[i] === unique[i - 1] + 1 ? streak + 1 : 1;
     if (streak >= need) return true;
   }
-  return streak >= need || unique.length >= need;
+  return false;
 }
 
 /**
