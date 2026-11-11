@@ -19,6 +19,7 @@ import { APP_NAME } from '@/utils/constants';
 import { formatCoins } from '@/utils/format';
 import { cn } from '@/utils/cn';
 import { Avatar, Button } from '@/components/ui';
+import { GameCardArt } from '@/components/illustrations/GameCardArt';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSocial } from '@/contexts/SocialContext';
 import { useToast } from '@/contexts/ToastContext';
@@ -88,7 +89,7 @@ export function Navbar() {
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-3 sm:px-5">
         <Link to="/" className="flex shrink-0 items-center gap-2.5">
           <span className="flex h-10 w-10 items-center justify-center rounded-2xl border border-brand-200 bg-gradient-to-br from-brand-50 to-white shadow-soft">
-            <Gamepad2 className="h-5 w-5 text-brand-600" />
+            <GameCardArt variant="navbar" />
           </span>
           <span className="hidden flex-col leading-none sm:flex">
             <span className="font-display text-base font-extrabold tracking-tight text-slate-100">
