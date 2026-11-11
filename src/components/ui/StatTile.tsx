@@ -30,12 +30,15 @@ export function StatTile({
 
   return (
     <div className="rounded-3xl border border-brand-100 bg-gradient-to-br from-white to-brand-50/70 p-4 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-card-hover">
-      <div className="flex items-center justify-between gap-2">
+      {/* min-h-9 + giữ chỗ icon để các ô có/không icon đều căn giá trị cùng một đường */}
+      <div className="flex min-h-9 items-center justify-between gap-2">
         <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">{label}</p>
-        {icon && (
+        {icon ? (
           <span className={cn('flex h-9 w-9 items-center justify-center rounded-full', iconClass)}>
             {icon}
           </span>
+        ) : (
+          <span className="h-9 w-9 shrink-0" aria-hidden="true" />
         )}
       </div>
       <p className={cn('mt-2 text-2xl font-extrabold tracking-tight', toneClass)}>{value}</p>
