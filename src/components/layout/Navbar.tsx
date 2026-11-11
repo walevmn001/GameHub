@@ -108,9 +108,9 @@ export function Navbar() {
               end={link.to === '/'}
               className={({ isActive }) =>
                 cn(
-                  'inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-bold transition-all',
+                  'inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-bold transition-all duration-200 ease-out active:scale-[0.97]',
                   isActive
-                    ? 'bg-brand-50 text-brand-700 ring-1 ring-brand-200'
+                    ? 'bg-brand-50 text-brand-700 shadow-soft ring-1 ring-brand-200'
                     : 'text-slate-400 hover:bg-base-800 hover:text-brand-600',
                 )
               }
@@ -139,7 +139,7 @@ export function Navbar() {
                 <button
                   type="button"
                   onClick={() => setMenuOpen((v) => !v)}
-                  className="flex items-center gap-2 rounded-full border border-base-700 bg-base-900 p-1 pr-2.5 shadow-soft transition-all hover:border-brand-300"
+                  className="flex items-center gap-2 rounded-full border border-base-700 bg-base-900 p-1 pr-2.5 shadow-soft transition-all duration-200 ease-out hover:border-brand-300 hover:shadow-card active:scale-[0.97]"
                 >
                   <Avatar src={user.avatar} name={user.displayName} size="xs" />
                   <span className="hidden max-w-[8rem] truncate text-sm font-bold text-slate-200 sm:block">
@@ -243,7 +243,7 @@ export function Navbar() {
           <button
             type="button"
             onClick={() => setMobileOpen((v) => !v)}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-base-700 bg-base-900 text-slate-400 shadow-soft md:hidden"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-base-700 bg-base-900 text-slate-400 shadow-soft transition-all duration-200 ease-out hover:border-brand-300 hover:text-brand-600 active:scale-95 md:hidden"
             aria-label="Mở menu"
           >
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}

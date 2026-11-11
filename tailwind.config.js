@@ -61,7 +61,10 @@ export default {
         'card-hover': '0 18px 40px -20px rgba(35, 139, 80, 0.45)',
         glow: '0 0 0 1px rgba(35, 139, 80, 0.25), 0 12px 30px -14px rgba(35, 139, 80, 0.5)',
         'glow-cyan': '0 0 0 1px rgba(117, 201, 138, 0.35), 0 12px 30px -14px rgba(117, 201, 138, 0.55)',
-        pop: '0 6px 0 -2px rgba(26, 107, 61, 0.35)',
+        // Nút bấm: bóng mềm + viền sáng bên trong tạo cảm giác "glossy" hiện đại
+        pop: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.4), 0 3px 0 -1px rgba(26, 107, 61, 0.32), 0 10px 20px -12px rgba(26, 107, 61, 0.55)',
+        'btn-hover':
+          'inset 0 1px 0 0 rgba(255, 255, 255, 0.5), 0 3px 0 -1px rgba(26, 107, 61, 0.28), 0 16px 30px -12px rgba(35, 139, 80, 0.6)',
         'inner-soft': 'inset 0 1px 0 0 rgba(255, 255, 255, 0.7)',
       },
       borderRadius: {

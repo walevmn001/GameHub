@@ -22,7 +22,7 @@ export function SegmentedControl<T extends string>({
   return (
     <div
       className={cn(
-        'inline-flex items-center gap-1 rounded-full border border-base-700 bg-base-900 p-1 shadow-soft',
+        'inline-flex items-center gap-1 rounded-full border border-base-700 bg-base-850/80 p-1 shadow-inner-soft backdrop-blur-sm',
         className,
       )}
       role="tablist"
@@ -37,11 +37,11 @@ export function SegmentedControl<T extends string>({
             aria-selected={active}
             onClick={() => onChange(option.value)}
             className={cn(
-              'inline-flex items-center gap-1.5 whitespace-nowrap rounded-full font-bold transition-all',
+              'inline-flex items-center gap-1.5 whitespace-nowrap rounded-full font-bold transition-all duration-200 ease-out active:scale-[0.96]',
               size === 'sm' ? 'px-3 py-1.5 text-[11px]' : 'px-4 py-2 text-xs sm:text-sm',
               active
-                ? 'bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-pop'
-                : 'text-slate-400 hover:bg-brand-50 hover:text-brand-600',
+                ? 'btn-shine bg-gradient-to-b from-brand-400 via-brand-500 to-brand-600 text-white shadow-pop'
+                : 'text-slate-500 hover:bg-base-900 hover:text-brand-600 hover:shadow-soft',
             )}
           >
             {option.icon}

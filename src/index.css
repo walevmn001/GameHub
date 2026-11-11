@@ -61,6 +61,33 @@
     @apply hover:-translate-y-1 hover:border-brand-300 hover:shadow-card-hover;
   }
 
+  /* Vệt sáng chạy qua nút khi hover (pseudo nằm dưới lớp chữ nhờ z-index âm) */
+  .btn-shine {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+  .btn-shine::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(
+      115deg,
+      transparent 28%,
+      rgba(255, 255, 255, 0.42) 48%,
+      rgba(255, 255, 255, 0.14) 56%,
+      transparent 74%
+    );
+    transform: translateX(-130%);
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .btn-shine:hover::after,
+  .group:hover .btn-shine::after {
+    transform: translateX(130%);
+  }
+
   /* Nhấn mạnh tiêu đề bằng gradient xanh lá */
   .neon-text {
     @apply bg-gradient-to-r from-brand-600 via-brand-500 to-brand-400 bg-clip-text text-transparent;

@@ -114,9 +114,9 @@ export function GameCard({ game, onSelect, variant = 'default', className }: Gam
 
         <span
           className={cn(
-            'mt-3 inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-xl text-xs font-bold transition-all',
+            'mt-3 inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-xl text-xs font-bold transition-all duration-200 ease-out',
             playable
-              ? 'bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-pop group-hover:brightness-105'
+              ? 'btn-shine bg-gradient-to-b from-brand-400 via-brand-500 to-brand-600 text-white shadow-pop group-hover:-translate-y-0.5 group-hover:shadow-btn-hover'
               : 'bg-base-800 text-slate-500',
           )}
         >
