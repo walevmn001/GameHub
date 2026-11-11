@@ -24,17 +24,34 @@ if (onlineEnabled) {
   api.setTokenProvider(() => readToken());
 }
 
+/**
+ * Token chỉ tồn tại trong phiên trình duyệt hiện tại — dùng khi người dùng bỏ chọn
+ * "Ghi nhớ đăng nhập". Không ghi xuống thiết bị nên sẽ mất khi tải lại trang.
+ */
+let sessionToken: string | null = null;
+
 /** Đọc JWT đã lưu (nếu có). */
 export async function readToken(): Promise<string | null> {
-  return storage.read<string>(STORAGE_KEYS.token);
+  return sessionToken ?? storage.read<string>(STORAGE_KEYS.token);
 }
 
-/** Lưu JWT sau khi đăng nhập/đăng ký. */
-export async function saveToken(token: string): Promise<void> {
-  await storage.write(STORAGE_KEYS.token, token);
+/**
+ * Lưu JWT sau khi đăng nhập/đăng ký.
+ * `remember = true` (mặc định): ghi xuống thiết bị để tự đăng nhập lại lần sau.
+ * `remember = false`: chỉ giữ trong phiên trình duyệt hiện tại (mất khi tải lại trang).
+ */
+export async function saveToken(token: string, remember = true): Promise<void> {
+  if (remember) {
+    sessionToken = null;
+    await storage.write(STORAGE_KEYS.token, token);
+    return;
+  }
+  sessionToken = token;
+  await storage.remove(STORAGE_KEYS.token);
 }
 
 /** Xoá JWT khi đăng xuất. */
 export async function clearToken(): Promise<void> {
+  sessionToken = null;
   await storage.remove(STORAGE_KEYS.token);
 }

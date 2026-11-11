@@ -124,7 +124,11 @@ class AuthService {
     return ok(toPublicUser(account));
   }
 
-  async login(username: string, password: string): Promise<ServiceResult<PublicUser>> {
+  async login(
+    username: string,
+    password: string,
+    remember = true,
+  ): Promise<ServiceResult<PublicUser>> {
     if (this.online) {
       const result = await api.request<{ token: string; user: PublicUser }>('/auth/login', {
         method: 'POST',
@@ -132,7 +136,7 @@ class AuthService {
         body: { username: username.trim().toLowerCase(), password },
       });
       if (!result.ok) return fail(result.error);
-      await saveToken(result.data.token);
+      await saveToken(result.data.token, remember);
       return ok(result.data.user);
     }
 
@@ -148,7 +152,8 @@ class AuthService {
     }
     account.lastLoginAt = Date.now();
     await this.writeAccounts(accounts);
-    await this.writeSession(account.id);
+    // Bỏ chọn "Ghi nhớ đăng nhập" thì không lưu phiên xuống thiết bị.
+    await this.writeSession(remember ? account.id : null);
     return ok(toPublicUser(account));
   }
 

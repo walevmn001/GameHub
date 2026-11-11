@@ -1,7 +1,19 @@
 import { useState } from 'react';
-import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { KeyRound, LogIn, Sparkles, User as UserIcon } from 'lucide-react';
-import { AuthTitle, Button, Input, Surface } from '@/components/ui';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { LogIn, Sparkles, User as UserIcon } from 'lucide-react';
+import { Button } from '@/components/ui';
+import {
+  AuthCard,
+  AuthCheckbox,
+  AuthFooter,
+  AuthHeader,
+  AuthInput,
+  AuthMascot,
+  ErrorMessage,
+  PasswordInput,
+  PrimaryButton,
+  SuccessPopup,
+} from '@/components/auth';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 
@@ -11,26 +23,37 @@ export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [form, setForm] = useState({ username: '', password: '' });
+  const [remember, setRemember] = useState(true);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [guestLoading, setGuestLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
-  if (user) return <Navigate to="/profile" replace />;
+  // Chờ hiệu ứng chúc mừng kết thúc rồi mới điều hướng, nên tạm bỏ qua khi `success`.
+  if (user && !success) return <Navigate to="/profile" replace />;
 
   const from = (location.state as { from?: string } | null)?.from ?? '/profile';
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError('');
+    if (!form.username.trim()) {
+      setError('Hãy nhập tên đăng nhập.');
+      return;
+    }
+    if (!form.password) {
+      setError('Hãy nhập mật khẩu.');
+      return;
+    }
     setLoading(true);
-    const result = await login(form.username, form.password);
+    const result = await login(form.username, form.password, remember);
     setLoading(false);
     if (!result.ok) {
       setError(result.error);
       return;
     }
-    toast.success(`Chào mừng trở lại, ${result.data.displayName}!`);
-    navigate(from, { replace: true });
+    setSuccess(true);
+    window.setTimeout(() => navigate(from, { replace: true }), 900);
   };
 
   const handleGuest = async () => {
@@ -45,18 +68,24 @@ export function LoginPage() {
     navigate('/');
   };
 
+  const handleForgotPassword = () => {
+    toast.info('Tính năng khôi phục mật khẩu sẽ sớm được bổ sung. Vui lòng liên hệ quản trị viên.');
+  };
+
   return (
-    <div className="mx-auto flex max-w-md flex-col gap-4 py-6">
-      <div className="text-center">
-        <AuthTitle text="Đăng nhập" className="mb-2 animate-pop-in" />
-        <p className="text-sm text-slate-400">
-          Tiếp tục với tài khoản của bạn.
-        </p>
+    <div className="w-full max-w-[420px]">
+      {/* Mascot nhô lên phía trên form */}
+      <div className="relative z-10 -mb-8 flex justify-center">
+        <AuthMascot className="h-28 w-28 sm:h-36 sm:w-36" />
       </div>
 
-      <Surface className="p-4 sm:p-5">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <Input
+      <AuthCard className="animate-fade-in pt-9">
+        <AuthHeader title="Đăng Nhập" subtitle="Chào mừng bạn quay trở lại!" />
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+          <ErrorMessage>{error}</ErrorMessage>
+
+          <AuthInput
             label="Tên đăng nhập"
             name="username"
             autoComplete="username"
@@ -66,32 +95,44 @@ export function LoginPage() {
             onChange={(e) => setForm((f) => ({ ...f, username: e.target.value }))}
             required
           />
-          <Input
+
+          <PasswordInput
             label="Mật khẩu"
             name="password"
-            type="password"
             autoComplete="current-password"
-            placeholder="Tối thiểu 6 ký tự"
-            icon={<KeyRound className="h-4 w-4" />}
+            placeholder="Nhập mật khẩu của bạn"
             value={form.password}
             onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
-            error={error || undefined}
             required
           />
 
-          <Button type="submit" fullWidth loading={loading} icon={<LogIn className="h-4 w-4" />}>
-            Đăng nhập
-          </Button>
+          <div className="flex items-center justify-between gap-3">
+            <AuthCheckbox id="remember" checked={remember} onChange={setRemember}>
+              Ghi nhớ đăng nhập
+            </AuthCheckbox>
+            <button
+              type="button"
+              onClick={handleForgotPassword}
+              className="shrink-0 text-xs font-extrabold text-brand-600 underline-offset-4 transition hover:text-brand-700 hover:underline"
+            >
+              Quên mật khẩu?
+            </button>
+          </div>
 
-          <div className="flex items-center gap-3 text-[11px] text-slate-600">
-            <span className="h-px flex-1 bg-ink/5" />
-            hoặc
-            <span className="h-px flex-1 bg-ink/5" />
+          <PrimaryButton type="submit" loading={loading} icon={<LogIn className="h-5 w-5" />}>
+            ĐĂNG NHẬP
+          </PrimaryButton>
+
+          <div className="flex items-center gap-3 text-[11px] font-bold text-slate-500">
+            <span className="h-px flex-1 bg-cute-inputBorder" />
+            HOẶC
+            <span className="h-px flex-1 bg-cute-inputBorder" />
           </div>
 
           <Button
             type="button"
             variant="outline"
+            size="lg"
             fullWidth
             loading={guestLoading}
             icon={<Sparkles className="h-4 w-4" />}
@@ -100,14 +141,15 @@ export function LoginPage() {
             Chơi ngay với tư cách khách
           </Button>
         </form>
-      </Surface>
+      </AuthCard>
 
-      <p className="text-center text-xs text-slate-500">
-        Chưa có tài khoản?{' '}
-        <Link to="/register" className="font-semibold text-neon-cyan hover:underline">
-          Đăng ký ngay
-        </Link>
-      </p>
+      <AuthFooter prompt="Chưa có tài khoản?" linkLabel="Đăng Kí ngay" to="/register" />
+
+      <SuccessPopup
+        show={success}
+        title="Đăng nhập thành công!"
+        message="Đang đưa bạn vào sảnh game…"
+      />
     </div>
   );
 }

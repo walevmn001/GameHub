@@ -33,6 +33,17 @@ export default {
           blue: '#D9F1FF',
           pink: '#FFE1E7',
         },
+        // Token chính xác cho hệ thống xác thực "Cute Cartoon" (xem src/components/auth).
+        cute: {
+          green: '#62D943',
+          greenLight: '#8DEB68',
+          greenDark: '#218C2B',
+          bg: '#F4FFF0',
+          mint: '#E7F9DF',
+          gold: '#FFC83D',
+          inputBg: '#F7FFF4',
+          inputBorder: '#D5F0CA',
+        },
         // Giữ alias cũ để các màn hình hiện hữu tiếp tục dùng token mà không cần đổi logic.
         neon: {
           purple: '#269B35',
@@ -151,6 +162,22 @@ export default {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-6px)' },
         },
+        // Trang trí cho hệ thống xác thực: lấp lánh, trôi nhẹ và rung khi lỗi.
+        sparkle: {
+          '0%, 100%': { transform: 'scale(0.6) rotate(0deg)', opacity: '0.25' },
+          '50%': { transform: 'scale(1) rotate(18deg)', opacity: '1' },
+        },
+        drift: {
+          '0%, 100%': { transform: 'translate3d(0, 0, 0) rotate(-6deg)' },
+          '50%': { transform: 'translate3d(0, -14px, 0) rotate(6deg)' },
+        },
+        shake: {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '20%': { transform: 'translateX(-6px)' },
+          '40%': { transform: 'translateX(6px)' },
+          '60%': { transform: 'translateX(-4px)' },
+          '80%': { transform: 'translateX(4px)' },
+        },
       },
       animation: {
         'fade-in': 'fade-in 0.35s ease-out both',
@@ -168,6 +195,9 @@ export default {
         wiggle: 'wiggle 1.6s ease-in-out infinite',
         'pop-in': 'pop-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both',
         bob: 'bob 3s ease-in-out infinite',
+        sparkle: 'sparkle 2.2s ease-in-out infinite',
+        drift: 'drift 6s ease-in-out infinite',
+        shake: 'shake 0.4s ease-in-out',
       },
     },
   },

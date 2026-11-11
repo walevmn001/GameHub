@@ -22,7 +22,7 @@ interface AuthContextValue {
     displayName: string;
     password: string;
   }) => Promise<ServiceResult<PublicUser>>;
-  login: (username: string, password: string) => Promise<ServiceResult<PublicUser>>;
+  login: (username: string, password: string, remember?: boolean) => Promise<ServiceResult<PublicUser>>;
   loginAsGuest: () => Promise<ServiceResult<PublicUser>>;
   logout: () => Promise<void>;
   updateProfile: (patch: {
@@ -80,8 +80,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return result;
   }, []);
 
-  const login = useCallback<AuthContextValue['login']>(async (username, password) => {
-    const result = await authService.login(username, password);
+  const login = useCallback<AuthContextValue['login']>(async (username, password, remember = true) => {
+    const result = await authService.login(username, password, remember);
     if (result.ok) {
       setUser(result.data);
       await connectRealtime();

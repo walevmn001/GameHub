@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import { GameLayout, MainLayout } from '@/layouts/MainLayout';
+import { AuthLayout } from '@/components/auth';
 import { HomePage } from '@/pages/HomePage';
 import { GamesPage } from '@/pages/GamesPage';
 import { RoomsPage } from '@/pages/RoomsPage';
@@ -20,13 +21,16 @@ export default function App() {
       <Route element={<GameLayout />}>
         <Route path="/play/:gameId" element={<PlayGamePage />} />
       </Route>
+      {/* Trang xác thực dùng bố cục riêng, không navbar/footer. */}
+      <Route element={<AuthLayout />}>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+      </Route>
       <Route element={<MainLayout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/games" element={<GamesPage />} />
         <Route path="/rooms" element={<RoomsPage />} />
         <Route path="/rooms/:roomId" element={<RoomLobbyPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/friends" element={<FriendsPage />} />
