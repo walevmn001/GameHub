@@ -121,6 +121,30 @@ export function PlayCard({
           draggable={false}
           className="pointer-events-none absolute inset-0 h-full w-full object-cover"
         />
+        {/*
+          Ảnh dựng sẵn vẽ sẵn hạng/chất ở góc nhưng quá nhỏ khi thu về cỡ thẻ.
+          Phủ nhãn hạng + chất cỡ lớn (theo tỉ lệ thẻ) lên hai góc để luôn đọc được.
+        */}
+        <span className="pointer-events-none absolute inset-0 z-10" aria-hidden>
+          <span
+            className={cn(
+              'absolute left-[6%] top-[4%] flex flex-col items-center rounded-md bg-white/85 px-1 py-px font-bold leading-tight shadow-sm ring-1 ring-black/5',
+              isRed ? 'text-rose-600' : 'text-slate-900',
+            )}
+          >
+            <span className="text-[1.1em]">{rank}</span>
+            <span className="text-[0.95em]">{symbol}</span>
+          </span>
+          <span
+            className={cn(
+              'absolute bottom-[4%] right-[6%] flex rotate-180 flex-col items-center rounded-md bg-white/85 px-1 py-px font-bold leading-tight shadow-sm ring-1 ring-black/5',
+              isRed ? 'text-rose-600' : 'text-slate-900',
+            )}
+          >
+            <span className="text-[1.1em]">{rank}</span>
+            <span className="text-[0.95em]">{symbol}</span>
+          </span>
+        </span>
       </button>
     );
   }
