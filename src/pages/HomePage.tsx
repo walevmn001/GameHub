@@ -280,10 +280,10 @@ function CategoryChip({
       type="button"
       onClick={onClick}
       className={cn(
-        'rounded-full border px-4 py-1.5 text-xs font-bold transition-all',
+        'rounded-full border px-4 py-1.5 text-xs font-bold shadow-soft transition-all hover:-translate-y-0.5',
         active
-          ? 'border-transparent bg-gradient-to-b from-brand-500 to-brand-600 text-brand-900 shadow-pop'
-          : 'border-base-700 bg-base-900 text-slate-400 hover:-translate-y-0.5 hover:border-brand-300 hover:text-brand-600',
+          ? 'border-brand-600/25 bg-gradient-to-b from-brand-400 via-brand-500 to-[#24D934] text-brand-900 shadow-pop'
+          : 'border-brand-200 bg-white text-slate-400 hover:border-brand-400 hover:text-brand-600',
       )}
     >
       {label}

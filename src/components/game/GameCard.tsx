@@ -63,7 +63,7 @@ export function GameCard({ game, onSelect, variant = 'default', className }: Gam
       type="button"
       onClick={() => onSelect(game)}
       className={cn(
-        'group relative flex flex-col overflow-hidden rounded-xl3 border border-base-700 bg-base-900 text-left shadow-card transition-all duration-300 hover:-translate-y-1.5 hover:border-brand-300 hover:shadow-card-hover',
+          'group relative flex flex-col overflow-hidden rounded-3xl border border-brand-200 bg-white text-left shadow-card transition-all duration-300 hover:-translate-y-1.5 hover:border-brand-400 hover:shadow-card-hover',
         className,
       )}
     >
@@ -114,10 +114,10 @@ export function GameCard({ game, onSelect, variant = 'default', className }: Gam
 
         <span
           className={cn(
-            'mt-3 inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-xl text-xs font-bold transition-all duration-200 ease-out',
+            'mt-3 inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-full text-xs font-extrabold transition-all duration-200 ease-out',
             playable
-              ? 'btn-shine bg-gradient-to-b from-brand-400 via-brand-500 to-brand-600 text-brand-900 shadow-pop group-hover:-translate-y-0.5 group-hover:shadow-btn-hover'
-              : 'bg-base-800 text-slate-500',
+              ? 'btn-shine border border-brand-600/35 bg-gradient-to-b from-brand-400 via-brand-500 to-[#24D934] text-brand-900 shadow-pop group-hover:-translate-y-0.5 group-hover:shadow-btn-hover'
+              : 'border border-base-700 bg-base-800 text-slate-500',
           )}
         >
           {playable ? (

@@ -59,13 +59,13 @@ export default {
       boxShadow: {
         soft: '0 8px 24px -12px rgba(38, 59, 45, 0.18)',
         card: '0 10px 30px -18px rgba(35, 139, 80, 0.30)',
-        'card-hover': '0 18px 40px -20px rgba(35, 139, 80, 0.45)',
+        'card-hover': '0 16px 0 -10px rgba(35, 139, 80, 0.22), 0 20px 36px -22px rgba(26, 107, 61, 0.5)',
         glow: '0 0 0 1px rgba(35, 139, 80, 0.25), 0 12px 30px -14px rgba(35, 139, 80, 0.5)',
         'glow-cyan': '0 0 0 1px rgba(117, 201, 138, 0.35), 0 12px 30px -14px rgba(117, 201, 138, 0.55)',
         // Nút bấm: bóng mềm + viền sáng bên trong tạo cảm giác "glossy" hiện đại
-        pop: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.4), 0 3px 0 -1px rgba(26, 107, 61, 0.32), 0 10px 20px -12px rgba(26, 107, 61, 0.55)',
+        pop: 'inset 0 2px 0 0 rgba(255, 255, 255, 0.72), 0 4px 0 -1px rgba(26, 107, 61, 0.48), 0 10px 18px -10px rgba(26, 107, 61, 0.52)',
         'btn-hover':
-          'inset 0 1px 0 0 rgba(255, 255, 255, 0.5), 0 3px 0 -1px rgba(26, 107, 61, 0.28), 0 16px 30px -12px rgba(35, 139, 80, 0.6)',
+          'inset 0 2px 0 0 rgba(255, 255, 255, 0.78), 0 4px 0 -1px rgba(26, 107, 61, 0.42), 0 18px 28px -12px rgba(35, 139, 80, 0.58)',
         'inner-soft': 'inset 0 1px 0 0 rgba(255, 255, 255, 0.7)',
       },
       borderRadius: {

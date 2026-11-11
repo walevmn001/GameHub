@@ -14,14 +14,14 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const VARIANT_CLASSES: Record<Variant, string> = {
-  // Nút chính: gradient xanh neon, chữ xanh đậm để tương phản cao, vệt sáng chạy khi hover + nhấn lún nhẹ
+  // CTA neon dạng viên nổi, giữ chữ đậm để dễ đọc trên nền sáng.
   primary:
-    'btn-shine bg-gradient-to-b from-brand-400 via-brand-500 to-brand-600 text-brand-900 shadow-pop hover:-translate-y-0.5 hover:shadow-btn-hover hover:brightness-[1.03] active:translate-y-0 active:scale-[0.97]',
+    'btn-shine border border-brand-600/35 bg-gradient-to-b from-brand-400 via-brand-500 to-[#24D934] text-brand-900 shadow-pop hover:-translate-y-0.5 hover:shadow-btn-hover hover:saturate-110 active:translate-y-0 active:scale-[0.97]',
   secondary:
-    'border border-brand-200 bg-gradient-to-b from-base-850 to-base-800 text-brand-700 shadow-soft hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-card active:translate-y-0 active:scale-[0.97]',
+    'border border-brand-300 bg-gradient-to-b from-white to-brand-50 text-brand-700 shadow-soft hover:-translate-y-0.5 hover:border-brand-500 hover:shadow-card active:translate-y-0 active:scale-[0.97]',
   ghost: 'text-slate-500 hover:bg-brand-50 hover:text-brand-600 active:scale-[0.97]',
   outline:
-    'border border-brand-300 bg-base-900 text-brand-700 shadow-soft hover:-translate-y-0.5 hover:border-brand-500 hover:bg-brand-50 hover:shadow-card active:translate-y-0 active:scale-[0.97]',
+    'border border-brand-300 bg-white text-brand-700 shadow-soft hover:-translate-y-0.5 hover:border-brand-500 hover:bg-brand-50 hover:shadow-card active:translate-y-0 active:scale-[0.97]',
   danger:
     'btn-shine bg-gradient-to-b from-rose-400 to-rose-600 text-white shadow-pop hover:-translate-y-0.5 hover:brightness-[1.05] hover:shadow-btn-hover active:translate-y-0 active:scale-[0.97]',
   success:
@@ -29,9 +29,9 @@ const VARIANT_CLASSES: Record<Variant, string> = {
 };
 
 const SIZE_CLASSES: Record<Size, string> = {
-  sm: 'h-9 px-3.5 text-xs gap-1.5 rounded-xl',
-  md: 'h-11 px-5 text-sm gap-2 rounded-xl2',
-  lg: 'h-12 px-6 text-base gap-2 rounded-xl2',
+  sm: 'h-9 px-4 text-xs gap-1.5 rounded-full',
+  md: 'h-11 px-5 text-sm gap-2 rounded-full',
+  lg: 'h-12 px-6 text-base gap-2 rounded-full',
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(

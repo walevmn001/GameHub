@@ -11,7 +11,7 @@ export function Surface({ children, interactive = false, className, ...rest }: S
   return (
     <div
       className={cn(
-        'rounded-xl3 border border-base-700 bg-base-900 shadow-card',
+        'rounded-xl3 border border-base-700 bg-white shadow-card',
         interactive && 'transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-card-hover',
         className,
       )}
@@ -37,7 +37,7 @@ export function SectionHeader({
     <div className="mb-4 flex items-end justify-between gap-4">
       <div className="flex min-w-0 items-center gap-3">
         {icon && (
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 ring-1 ring-brand-100">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-brand-600/25 bg-gradient-to-b from-brand-400 to-brand-500 text-brand-900 shadow-pop">
             {icon}
           </span>
         )}
