@@ -53,7 +53,8 @@ export function ChatDock({ landscape = false }: { landscape?: boolean }) {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="btn-shine fixed bottom-4 right-4 z-[60] inline-flex h-14 w-14 shrink-0 aspect-square items-center justify-center rounded-full border border-brand-700/25 bg-gradient-to-b from-cute-greenLight via-cute-green to-brand-600 text-white shadow-[inset_0_2px_0_rgba(255,255,255,0.55),0_6px_0_-1px_rgba(33,140,43,0.5),0_16px_28px_-12px_rgba(33,140,43,0.5)] transition-all duration-200 hover:-translate-y-1 hover:brightness-[1.06] active:translate-y-1 active:shadow-[inset_0_2px_0_rgba(255,255,255,0.4),0_2px_0_-1px_rgba(33,140,43,0.5)]"
+          className="btn-shine fixed bottom-4 right-4 z-[60] inline-flex h-14 w-14 shrink-0 aspect-square items-center justify-center rounded-full border border-brand-700/25 text-white shadow-[inset_0_2px_0_rgba(255,255,255,0.6),0_6px_0_-1px_rgba(33,140,43,0.55),0_16px_28px_-12px_rgba(33,140,43,0.55)] transition-all duration-200 hover:-translate-y-1 hover:brightness-105 active:translate-y-1 active:shadow-[inset_0_2px_0_rgba(255,255,255,0.4),0_2px_0_-1px_rgba(33,140,43,0.5)]"
+          style={{ backgroundColor: '#62D943' }}
           aria-label="Mở menu cá nhân"
         >
           <UserRound className="h-6 w-6" />
