@@ -1,8 +1,9 @@
 import { cn } from '@/utils/cn';
 
 /**
- * Tiêu đề trang xác thực dạng "text art" có vương miện, bóng mềm và hiệu ứng
- * lắc nhẹ. Dùng chung cho trang Đăng nhập và Tạo tài khoản.
+ * Tiêu đề trang xác thực dạng cartoon: vương miện + chữ xanh lá có viền trắng và bóng
+ * đậm cho cảm giác nổi. KHÔNG dùng WebkitTextStroke (bị vỡ nét với tiếng Việt); thay
+ * vào dùng nhiều lớp text-shadow để tạo viền trắng + bóng xanh mềm mại.
  */
 export function AuthTitle({
   text,
@@ -14,7 +15,7 @@ export function AuthTitle({
   return (
     <div className={cn('relative flex flex-col items-center', className)}>
       {/* Vương miện */}
-      <div className="mb-1 animate-wiggle">
+      <div className="mb-1.5 animate-wiggle">
         <svg
           viewBox="0 0 80 48"
           className="h-9 w-14 drop-shadow-sm"
@@ -23,7 +24,7 @@ export function AuthTitle({
           <defs>
             <linearGradient id="auth-crown-gold" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#FFE58A" />
-              <stop offset="50%" stopColor="#FFC94F" />
+              <stop offset="50%" stopColor="#FFC83D" />
               <stop offset="100%" stopColor="#E0A82C" />
             </linearGradient>
           </defs>
@@ -34,26 +35,26 @@ export function AuthTitle({
             strokeWidth="2.5"
             strokeLinejoin="round"
           />
-          <rect x="8" y="36" width="64" height="8" rx="3" fill="#FFC94F" stroke="#C78A1F" strokeWidth="2.5" />
+          <rect x="8" y="36" width="64" height="8" rx="3" fill="#FFC83D" stroke="#C78A1F" strokeWidth="2.5" />
           <circle cx="18" cy="22" r="3" fill="#FF7A9E" />
           <circle cx="40" cy="16" r="3.5" fill="#7DD3FC" />
           <circle cx="62" cy="22" r="3" fill="#86EFAC" />
         </svg>
       </div>
 
-      {/* Chữ cartoon: viền trắng dày + gradient xanh lá + bóng đậm cho cảm giác nổi */}
-      <h1 className="relative font-display text-4xl font-black tracking-tight sm:text-5xl">
-        <span
-          className="bg-gradient-to-b from-brand-400 to-brand-700 bg-clip-text text-transparent"
-          style={{
-            WebkitTextStroke: '2.5px #FFFFFF',
-            textShadow:
-              '0 3px 0 #164820, 0 5px 0 #164820, 0 8px 14px rgba(22, 72, 32, 0.35)',
-            paintOrder: 'stroke fill',
-          }}
-        >
-          {text}
-        </span>
+      {/* Chữ cartoon: gradient xanh lá, viền trắng 4 hướng + bóng đậm để nổi */}
+      <h1
+        className="font-display text-4xl font-black leading-tight tracking-tight sm:text-5xl"
+        style={{
+          backgroundImage: 'linear-gradient(180deg, #8DEB68 0%, #62D943 45%, #218C2B 100%)',
+          WebkitBackgroundClip: 'text',
+          backgroundClip: 'text',
+          color: 'transparent',
+          textShadow:
+            '-2.5px -2.5px 0 #FFFFFF, 2.5px -2.5px 0 #FFFFFF, -2.5px 2.5px 0 #FFFFFF, 2.5px 2.5px 0 #FFFFFF, 0 3px 0 #1B6F23, 0 7px 14px rgba(33,140,43,0.28)',
+        }}
+      >
+        {text}
       </h1>
 
       {/* Đốm trang trí 2 bên */}
