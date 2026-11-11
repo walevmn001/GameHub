@@ -262,66 +262,193 @@ function KnightPortrait({ rank, suit }: { rank: number; suit: string }) {
 
 /* --------------------------------- Dragon --------------------------------- */
 
-function DragonArt({ kind, rank, suit, suitColor }: ArtProps) {
-  if (kind === 'ace') {
-    return (
-      <g opacity="0.95">
-        <circle cx="50" cy="70" r="33" fill="#064e3b" opacity="0.16" />
-        <circle cx="50" cy="70" r="33" fill="none" stroke="#d6a84f" strokeWidth="2" />
-        <path d="M50 40C64 40 76 50 76 68s-12 30-26 30-26-12-26-30 12-28 26-28Z" fill="#065f46" stroke="#d6a84f" strokeWidth="2" />
-        <ellipse cx="50" cy="68" rx="9" ry="16" fill="#f59e0b" stroke="#7c2d12" strokeWidth="2" />
-        <ellipse cx="50" cy="68" rx="3" ry="12" fill="#0b1220" />
-        <circle cx="50" cy="60" r="2.4" fill="#fde68a" />
-        <SuitSeal x={50} y={130} suit={suit} color={suitColor} size={14} />
-      </g>
-    );
-  }
-  if (kind === 'face') return <DragonPortrait rank={rank} suit={suit} />;
+/**
+ * Bộ "Rồng" vẽ theo phong cách thẻ TCG: khung viền dát vàng, ô tên, hàng sao
+ * cấp, cửa sổ tranh, thanh hệ và ô mô tả kèm chỉ số ATK/DEF. Hạng/chất vẫn hiện
+ * ở hai góc thẻ (do `PlayCard` vẽ) nên vẫn dễ đọc khi chơi.
+ */
+const DRAGON_NAMES: Record<number, string> = {
+  3: 'Kim Long',
+  4: 'Thổ Long',
+  5: 'Thủy Long',
+  6: 'Băng Long',
+  7: 'Phong Long',
+  8: 'Lôi Long',
+  9: 'Hỏa Long',
+  10: 'Cổ Long',
+  11: 'Long Kỵ Sĩ',
+  12: 'Long Hậu',
+  13: 'Long Vương',
+  14: 'Rồng Thần',
+  15: 'Thiên Long',
+};
+
+/** Tên tiếng Việt của chất để in lên thanh hệ. */
+const SUIT_NAME_VN: Record<string, string> = {
+  '♠': 'BÍCH',
+  '♣': 'CHUỒN',
+  '♦': 'RÔ',
+  '♥': 'CƠ',
+};
+
+function dragonLevel(rank: number): number {
+  return Math.min(Math.max(rank - 2, 1), 12);
+}
+
+/** Khung thẻ TCG dùng chung cho mọi lá của bộ Rồng. */
+function DragonFrame({ rank, suit, children }: { rank: number; suit: string; children: React.ReactNode }) {
+  const name = DRAGON_NAMES[rank] ?? 'Rồng';
+  const level = dragonLevel(rank);
+  const suitName = SUIT_NAME_VN[suit] ?? '';
+  const atk = 800 + (rank - 2) * 320;
+  const def = 600 + (rank - 2) * 260;
+
   return (
-    <PipField
-      rank={rank}
-      suit={suit}
-      color={suitColor}
-      accent="#fde68a"
-      decor={
-        <g opacity="0.34">
-          <circle cx="50" cy="70" r="34" fill="#064e3b" opacity="0.16" />
-          <circle cx="50" cy="70" r="34" fill="none" stroke="#d6a84f" strokeWidth="2" />
-          {[42, 58, 74, 90].map((y) => (
-            <path key={y} d={`M30 ${y} l5 3 5 -3 5 3 5 -3 5 3 5 -3`} fill="none" stroke="#047857" strokeWidth="2" />
-          ))}
-        </g>
-      }
-    />
+    <g>
+      <defs>
+        <linearGradient id="dragonFrame" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#0b3b2b" />
+          <stop offset="0.5" stopColor="#065f46" />
+          <stop offset="1" stopColor="#0b3b2b" />
+        </linearGradient>
+        <linearGradient id="dragonGold" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#f7e2a8" />
+          <stop offset="0.5" stopColor="#d6a84f" />
+          <stop offset="1" stopColor="#9c713b" />
+        </linearGradient>
+        <linearGradient id="dragonArt" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#0a1f17" />
+          <stop offset="1" stopColor="#03211a" />
+        </linearGradient>
+        <clipPath id="dragonArtClip">
+          <rect x="7" y="24" width="86" height="58" rx="2.5" />
+        </clipPath>
+      </defs>
+
+      {/* Thân thẻ và viền dát vàng */}
+      <rect x="2.5" y="2.5" width="95" height="135" rx="7" fill="url(#dragonFrame)" stroke="url(#dragonGold)" strokeWidth="1.6" />
+      <rect x="6" y="6" width="88" height="128" rx="4.5" fill="#04160f" opacity="0.5" />
+
+      {/* Ô tên — chừa góc phải cho biểu tượng bộ (do PlayCard vẽ) */}
+      <rect x="16" y="5.5" width="70" height="12" rx="3" fill="url(#dragonGold)" opacity="0.92" />
+      <rect x="16" y="5.5" width="70" height="12" rx="3" fill="none" stroke="#7c5a22" strokeWidth="0.7" />
+      <text x="51" y="14.2" textAnchor="middle" fontSize="8.4" fontWeight="700" fill="#1b2a12" fontFamily="Georgia, serif">
+        {name}
+      </text>
+
+      {/* Hàng sao cấp */}
+      {Array.from({ length: level }).map((_, i) => (
+        <path
+          key={i}
+          transform={`translate(${92 - i * 6.2} 21.5) scale(0.32)`}
+          d="M0-8 2.4-2.6 8-2 3.8 1.9 5 7.4 0 4.4-5 7.4-3.8 1.9-8-2-2.4-2.6Z"
+          fill="#f5d78a"
+          stroke="#a16207"
+          strokeWidth="1.3"
+        />
+      ))}
+
+      {/* Cửa sổ tranh */}
+      <rect x="7" y="24" width="86" height="58" rx="2.5" fill="url(#dragonArt)" />
+      <g clipPath="url(#dragonArtClip)">{children}</g>
+      <rect x="7" y="24" width="86" height="58" rx="2.5" fill="none" stroke="url(#dragonGold)" strokeWidth="1.3" />
+
+      {/* Thanh hệ */}
+      <rect x="6" y="84" width="88" height="9" rx="2.5" fill="#0b3b2b" stroke="url(#dragonGold)" strokeWidth="0.7" />
+      <text x="50" y="90.3" textAnchor="middle" fontSize="5.6" fontWeight="700" fill="#f5e6b8" letterSpacing="0.4">
+        {`RỒNG / HỆ ${suitName}`}
+      </text>
+
+      {/* Ô mô tả và chỉ số */}
+      <rect x="6" y="95" width="88" height="22" rx="2.5" fill="#0a2a1f" stroke="#1f5b47" strokeWidth="0.7" />
+      <text x="9" y="101.4" fontSize="4.4" fill="#bfe3cf">Khi lá bài này được đánh ra, rồng phun</text>
+      <text x="9" y="106.6" fontSize="4.4" fill="#bfe3cf">lửa thiêu rụi mọi thế lực cản đường.</text>
+      <text x="9" y="113.4" fontSize="5.4" fontWeight="700" fill="#f5d78a">{`ATK/${atk}`}</text>
+      <text x="91" y="113.4" textAnchor="end" fontSize="5.4" fontWeight="700" fill="#f5d78a">{`DEF/${def}`}</text>
+    </g>
   );
 }
 
-function DragonPortrait({ rank, suit }: { rank: number; suit: string }) {
+function DragonArt({ kind, rank, suit }: ArtProps) {
+  return (
+    <DragonFrame rank={rank} suit={suit}>
+      {kind === 'ace' ? <DragonEmblemArt /> : kind === 'face' ? <DragonFaceArt rank={rank} /> : <DragonPipArt rank={rank} suit={suit} />}
+    </DragonFrame>
+  );
+}
+
+/** Át: huy hiệu đầu rồng. */
+function DragonEmblemArt() {
+  return (
+    <g>
+      <circle cx="50" cy="52" r="23" fill="#064e3b" opacity="0.6" />
+      <circle cx="50" cy="52" r="23" fill="none" stroke="#d6a84f" strokeWidth="1.3" />
+      <path d="M28 40 17 34 30 53Z" fill="#065f46" stroke="#d6a84f" strokeWidth="0.9" />
+      <path d="M72 40 83 34 70 53Z" fill="#065f46" stroke="#d6a84f" strokeWidth="0.9" />
+      <path d="M50 30C60 30 68 38 68 52s-8 22-18 22-18-9-18-22 8-22 18-22Z" fill="#047857" stroke="#d6a84f" strokeWidth="1.3" />
+      <path d="M50 32 42 21 50 25 58 21Z" fill="#a16207" stroke="#d6a84f" strokeWidth="1" />
+      <ellipse cx="50" cy="53" rx="6.6" ry="12" fill="#f59e0b" stroke="#7c2d12" strokeWidth="1.2" />
+      <ellipse cx="50" cy="53" rx="2.2" ry="9" fill="#0b1220" />
+      <circle cx="50" cy="46" r="1.8" fill="#fde68a" />
+      <text x="50" y="78.5" textAnchor="middle" fontSize="4.6" fill="#f5d78a" letterSpacing="0.6">
+        DRAGON EMPEROR
+      </text>
+    </g>
+  );
+}
+
+/** J/Q/K: chân dung rồng (vương miện / triều thiên / cặp sừng). */
+function DragonFaceArt({ rank }: { rank: number }) {
   const isKing = rank === 13;
   const isQueen = rank === 12;
   return (
-    <g opacity="0.95">
-      <Medallion ring="#d6a84f" glow="#065f46" />
-      <path d="M26 100C30 80 40 73 50 73s20 7 24 27Z" fill="#065f46" stroke="#d6a84f" strokeWidth="1.5" />
-      <circle cx="50" cy="54" r="13" fill="#047857" stroke="#d6a84f" strokeWidth="1.5" />
-      <path d="M50 40 42 26 50 30 58 26Z" fill="#a16207" stroke="#d6a84f" strokeWidth="1.5" />
-      {isQueen && <path d="M34 42 26 30M66 42 74 30" fill="none" stroke="#d6a84f" strokeLinecap="round" strokeWidth="2.5" />}
-      {isKing && (
-        <path d="M36 42 40 30 46 36 50 26 54 36 60 30 64 42Z" fill="#d6a84f" stroke="#a16207" strokeWidth="1.4" />
-      )}
+    <g>
+      <circle cx="50" cy="50" r="24" fill="#065f46" opacity="0.4" />
+      <circle cx="50" cy="50" r="24" fill="none" stroke="#d6a84f" strokeWidth="1" opacity="0.55" />
+      <path d="M35 80C38 63 44 58 50 58s12 5 15 22Z" fill="#047857" stroke="#d6a84f" strokeWidth="1.1" />
+      <circle cx="50" cy="44" r="10.5" fill="#059669" stroke="#d6a84f" strokeWidth="1.2" />
       {isKing ? (
-        <>
-          <circle cx="50" cy="52" r="2" fill="#fbbf24" />
-          <path d="M42 60q8 6 16 0" fill="none" stroke="#fbbf24" strokeWidth="1.6" />
-        </>
+        <path d="M39 32 42 23 46 29 50 21 54 29 58 23 61 32Z" fill="#d6a84f" stroke="#a16207" strokeWidth="0.9" />
+      ) : isQueen ? (
+        <path d="M41 31 50 20 59 31Z" fill="#d6a84f" stroke="#a16207" strokeWidth="0.9" />
       ) : (
         <>
-          <circle cx="45" cy="54" r="1.8" fill="#fde68a" />
-          <circle cx="55" cy="54" r="1.8" fill="#fde68a" />
+          <path d="M50 33 43 23 50 27 57 23Z" fill="#a16207" stroke="#d6a84f" strokeWidth="1" />
+          <path d="M30 36 22 27M70 36 78 27" stroke="#d6a84f" strokeWidth="1.5" strokeLinecap="round" />
         </>
       )}
-      {!isKing && !isQueen && <path d="M22 92C30 84 40 88 46 96" fill="none" stroke="#d6a84f" strokeWidth="2" />}
-      <SuitSeal x={50} y={100} suit={suit} color={isRedSuit(suit) ? '#fecaca' : '#fde68a'} size={13} />
+      <circle cx="46" cy="44" r="1.7" fill="#fde68a" />
+      <circle cx="54" cy="44" r="1.7" fill="#fde68a" />
+      <path d="M45 51q5 4 10 0" fill="none" stroke="#f5d78a" strokeWidth="1.1" />
+    </g>
+  );
+}
+
+/** Lá số (2–10): rải pip cách điệu trong cửa sổ tranh nên mỗi hạng khác nhau. */
+function DragonPipArt({ rank, suit }: { rank: number; suit: string }) {
+  const pips = PIP_LAYOUT[rank] ?? PIP_LAYOUT[2];
+  const fontSize = rank <= 3 ? 17 : rank <= 6 ? 13 : 11;
+  return (
+    <g transform="translate(50 53) scale(0.72) translate(-50 -70)">
+      <circle cx="50" cy="70" r="46" fill="#064e3b" opacity="0.3" />
+      <circle cx="50" cy="70" r="46" fill="none" stroke="#d6a84f" strokeWidth="1.6" opacity="0.5" />
+      {pips.map(([x, y], i) => (
+        <text
+          key={i}
+          x={x}
+          y={y}
+          textAnchor="middle"
+          dominantBaseline="central"
+          fontSize={fontSize}
+          fontWeight="700"
+          fill="#f5d78a"
+          stroke="#7c2d12"
+          strokeWidth="1.1"
+          paintOrder="stroke"
+        >
+          {suit}
+        </text>
+      ))}
     </g>
   );
 }
@@ -477,6 +604,9 @@ export function CardSkinBack({ skinId }: { skinId: string }) {
       )}
       {skinId === 'card-skin-dragon' && (
         <g opacity="0.95">
+          {/* Khung viền dát vàng cho khớp phong cách thẻ TCG của bộ Rồng */}
+          <rect x="10" y="14" width="80" height="112" rx="5" fill="none" stroke="#d6a84f" strokeWidth="1.4" opacity="0.75" />
+          <rect x="14" y="18" width="72" height="104" rx="3.5" fill="none" stroke="#047857" strokeWidth="1" opacity="0.7" />
           <path d="M50 20 80 70 50 120 20 70Z" fill="none" stroke="#d6a84f" strokeWidth="1.6" opacity="0.7" />
           {[34, 48, 62, 76, 90].map((y) => (
             <path key={y} d={`M32 ${y} l6 4 6 -4 6 4 6 -4 6 4 6 -4`} fill="none" stroke="#047857" strokeWidth="1.6" opacity="0.8" />

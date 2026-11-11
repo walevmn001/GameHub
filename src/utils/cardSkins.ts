@@ -35,12 +35,13 @@ export const CARD_SKINS: Record<string, CardSkinTheme> = {
     id: 'card-skin-dragon',
     name: 'Rồng',
     mark: '🐉',
-    faceClass: 'border-amber-400 bg-gradient-to-br from-emerald-100 via-lime-50 to-amber-100',
+    // Khung TCG nền xanh thẫm; nền thẻ trùng màu viền để không lộ dải sáng do tỉ lệ khung.
+    faceClass: 'border-amber-400 bg-[#0b3b2b]',
     backClass: 'border-amber-300 bg-emerald-950 bg-[repeating-linear-gradient(135deg,rgba(251,191,36,0.6)_0px,rgba(251,191,36,0.6)_2px,transparent_2px,transparent_7px)]',
     innerClass: 'border-amber-200/80',
     previewClass: 'from-emerald-500 via-teal-700 to-amber-500',
-    redTextClass: 'text-red-700',
-    blackTextClass: 'text-emerald-950',
+    redTextClass: 'text-rose-300',
+    blackTextClass: 'text-amber-100',
   },
   'card-skin-knight': {
     id: 'card-skin-knight',
