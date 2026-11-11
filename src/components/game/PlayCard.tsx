@@ -1,7 +1,7 @@
 import { SUIT_SYMBOL, type Card } from '@/types';
 import { RANK_LABEL } from '@/types/game';
 import { cn } from '@/utils/cn';
-import { getCardSkinTheme } from '@/utils/cardSkins';
+import { getCardSkinTheme, cardSkinFaceUrl, cardSkinBackUrl } from '@/utils/cardSkins';
 import { CardSkinArtwork, CardSkinBack } from '@/components/game/CardSkinArtwork';
 
 export type CardSize = 'xs' | 'sm' | 'md' | 'lg';
@@ -55,6 +55,23 @@ export function PlayCard({
   const skin = getCardSkinTheme(skinId);
 
   if (faceDown) {
+    const backUrl = skin ? cardSkinBackUrl(skin.id) : null;
+    if (backUrl) {
+      return (
+        <div
+          className={cn('relative shrink-0 overflow-hidden rounded-lg shadow-soft', SIZE_CLASSES[size], className)}
+          style={style}
+          aria-hidden
+        >
+          <img
+            src={backUrl}
+            alt=""
+            draggable={false}
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+          />
+        </div>
+      );
+    }
     return (
       <div
         className={cn(
@@ -73,6 +90,38 @@ export function PlayCard({
         )} />
         {skin && <span className="absolute inset-0 flex items-center justify-center text-lg">{skin.mark}</span>}
       </div>
+    );
+  }
+
+  const faceUrl = skin ? cardSkinFaceUrl(skin.id, card) : null;
+  if (faceUrl) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        disabled={disabled || !onClick}
+        style={style}
+        aria-pressed={selected}
+        aria-label={`${rank}${symbol}`}
+        className={cn(
+          'relative isolate shrink-0 select-none overflow-hidden rounded-lg shadow-soft transition-all duration-200',
+          selected
+            ? 'scale-105 -translate-y-4 ring-2 ring-neon-cyan/70 shadow-glow-cyan'
+            : 'hover:-translate-y-1.5 hover:shadow-glow-cyan',
+          onClick && !disabled ? 'cursor-pointer' : 'cursor-default',
+          animate && 'animate-play-card',
+          victory && 'animate-card-victory',
+          SIZE_CLASSES[size],
+          className,
+        )}
+      >
+        <img
+          src={faceUrl}
+          alt={`${rank}${symbol}`}
+          draggable={false}
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+        />
+      </button>
     );
   }
 

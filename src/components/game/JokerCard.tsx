@@ -1,11 +1,12 @@
 import { cn } from '@/utils/cn';
-import { getCardSkinTheme } from '@/utils/cardSkins';
+import { getCardSkinTheme, cardSkinJokerUrl } from '@/utils/cardSkins';
 import { CardSkinJoker, type JokerVariant } from '@/components/game/CardSkinArtwork';
 import { SIZE_CLASSES, type CardSize } from '@/components/game/PlayCard';
 
 /**
  * Lá Joker — chỉ mang tính sưu tầm/trang trí (không dùng trong ván Tiến Lên).
- * Mỗi theme có 2 biến thể: đỏ và đen, dùng chung khung/mặt bài với `PlayCard`.
+ * Mỗi theme có 2 biến thể: đỏ và đen. Skin có bộ ảnh dựng sẵn (Sakura) dùng ảnh,
+ * còn lại vẽ procedural cho khớp khung `PlayCard`.
  */
 export function JokerCard({
   skinId,
@@ -22,6 +23,19 @@ export function JokerCard({
   if (!skin) return null;
 
   const isRed = variant === 'red';
+  const label = `Joker ${isRed ? 'đỏ' : 'đen'} — ${skin.name}`;
+  const artUrl = cardSkinJokerUrl(skin.id, variant);
+
+  if (artUrl) {
+    return (
+      <div
+        className={cn('relative isolate shrink-0 select-none overflow-hidden rounded-lg shadow-soft', SIZE_CLASSES[size], className)}
+        aria-label={label}
+      >
+        <img src={artUrl} alt={label} draggable={false} className="pointer-events-none absolute inset-0 h-full w-full object-cover" />
+      </div>
+    );
+  }
 
   return (
     <div
@@ -32,7 +46,7 @@ export function JokerCard({
         SIZE_CLASSES[size],
         className,
       )}
-      aria-label={`Joker ${isRed ? 'đỏ' : 'đen'} — ${skin.name}`}
+      aria-label={label}
     >
       <CardSkinJoker skinId={skin.id} variant={variant} />
       <div className="relative z-10 flex flex-col items-start leading-none">

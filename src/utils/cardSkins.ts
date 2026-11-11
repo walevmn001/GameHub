@@ -1,3 +1,5 @@
+import { RANK_LABEL, type Card, type Suit } from '@/types/game';
+
 export interface CardSkinTheme {
   id: string;
   name: string;
@@ -8,6 +10,11 @@ export interface CardSkinTheme {
   previewClass: string;
   redTextClass: string;
   blackTextClass: string;
+  /**
+   * Thư mục ảnh SVG dựng sẵn trong `public/` (so với gốc site). Có trường này thì
+   * skin dùng ảnh thay cho tranh vẽ procedural: mặt/mặt lưng/Joker đều lấy từ đây.
+   */
+  imageDeck?: string;
 }
 
 /** Cosmetic-only themes. Rank and suit remain unchanged for fair, readable play. */
@@ -22,6 +29,7 @@ export const CARD_SKINS: Record<string, CardSkinTheme> = {
     previewClass: 'from-rose-500 via-pink-600 to-rose-950',
     redTextClass: 'text-rose-700',
     blackTextClass: 'text-slate-900',
+    imageDeck: 'card-skins/sakura',
   },
   'card-skin-dragon': {
     id: 'card-skin-dragon',
@@ -71,4 +79,40 @@ export const CARD_SKINS: Record<string, CardSkinTheme> = {
 
 export function getCardSkinTheme(id?: string | null): CardSkinTheme | undefined {
   return id ? CARD_SKINS[id] : undefined;
+}
+
+/* ----------------------- Ảnh dựng sẵn cho skin (Sakura) ---------------------- */
+
+/** Tên thư mục theo chất trong bộ ảnh dựng sẵn (vd `spades-A.svg`). */
+const SUIT_FILE: Record<Suit, string> = {
+  spade: 'spades',
+  club: 'clubs',
+  diamond: 'diamonds',
+  heart: 'hearts',
+};
+
+function deckBase(skinId: string | null | undefined): string | null {
+  const deck = getCardSkinTheme(skinId)?.imageDeck;
+  return deck ? `${import.meta.env.BASE_URL}${deck}` : null;
+}
+
+/** URL mặt bài từ bộ ảnh dựng sẵn; `null` nếu skin được vẽ procedural. */
+export function cardSkinFaceUrl(skinId: string | null | undefined, card: Card): string | null {
+  const base = deckBase(skinId);
+  return base ? `${base}/${SUIT_FILE[card.suit]}-${RANK_LABEL[card.rank]}.svg` : null;
+}
+
+/** URL mặt lưng bài từ bộ ảnh dựng sẵn; `null` nếu skin được vẽ procedural. */
+export function cardSkinBackUrl(skinId: string | null | undefined): string | null {
+  const base = deckBase(skinId);
+  return base ? `${base}/card-back.svg` : null;
+}
+
+/** URL lá Joker từ bộ ảnh dựng sẵn (`red` → joker-1, `black` → joker-2). */
+export function cardSkinJokerUrl(
+  skinId: string | null | undefined,
+  variant: 'red' | 'black',
+): string | null {
+  const base = deckBase(skinId);
+  return base ? `${base}/${variant === 'red' ? 'joker-1' : 'joker-2'}.svg` : null;
 }
