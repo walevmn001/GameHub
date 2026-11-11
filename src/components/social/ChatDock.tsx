@@ -53,7 +53,7 @@ export function ChatDock({ landscape = false }: { landscape?: boolean }) {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="fixed bottom-4 right-4 z-40 inline-flex h-12 w-12 shrink-0 aspect-square items-center justify-center rounded-full bg-gradient-to-br from-neon-purple to-neon-cyan text-white shadow-glow"
+          className="fixed bottom-4 right-4 z-[60] inline-flex h-12 w-12 shrink-0 aspect-square items-center justify-center rounded-full bg-gradient-to-br from-neon-purple to-neon-cyan text-white shadow-glow"
           aria-label="Mở menu cá nhân"
         >
           <UserRound className="h-5 w-5" />
@@ -94,7 +94,7 @@ function SocialPanel({
   return (
     <div
       className={cn(
-        'fixed z-40 flex flex-col overflow-hidden border border-white/10 bg-base-850/95 shadow-soft backdrop-blur-md',
+        'fixed z-[60] flex flex-col overflow-hidden border border-white/10 bg-base-850/95 shadow-soft backdrop-blur-md',
         landscape
           ? 'inset-y-4 right-4 max-w-[28rem] rounded-2xl'
           : 'bottom-0 right-0 h-[72vh] max-h-[34rem] w-full sm:bottom-4 sm:right-4 sm:w-96 sm:rounded-2xl',
