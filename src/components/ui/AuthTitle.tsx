@@ -41,15 +41,16 @@ export function AuthTitle({
         </svg>
       </div>
 
-      {/* Chữ có gradient + outline mềm */}
-      <h1 className="relative font-display text-3xl font-extrabold tracking-tight sm:text-4xl">
-        <span className="bg-gradient-to-b from-brand-500 to-brand-700 bg-clip-text text-transparent drop-shadow-[0_2px_0_rgba(255,255,255,0.9)]">
-          {text}
-        </span>
-        {/* Viền ngoài mềm */}
+      {/* Chữ cartoon: viền trắng dày + gradient xanh lá + bóng đậm cho cảm giác nổi */}
+      <h1 className="relative font-display text-4xl font-black tracking-tight sm:text-5xl">
         <span
-          aria-hidden="true"
-          className="absolute inset-0 -z-10 font-display text-3xl font-extrabold tracking-tight text-brand-700/15 blur-[1px] sm:text-4xl"
+          className="bg-gradient-to-b from-brand-400 to-brand-700 bg-clip-text text-transparent"
+          style={{
+            WebkitTextStroke: '2.5px #FFFFFF',
+            textShadow:
+              '0 3px 0 #164820, 0 5px 0 #164820, 0 8px 14px rgba(22, 72, 32, 0.35)',
+            paintOrder: 'stroke fill',
+          }}
         >
           {text}
         </span>
