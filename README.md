@@ -168,7 +168,7 @@ Hệ thống nhãn dán dùng **file ảnh tĩnh** — có thể nằm trong `pu
 | **Danh mục (nguồn duy nhất)** | `src/data/shopCatalog.ts` | Khai báo gói, loại, vật phẩm, giá và file ảnh. **Dùng chung client + server** nên giá/quyền không bao giờ lệch. |
 | Kiểu dữ liệu | `src/types/shop.ts` | `ShopItem`, `ShopItemKind`, `MessageType`. |
 | Hiển thị/chọn | `src/components/chat/StickerPicker.tsx`, `StickerImage.tsx` | Bảng chọn nhãn dán (nhãn chưa mua hiện ổ khoá → dẫn tới `/shop`) và cách render ảnh (hỗ trợ cả tệp trong repo lẫn **URL ảnh host bên ngoài**). |
-| Skin bộ bài | `src/utils/cardSkins.ts`, `src/components/game/PlayCard.tsx` | Màu, họa tiết và biểu tượng mặt/lưng bài; hạng và chất không đổi. |
+| Skin bộ bài | `src/utils/cardSkins.ts`, `src/components/game/CardSkinArtwork.tsx`, `src/components/game/PlayCard.tsx` | Họa tiết lưng và tranh vector mặt bài; hạng/chất ở góc không đổi. |
 | Trạng thái/nghiệp vụ | `src/contexts/ShopContext.tsx`, `src/services/ShopService.ts` | Quyền sở hữu, mua vật phẩm và loadout đang trang bị. |
 | Trang cửa hàng | `src/pages/ShopPage.tsx` (route `/shop`) | Tab theo loại vật phẩm, xem trước, mua và trang bị skin. |
 | Backend | `server/src/shop/{service,routes}.ts`, models `Purchase`/`UserLoadout` | Mua + trừ xu; xác thực quyền sở hữu khi trang bị; xác thực quyền gửi nhãn dán. |
@@ -181,8 +181,9 @@ Hai chế độ hoạt động khác nhau (theo đúng kiến trúc chung):
 
 1. Thêm sản phẩm `kind: 'cardSkin'` vào `SHOP_ITEMS` trong `src/data/shopCatalog.ts`, đặt giá bằng xu.
 2. Dùng id ổn định và thêm cùng id vào `CARD_SKINS` trong `src/utils/cardSkins.ts` (màu mặt/lưng và biểu tượng).
-3. Shop tự tạo tab “Skin bộ bài”. Người chơi mua rồi bấm **Trang bị**; lựa chọn lưu cục bộ hoặc trong `UserLoadout`.
-4. Ván online chốt skin theo từng ghế. `MatchSeatView` chỉ gửi cosmetic id công khai, không gửi bài kín.
+3. Thêm tranh SVG theo id trong `src/components/game/CardSkinArtwork.tsx`; component này vẽ art trên từng lá cả ở tay người chơi và bàn giữa.
+4. Giữ hạng/chất ở góc lá trong `PlayCard.tsx`; không thay dữ liệu luật chơi khi thêm art.
+5. Shop tự tạo tab “Skin bộ bài”. Người chơi mua rồi bấm **Trang bị**; ván online chốt skin theo từng ghế và chỉ phát cosmetic id công khai, không gửi bài kín.
 
 Tab mới cần kind trong `ShopItemKind` và `SHOP_KINDS`; thêm loại equip thì bổ sung validator tại `server/src/shop/routes.ts`. Tab chưa có sản phẩm sẽ tự ẩn.
 

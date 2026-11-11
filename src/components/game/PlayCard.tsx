@@ -2,6 +2,7 @@ import { SUIT_SYMBOL, type Card } from '@/types';
 import { RANK_LABEL } from '@/types/game';
 import { cn } from '@/utils/cn';
 import { getCardSkinTheme } from '@/utils/cardSkins';
+import { CardSkinArtwork } from '@/components/game/CardSkinArtwork';
 
 export type CardSize = 'xs' | 'sm' | 'md' | 'lg';
 
@@ -78,7 +79,7 @@ export function PlayCard({
       disabled={disabled || !onClick}
       style={style}
       className={cn(
-        'relative shrink-0 select-none rounded-lg border p-1 text-left shadow-soft transition-all duration-200',
+        'relative isolate shrink-0 select-none overflow-hidden rounded-lg border p-1 text-left shadow-soft transition-all duration-200',
         skin?.faceClass ?? 'bg-slate-50',
         skin ? (isRed ? skin.redTextClass : skin.blackTextClass) : (isRed ? 'text-rose-600' : 'text-slate-900'),
         selected
@@ -91,20 +92,23 @@ export function PlayCard({
       )}
       aria-pressed={selected}
     >
-      {skin && <span className="pointer-events-none absolute right-1 top-1 text-[0.55em] opacity-55">{skin.mark}</span>}
-      <div className="flex flex-col items-start leading-none">
+      {skin && <CardSkinArtwork skinId={skin.id} card={card} />}
+      {skin && <span className="pointer-events-none absolute right-1 top-1 z-10 text-[0.55em] opacity-55">{skin.mark}</span>}
+      <div className="relative z-10 flex flex-col items-start leading-none">
         <span className="font-bold">{rank}</span>
         <span className="text-[0.9em]">{symbol}</span>
       </div>
-      <span
-        className={cn(
-          'pointer-events-none absolute inset-0 flex items-center justify-center font-bold opacity-90',
-          CENTER_SIZE[size],
-        )}
-      >
-        {symbol}
-      </span>
-      <div className="absolute bottom-1 right-1 rotate-180 leading-none">
+      {!skin && (
+        <span
+          className={cn(
+            'pointer-events-none absolute inset-0 flex items-center justify-center font-bold opacity-90',
+            CENTER_SIZE[size],
+          )}
+        >
+          {symbol}
+        </span>
+      )}
+      <div className="absolute bottom-1 right-1 z-10 rotate-180 leading-none">
         <span className="block font-bold">{rank}</span>
         <span className="block text-[0.9em]">{symbol}</span>
       </div>
