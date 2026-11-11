@@ -53,19 +53,11 @@ export function Navbar() {
     if (user) {
       links.push({ to: '/shop', label: 'Cửa hàng', icon: <ShoppingBag className="h-4 w-4" /> });
     }
-    if (user && social.enabled) {
-      links.push({
-        to: '/friends',
-        label: 'Bạn bè',
-        icon: <UserRound className="h-4 w-4" />,
-        badge: social.unreadTotal,
-      });
-    }
     if (user?.role === 'admin') {
       links.push({ to: '/admin', label: 'Quản trị', icon: <ShieldCheck className="h-4 w-4" /> });
     }
     return links;
-  }, [user, social.enabled, social.unreadTotal]);
+  }, [user]);
 
   useEffect(() => {
     if (!menuOpen) return;
